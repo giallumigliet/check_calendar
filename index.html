@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DONE CALENDAR</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>DONE CALENDAR</h1>
+
+  
+  <div class="calendar">
+      <div class="calendar-header">
+        <button id="prevMonth" class="month-btn">◀</button>
+        <div id="monthYear"></div>
+        <button id="nextMonth" class="month-btn">▶</button>
+      </div>
+
+      <div class="days" id="calendarDays"></div>
+  </div>
+
+
+  <div class="progress-wrapper">
+    <div class="progress-container">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+    <div class="progress-text" id="progressText">0</div>
+  </div>
+
+
+
+  <div id="day-actions" class="day-elements">
+    <button id="add-btn">+</button>
+  </div>
+
+
+  <div id="button-footer">
+    <button id="taken-btn">TAKEN</button>
+    <button id="undo-btn">↺</button>
+    <button id="save-btn">STATS</button>
+  </div>
+
+
+
+  <script type="module" src="script.js"></script>
+
+</body>
+</html>
