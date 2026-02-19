@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>DONE CALENDAR</title>
+  <title>CHECK CALENDAR</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>DONE CALENDAR</h1>
+  <h1>CHECK CALENDAR</h1>
 
   
   <div class="calendar">
@@ -15,6 +15,16 @@
         <button id="prevMonth" class="month-btn">◀</button>
         <div id="monthYear"></div>
         <button id="nextMonth" class="month-btn">▶</button>
+      </div>
+
+      <div class="weekdays">
+        <div>Mon</div>
+        <div>Tue</div>
+        <div>Wed</div>
+        <div>Thu</div>
+        <div>Fri</div>
+        <div>Sat</div>
+        <div>Sun</div>
       </div>
 
       <div class="days" id="calendarDays"></div>
@@ -32,11 +42,12 @@
 
   <div id="day-actions" class="day-elements">
     <button id="add-btn">+</button>
+    <button id="cancel-btn">x</button>
   </div>
 
 
   <div id="button-footer">
-    <button id="taken-btn">TAKEN</button>
+    <button id="task-btn">TASKS</button>
     <button id="undo-btn">↺</button>
     <button id="save-btn">STATS</button>
   </div>
