@@ -102,6 +102,13 @@ button:hover {
     background-color: #e8e8e8;
 }
 
+
+.days div.completed {
+    background-color: #13cc7c;
+    color: white;
+    font-weight: bold;
+}
+
 .days div.selected {
     background-color: #10a263;
     color: white;
@@ -116,13 +123,18 @@ button:hover {
 }
 
 
-.day-elements {
+.hidden-day-buttons {
     display: none;
 }
 
 
 #add-btn {
     font-size: 30px;
+}
+
+#cancel-btn {
+    font-size: 30px;
+    background-color: #ff6663;
 }
 
 
