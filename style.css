@@ -123,7 +123,7 @@ button:hover {
 }
 
 
-.hidden {
+.hidden-day-buttons {
     display: none;
 }
 
@@ -167,4 +167,5 @@ button:hover {
   min-width: 40px;
   text-align: right;
 }
+
 
