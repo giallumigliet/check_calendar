@@ -14,13 +14,19 @@ export function createCalendar(date, monthYear, calendarDays) {
     const firstDay = new Date(year, month, 1).getDay();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     // First day being Monday in Italy
-    const startDay = (firstDay === 0) ? 6 : firstDay - 1;
+    const startDay = (firstDay === 0) ? 7 : firstDay;
 
 
     // to display days of the months
     for (let day = 1; day <= daysInMonth; day++) {
         const dayDiv = document.createElement("div");
         dayDiv.textContent = day;
+        dayDiv.classList.add("day");
+
+        // to shift the first day
+        if (day === 1) {
+            dayDiv.style.gridColumnStart = startDay;
+        }
 
         if (
             day === date.getDate() &&
@@ -36,21 +42,25 @@ export function createCalendar(date, monthYear, calendarDays) {
 
 
 
-export function listenClickCalendar(dayActions, calendarDays) {
+export function listenClickCalendar(addBtn, cancelBtn, dayActions, calendarDays, progressBar, progressText) {
+    let selectedDay=null;
+    
     // to select the day by clicking it
     calendarDays.addEventListener("click", function(e) {
-        if (e.target.tagName === "DIV") {
+        selectedDay = e.target;
+        if (selectedDay.tagName === "DIV") {
             
             // remove previous selection
             document.querySelectorAll(".days div").forEach(day => {
             day.classList.remove("selected");
             });
-
+            
             // select clicked day
-            e.target.classList.add("selected");
+            selectedDay.classList.add("selected");
 
             // show day actions
-            dayActions.classList.remove("day-elements");
+            dayActions.classList.remove("hidden-day-buttons");
+            
         }
     });
 
@@ -69,8 +79,40 @@ export function listenClickCalendar(dayActions, calendarDays) {
             day.classList.remove("selected");
             });
 
+            selectedDay = null;
+
             // hide day actions
-            dayActions.classList.add("day-elements");
+            dayActions.classList.add("hidden-day-buttons");
+        }
+
+
+        
+    });
+
+
+    // day completed
+    addBtn.addEventListener("click", function() {
+
+        if (selectedDay) {
+            selectedDay.classList.remove("selected");
+            selectedDay.classList.add("completed");
+            selectedDay = null;
+
+            dayActions.classList.add("hidden-day-buttons");
+            updateProgress(calendarDays, progressBar, progressText);
+        }
+    });
+
+    // day annulled
+    cancelBtn.addEventListener("click", function() {
+
+        if (selectedDay) {
+            selectedDay.classList.remove("selected");
+            selectedDay.classList.remove("completed");
+            selectedDay = null;
+
+            dayActions.classList.add("hidden-day-buttons");
+            updateProgress(calendarDays, progressBar, progressText);
         }
     });
 
@@ -79,16 +121,36 @@ export function listenClickCalendar(dayActions, calendarDays) {
 
 
 
-export function listenMonthCalendar(date, monthYear, dayActions, calendarDays, prevMonthBtn, nextMonthBtn) {
+export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn, nextMonthBtn) {
     // left arrow
     prevMonthBtn.addEventListener("click", () => {
         date.setMonth(date.getMonth() - 1);
         createCalendar(date, monthYear, calendarDays);
+        updateProgress(calendarDays, progressBar, progressText);
     });
 
     // right arrow
     nextMonthBtn.addEventListener("click", () => {
         date.setMonth(date.getMonth() + 1);
         createCalendar(date, monthYear, calendarDays);
+        updateProgress(calendarDays, progressBar, progressText);
     });
+}
+
+
+
+
+
+
+
+export function updateProgress(calendarDays, progressBar, progressText) {
+    const completedNumber = calendarDays.querySelectorAll(".day.completed").length;
+    const total = calendarDays.querySelectorAll(".day").length;
+    
+    
+    if (total === 0) return; 
+    const percent = (completedNumber / total) * 100;
+
+    progressBar.style.width = percent + "%";
+    progressText.textContent = completedNumber; 
 }
