@@ -59,7 +59,7 @@ export function listenClickCalendar(addBtn, cancelBtn, dayActions, calendarDays,
             selectedDay.classList.add("selected");
 
             // show day actions
-            dayActions.classList.remove("hidden");
+            dayActions.classList.remove("hidden-day-buttons");
             
         }
     });
@@ -82,7 +82,7 @@ export function listenClickCalendar(addBtn, cancelBtn, dayActions, calendarDays,
             selectedDay = null;
 
             // hide day actions
-            dayActions.classList.add("hidden");
+            dayActions.classList.add("hidden-day-buttons");
         }
 
 
@@ -98,7 +98,7 @@ export function listenClickCalendar(addBtn, cancelBtn, dayActions, calendarDays,
             selectedDay.classList.add("completed");
             selectedDay = null;
 
-            dayActions.classList.add("hidden");
+            dayActions.classList.add("hidden-day-buttons");
             updateProgress(calendarDays, progressBar, progressText);
         }
     });
@@ -111,7 +111,7 @@ export function listenClickCalendar(addBtn, cancelBtn, dayActions, calendarDays,
             selectedDay.classList.remove("completed");
             selectedDay = null;
 
-            dayActions.classList.add("hidden");
+            dayActions.classList.add("hidden-day-buttons");
             updateProgress(calendarDays, progressBar, progressText);
         }
     });
@@ -154,4 +154,5 @@ export function updateProgress(calendarDays, progressBar, progressText) {
     progressBar.style.width = percent + "%";
     progressText.textContent = completedNumber; 
 }
+
 
