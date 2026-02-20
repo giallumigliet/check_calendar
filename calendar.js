@@ -139,6 +139,21 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
 
 
 
+export function listenTaskButtons(taskBtn, goBackButton, calendarWrapper, taskWrapper) {
+    taskBtn.addEventListener("click", () => {
+        calendarWrapper.classList.add("hidden-day-buttons");
+        taskWrapper.classList.remove("hidden-day-buttons");
+    });
+
+    goBackButton.addEventListener("click", () => {
+        taskWrapper.classList.add("hidden-day-buttons");
+        calendarWrapper.classList.remove("hidden-day-buttons");
+    });
+
+
+}
+
+
 
 
 
@@ -154,5 +169,4 @@ export function updateProgress(calendarDays, progressBar, progressText) {
     progressBar.style.width = percent + "%";
     progressText.textContent = completedNumber; 
 }
-
 
