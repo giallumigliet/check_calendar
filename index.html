@@ -9,34 +9,37 @@
 <body>
   <h1>CHECK CALENDAR</h1>
 
-  
-  <div class="calendar">
-      <div class="calendar-header">
-        <button id="prevMonth" class="month-btn">◀</button>
-        <div id="monthYear"></div>
-        <button id="nextMonth" class="month-btn">▶</button>
-      </div>
+  <div id="calendar-wrapper">
+      <div class="calendar">
+        <div class="calendar-header">
+          <button id="prevMonth" class="month-btn">◀</button>
+          <div id="monthYear"></div>
+          <button id="nextMonth" class="month-btn">▶</button>
+        </div>
 
-      <div class="weekdays">
-        <div>Mon</div>
-        <div>Tue</div>
-        <div>Wed</div>
-        <div>Thu</div>
-        <div>Fri</div>
-        <div>Sat</div>
-        <div>Sun</div>
-      </div>
+        <div class="weekdays">
+          <div>Mon</div>
+          <div>Tue</div>
+          <div>Wed</div>
+          <div>Thu</div>
+          <div>Fri</div>
+          <div>Sat</div>
+          <div>Sun</div>
+        </div>
 
-      <div class="days" id="calendarDays"></div>
-  </div>
-
-
-  <div class="progress-wrapper">
-    <div class="progress-container">
-      <div class="progress-bar" id="progressBar"></div>
+        <div class="days" id="calendarDays"></div>
     </div>
-    <div class="progress-text" id="progressText">0</div>
+
+
+    <div class="progress-wrapper">
+      <div class="progress-container">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+      <div class="progress-text" id="progressText">0</div>
+    </div>
+
   </div>
+  
 
 
 
@@ -44,6 +47,11 @@
     <button id="add-btn">+</button>
     <button id="cancel-btn">x</button>
   </div>
+
+  <div id="task-wrapper" class="hidden-day-buttons">
+    <button id="goback-btn">x</button>
+  </div>
+
 
 
   <div id="button-footer">
@@ -58,6 +66,5 @@
 
 </body>
 </html>
-
 
 
