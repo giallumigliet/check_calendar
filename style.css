@@ -13,7 +13,7 @@ h1 {
 
 button {
     background-color: #33ffa7;
-    border: 2px solid white;
+    border: 3px solid #e8e8e8;
     color: white;
     padding: 12px 20px;
     font-size: 16px;
@@ -34,13 +34,25 @@ button:hover {
     bottom: 0;            
     left: 0;
     width: 100%;         
-    background-color: #e8e8e8;
+    background-color: #fff;
     padding: 10px 0;
     display: flex;
     justify-content: center; 
     box-shadow: 0 -2px 5px rgba(0,0,0,0);
     z-index: 1000;         
 }
+
+
+#task-wrapper {
+    background-color: none;
+    margin: 10px;
+    border-radius: 10px;
+    border: 2px solid #e8e8e8;
+    width: 350px; 
+    height: 500px;
+    box-shadow: 0 -2px 5px rgba(0,0,0,0);       
+}
+
 
 
 .calendar {
@@ -167,5 +179,4 @@ button:hover {
   min-width: 40px;
   text-align: right;
 }
-
 
