@@ -12,9 +12,7 @@ const dayActions = document.getElementById("day-actions");
 const addBtn = document.getElementById("add-btn");
 const cancelBtn = document.getElementById("cancel-btn");
 const taskBtn = document.getElementById("task-btn");
-const goBackButton = document.getElementById("goback-btn");
 
-const taskWrapper = document.getElementById("task-wrapper");
 
 const progressBar = document.getElementById("progressBar");
 const progressText = document.getElementById("progressText");
@@ -35,4 +33,13 @@ listenClickCalendar(addBtn, cancelBtn, dayActions, calendarDays, progressBar, pr
 
 listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn, nextMonthBtn);
 
-listenTaskButtons(taskBtn, goBackButton, calendarWrapper, taskWrapper);
+
+
+const panel = document.getElementById("floating-panel");
+const overlay = document.getElementById("overlay");
+const closePanel = document.getElementById("close-panel");
+const buttonFooter = document.getElementById("button-footer");
+
+
+listenTaskButtons(taskBtn, closePanel, panel, overlay, calendarWrapper, buttonFooter);
+
