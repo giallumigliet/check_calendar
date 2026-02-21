@@ -139,22 +139,29 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
 
 
 
-export function listenTaskButtons(taskBtn, goBackButton, calendarWrapper, taskWrapper) {
+export function listenTaskButtons(taskBtn, closePanel, panel, overlay, calendarWrapper, buttonFooter) {
     taskBtn.addEventListener("click", () => {
         calendarWrapper.classList.add("hidden-day-buttons");
-        taskWrapper.classList.remove("hidden-day-buttons");
+        buttonFooter.classList.add("hidden-day-buttons");
+        panel.classList.add("active");
+        overlay.classList.add("active");
     });
 
-    goBackButton.addEventListener("click", () => {
-        taskWrapper.classList.add("hidden-day-buttons");
+    closePanel.addEventListener("click", () => {
         calendarWrapper.classList.remove("hidden-day-buttons");
+        buttonFooter.classList.remove("hidden-day-buttons");
+        panel.classList.remove("active");
+        overlay.classList.remove("active");
     });
 
-
+    overlay.addEventListener("click", () => {
+        calendarWrapper.classList.remove("hidden-day-buttons");
+        buttonFooter.classList.remove("hidden-day-buttons");
+        panel.classList.remove("active");
+        overlay.classList.remove("active");
+    });
+    
 }
-
-
-
 
 
 
@@ -169,4 +176,3 @@ export function updateProgress(calendarDays, progressBar, progressText) {
     progressBar.style.width = percent + "%";
     progressText.textContent = completedNumber; 
 }
-
