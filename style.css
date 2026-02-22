@@ -251,3 +251,7 @@ button:hover {
 #addTask-btn {
   font-size: 30px;
 }
+
+#hue-preview {
+  border: 2px solid #e8e8e8;
+}
