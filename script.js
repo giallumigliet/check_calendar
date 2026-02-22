@@ -21,6 +21,12 @@ const prevMonthBtn = document.getElementById("prevMonth");
 const nextMonthBtn = document.getElementById("nextMonth");
 
 
+const panel = document.getElementById("floating-panel");
+const overlay = document.getElementById("overlay");
+const closePanel = document.getElementById("close-panel");
+const buttonFooter = document.getElementById("button-footer");
+
+
 
 const date = new Date();
 const year = date.getFullYear();
@@ -33,13 +39,38 @@ listenClickCalendar(addBtn, cancelBtn, dayActions, calendarDays, progressBar, pr
 
 listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn, nextMonthBtn);
 
-
-
-const panel = document.getElementById("floating-panel");
-const overlay = document.getElementById("overlay");
-const closePanel = document.getElementById("close-panel");
-const buttonFooter = document.getElementById("button-footer");
-
-
 listenTaskButtons(taskBtn, closePanel, panel, overlay, calendarWrapper, buttonFooter);
 
+
+
+const addTaskBtn = document.getElementById("addTask-btn");
+const saveTaskBtn = document.getElementById("save-task");
+const taskList = document.getElementById("task-list");
+const taskManager = document.getElementById("task-manager");
+const taskForm = document.getElementById("task-form");
+
+
+addTaskBtn.addEventListener("click", () => {
+  taskManager.classList.add("hidden-task-buttons");
+  taskForm.classList.remove("hidden-task-buttons");
+});
+
+saveTaskBtn.addEventListener("click", () => {
+
+  const name = document.getElementById("task-name").value;
+  const color = document.getElementById("task-color").value;
+
+  if (!name) return;
+
+  const newTask = document.createElement("button");
+  newTask.textContent = name;
+  newTask.style.backgroundColor = color;
+  newTask.style.color = "white";
+
+  taskList.appendChild(newTask);
+
+  // reset
+  document.getElementById("task-name").value = "";
+  taskForm.classList.add("hidden-task-buttons");
+  taskManager.classList.remove("hidden-task-buttons");
+});
