@@ -252,6 +252,67 @@ button:hover {
   font-size: 30px;
 }
 
+.color-picker-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.color-label {
+  font-size: 16px;
+  font-weight: 600;
+  color: #555;
+  min-width: 55px;
+}
+
+
+/* SLIDER HUE */
+#task-hue {
+  flex: 1;
+  height: 14px;
+  border-radius: 10px;
+  outline: none;
+  appearance: none;
+  background: linear-gradient(
+    to right,
+    hsl(0,100%,50%),
+    hsl(60,100%,50%),
+    hsl(120,100%,50%),
+    hsl(180,100%,50%),
+    hsl(240,100%,50%),
+    hsl(300,100%,50%),
+    hsl(360,100%,50%)
+  );
+}
+
+/* Thumb slider */
+#task-hue::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: white;
+  border: 3px solid #10a263;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+#task-hue::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: white;
+  border: 3px solid #10a263;
+  cursor: pointer;
+}
+
+/* Preview circle */
 #hue-preview {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
   border: 2px solid #e8e8e8;
+  background-color: hsl(162, 80%, 50%);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  flex-shrink: 0;
 }
