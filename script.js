@@ -49,28 +49,44 @@ const taskList = document.getElementById("task-list");
 const taskManager = document.getElementById("task-manager");
 const taskForm = document.getElementById("task-form");
 
+const taskNameInput = document.getElementById("task-name");
+const taskHueInput = document.getElementById("task-hue");
+const huePreview = document.getElementById("hue-preview");
+
 
 addTaskBtn.addEventListener("click", () => {
   taskManager.classList.add("hidden-task-buttons");
   taskForm.classList.remove("hidden-task-buttons");
 });
 
-saveTaskBtn.addEventListener("click", () => {
+taskHueInput.addEventListener("input", () => {
+  const hue = taskHueInput.value;
+  huePreview.style.backgroundColor = `hsl(${hue}, 80%, 50%)`;
+});
 
-  const name = document.getElementById("task-name").value;
-  const color = document.getElementById("task-color").value;
+
+
+saveTaskBtn.addEventListener("click", () => {
+  const name = taskNameInput.value.trim();
+  const hue = taskHueInput.value;
 
   if (!name) return;
 
   const newTask = document.createElement("button");
   newTask.textContent = name;
-  newTask.style.backgroundColor = color;
+  newTask.style.backgroundColor = `hsl(${hue}, 80%, 50%)`;
   newTask.style.color = "white";
 
   taskList.appendChild(newTask);
 
-  // reset
-  document.getElementById("task-name").value = "";
+  // reset form
+  taskNameInput.value = "";
+  taskHueInput.value = 162;
+  huePreview.style.backgroundColor = `hsl(162, 80%, 50%)`;
+
+  
   taskForm.classList.add("hidden-task-buttons");
   taskManager.classList.remove("hidden-task-buttons");
 });
+
+
