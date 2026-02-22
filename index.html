@@ -62,14 +62,23 @@
 
   <div id="floating-panel">
     <div class="panel-header">
-      <span>Tasks</span>
-      <button id="close-panel">✕</button>
+      <span>Select your task</span>
+      <button id="close-panel">⯆</button>
     </div>
 
     <div class="panel-content">
-      <button>Nuovo Task</button>
-      <button>Lista Task</button>
-      <button>Impostazioni</button>
+      <div id="task-list"></div>
+      
+      <div id="task-manager" class="task-actions">
+        <button id="addTask-btn">+</button>
+        <button id="modifyTask-btn">Modify</button>
+      </div>
+
+      <div id="task-form" class="hidden-task-buttons">
+        <input type="text" id="task-name" placeholder="Nome task">
+        <input type="color" id="task-color" value="#33ffa7">
+        <button id="save-task">Save</button>
+      </div>
     </div>
   </div>
 
