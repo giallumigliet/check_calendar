@@ -152,6 +152,11 @@ export function listenTaskButtons(taskBtn, closePanel, panel, overlay, calendarW
         buttonFooter.classList.remove("hidden-day-buttons");
         panel.classList.remove("active");
         overlay.classList.remove("active");
+        
+        document.body.style.transform = "scale(1)";
+        setTimeout(() => {
+            document.body.style.transform = "";
+        }, 0);
     });
 
     overlay.addEventListener("click", () => {
@@ -159,6 +164,10 @@ export function listenTaskButtons(taskBtn, closePanel, panel, overlay, calendarW
         buttonFooter.classList.remove("hidden-day-buttons");
         panel.classList.remove("active");
         overlay.classList.remove("active");
+        document.body.style.transform = "scale(1)";
+        setTimeout(() => {
+            document.body.style.transform = "";
+        }, 0);
     });
     
 }
