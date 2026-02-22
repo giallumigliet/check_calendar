@@ -1,5 +1,5 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family: Roboto, sans-serif;
     display: grid;
     place-items: center;
     background: #ffffff;
@@ -7,12 +7,13 @@ body {
 }
 
 h1 {
+    font-size: 34px;
     margin-top: 30px;
     color: #10a263;
 }
 
 button {
-    background-color: #33ffa7;
+    background-color: #10a263;
     border: 3px solid #e8e8e8;
     color: white;
     padding: 12px 20px;
@@ -25,7 +26,7 @@ button {
 }
 
 button:hover {
-    background-color: #10a263;
+    background-color: #08683f;
 }
 
 
@@ -130,6 +131,10 @@ button:hover {
     display: none;
 }
 
+.hidden-task-buttons {
+    display: none !important;
+}
+
 
 #add-btn {
     font-size: 30px;
@@ -172,9 +177,6 @@ button:hover {
 }
 
 
-
-
-/* Overlay scuro */
 #overlay {
   position: fixed;
   inset: 0;
@@ -185,26 +187,34 @@ button:hover {
   z-index: 999;
 }
 
-/* Floating panel */
+
 #floating-panel {
   position: fixed;
 
   left: 10px;
   right: 10px;
-  bottom: -100%;
+  bottom: 10px;
+
   background: white;
-  border-radius: 57px 57px 57px 57px;
+  border-radius: 57px;
   border: 3px solid #e8e8e8;
   box-shadow: 0 -5px 5px rgba(0,0,0,0.05);
-  transition: transform 0.4s ease;
-  z-index: 1001;
+
   display: flex;
   flex-direction: column;
   padding: 20px;
-  transform: translateY(100%);
+
+  transform: translateY(120%);
+  transition: transform 0.4s ease;
+
+  z-index: 1001;
 }
 
-/* Header */
+#floating-panel.active {
+  transform: translateY(0);
+}
+
+
 .panel-header {
   display: flex;
   justify-content: space-between;
@@ -214,7 +224,7 @@ button:hover {
   border-bottom: 1px solid #eee;
 }
 
-/* Contenuto */
+
 .panel-content {
   padding: 20px;
   display: flex;
@@ -222,13 +232,22 @@ button:hover {
   gap: 15px;
 }
 
-/* Stato attivo */
 #overlay.active {
   opacity: 1;
   pointer-events: auto;
 }
 
-#floating-panel.active {
-  bottom: 10px;
-  transform: translateY(0);
+
+.task-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.task-actions button {
+  flex: 1;
+}
+
+#addTask-btn {
+  font-size: 30px;
 }
