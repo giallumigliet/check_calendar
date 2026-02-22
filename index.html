@@ -76,7 +76,9 @@
 
       <div id="task-form" class="hidden-task-buttons">
         <input type="text" id="task-name" placeholder="Nome task">
-        <input type="color" id="task-color" value="#33ffa7">
+        <label for="task-hue">Colore:</label>
+        <input type="range" id="task-hue" min="0" max="360" value="162"> 
+        <div id="hue-preview" style="width:40px;height:40px;border-radius:50%;background-color:hsl(162, 80%, 50%);"></div>
         <button id="save-task">Save</button>
       </div>
     </div>
