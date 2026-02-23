@@ -36,6 +36,8 @@ const month = date.getMonth();
 
 const addTaskBtn = document.getElementById("addTask-btn");
 const saveTaskBtn = document.getElementById("save-task");
+const goBackBtn = document.getElementById("goback-task");
+
 const taskList = document.getElementById("task-list");
 const taskManager = document.getElementById("task-manager");
 const taskForm = document.getElementById("task-form");
@@ -63,7 +65,18 @@ listenTaskButtons(taskBtn, closePanel, panel, overlay, calendarWrapper, buttonFo
 addTaskBtn.addEventListener("click", () => {
   taskManager.classList.add("hidden-task-buttons");
   taskForm.classList.remove("hidden-task-buttons");
+
+  const badges = document.querySelectorAll(".delete-badge");
+  badges.forEach(badge => {
+    badge.classList.add("hidden");
+  });
   modifyTaskBtn.classList.remove("modify-active");
+});
+
+
+goBackBtn.addEventListener("click", () => {
+  taskManager.classList.remove("hidden-task-buttons");
+  taskForm.classList.add("hidden-task-buttons");
 });
 
 
@@ -86,6 +99,7 @@ saveTaskBtn.addEventListener("click", () => {
 
   const newTask = document.createElement("div");
   newTask.classList.add("task-item");
+  newTask.dataset.hue = hue;
   newTask.style.backgroundColor = `hsl(${hue}, 80%, 50%)`;
   newTask.textContent = name;
 
@@ -112,6 +126,10 @@ saveTaskBtn.addEventListener("click", () => {
   
   taskForm.classList.add("hidden-task-buttons");
   taskManager.classList.remove("hidden-task-buttons");
+
+  newTask.addEventListener("click", () => {
+    document.documentElement.style.setProperty("--main-hue", newTask.dataset.hue);
+  });
 });
 
 
@@ -125,9 +143,6 @@ modifyTaskBtn.addEventListener("click", () => {
 
   modifyTaskBtn.classList.toggle("modify-active");
 });
-
-
-
 
 
 
