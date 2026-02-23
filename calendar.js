@@ -168,9 +168,6 @@ export function listenTaskButtons(taskBtn, closePanel, panel, overlay, calendarW
             document.body.style.transform = "";
         }, 0);
 
-        requestAnimationFrame(() => {
-          document.documentElement.style.backgroundColor = "#ffffff";
-        });
     });
 
     overlay.addEventListener("click", () => {
@@ -184,11 +181,7 @@ export function listenTaskButtons(taskBtn, closePanel, panel, overlay, calendarW
             document.body.style.transform = "";
         }, 0);
 
-        requestAnimationFrame(() => {
-          document.documentElement.style.backgroundColor = "#ffffff";
-        });
     });
-    
 }
 
 
@@ -205,4 +198,5 @@ export function updateProgress(calendarDays, progressBar, progressText) {
     progressBar.style.width = percent + "%";
     progressText.textContent = completedNumber; 
 }
+
 
