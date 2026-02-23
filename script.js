@@ -92,7 +92,7 @@ saveTaskBtn.addEventListener("click", () => {
   // crea badge delete
   const deleteBadge = document.createElement("div");
   deleteBadge.classList.add("delete-badge", "hidden");
-  deleteBadge.textContent = "-";
+  deleteBadge.textContent = "━";
 
   newTask.appendChild(deleteBadge);
   taskList.appendChild(newTask);
@@ -125,6 +125,7 @@ modifyTaskBtn.addEventListener("click", () => {
 
   modifyTaskBtn.classList.toggle("modify-active");
 });
+
 
 
 
