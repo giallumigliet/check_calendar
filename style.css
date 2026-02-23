@@ -1,3 +1,11 @@
+:root {
+  --main-hue: 150;
+  --main-color: hsl(var(--main-hue), 80%, 45%);
+  --main-color-dark: hsl(var(--main-hue), 80%, 30%);
+  --main-color-light: hsl(var(--main-hue), 80%, 85%);
+}
+
+
 body {
     font-family: Roboto, sans-serif;
     display: grid;
@@ -6,14 +14,16 @@ body {
     color: #000;
 }
 
+/* App Title */
 h1 {
     font-size: 34px;
     margin-top: 30px;
-    color: #10a263;
+    color:  var(--main-color);
 }
 
+/* Buttons */
 button {
-    background-color: #10a263;
+    background-color:  var(--main-color);
     border: 3px solid #e8e8e8;
     color: white;
     padding: 12px 20px;
@@ -26,10 +36,11 @@ button {
 }
 
 button:hover {
-    background-color: #08683f;
+    background-color: var(--main-color-dark);
 }
 
 
+/* Footer with buttons */
 #button-footer {
     position: fixed;
     bottom: 10px;     
@@ -46,7 +57,7 @@ button:hover {
 }
 
 
-
+/* Calendar */
 .calendar {
     width: 350px; 
 }
@@ -63,7 +74,7 @@ button:hover {
 .month-btn {
     background: none;
     border: none;
-    color: #12b971;
+    color: var(--main-color);
     font-size: 22px;
     cursor: pointer;
     padding: 5px 10px;
@@ -71,7 +82,7 @@ button:hover {
 
 .month-btn:hover {
     background: none;
-    color: #08683f;
+    color: var(--main-color-dark);
 }
 
 
@@ -108,13 +119,13 @@ button:hover {
 
 
 .days div.completed {
-    background-color: #13cc7c;
+    background-color: var(--main-color);
     color: white;
     font-weight: bold;
 }
 
 .days div.selected {
-    background-color: #10a263;
+    background-color: var(--main-color-light);
     color: white;
     font-weight: bold;
 }
@@ -127,6 +138,7 @@ button:hover {
 }
 
 
+/* Hide elements */
 .hidden-day-buttons {
     display: none;
 }
@@ -135,7 +147,7 @@ button:hover {
     display: none !important;
 }
 
-
+/* Buttons to select/deselect days */
 #add-btn {
     font-size: 30px;
 }
@@ -145,7 +157,7 @@ button:hover {
     background-color: #ff6663;
 }
 
-
+/* Progress bar */
 .progress-wrapper {
   width: 350px;
   display: flex;
@@ -165,18 +177,18 @@ button:hover {
 .progress-bar {
   height: 100%;
   width: 0%;
-  background-color: #10a263;
+  background-color: var(--main-color);
   transition: width 0.4s ease;
 }
 
 .progress-text {
   font-weight: bold;
-  color: #10a263;
+  color: var(--main-color);
   min-width: 40px;
   text-align: right;
 }
 
-
+/* Grey overlay when floating panel opens */
 #overlay {
   position: fixed;
   inset: 0;
@@ -238,6 +250,7 @@ button:hover {
 }
 
 
+/* Elements in the panel */
 .task-actions {
   display: flex;
   gap: 10px;
@@ -276,7 +289,7 @@ button:hover {
   font-size: 16px;
 }
 
-/* SLIDER HUE */
+/* Hue slider */
 #task-hue {
   flex: 1;
   width: 100%;
@@ -303,7 +316,7 @@ button:hover {
   height: 20px;
   border-radius: 50%;
   background: white;
-  border: 3px solid #10a263;
+  border: 3px solid var(--main-color);
   cursor: pointer;
   box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 }
@@ -313,7 +326,7 @@ button:hover {
   height: 20px;
   border-radius: 50%;
   background: white;
-  border: 3px solid #10a263;
+  border: 3px solid var(--main-color);
   cursor: pointer;
 }
 
@@ -323,7 +336,7 @@ button:hover {
   height: 32px;
   border-radius: 50%;
   border: 2px solid #e8e8e8;
-  background-color: hsl(162, 80%, 50%);
+  background-color: hsl(156, 80%, 50%);
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   flex-shrink: 0;
 }
@@ -360,13 +373,12 @@ button:hover {
   box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 }
 
-/* nascosto di default */
+
 .delete-badge.hidden {
   display: none;
 }
 
 .modify-active {
-  background-color: #08683f !important;
+  background-color: var(--main-color-dark) !important;
 }
-
 
