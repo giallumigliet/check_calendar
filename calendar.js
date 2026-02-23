@@ -139,12 +139,23 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
 
 
 
-export function listenTaskButtons(taskBtn, closePanel, panel, overlay, calendarWrapper, buttonFooter) {
+export function listenTaskButtons(taskBtn, closePanel, panel, overlay, calendarWrapper, buttonFooter, taskManager, taskForm, modifyTaskBtn) {
     taskBtn.addEventListener("click", () => {
         calendarWrapper.classList.add("hidden-day-buttons");
         buttonFooter.classList.add("hidden-day-buttons");
         panel.classList.add("active");
         overlay.classList.add("active");
+
+        taskManager.classList.remove("hidden-task-buttons");
+        taskForm.classList.add("hidden-task-buttons");
+
+        const badges = document.querySelectorAll(".delete-badge");
+        badges.forEach(badge => {
+            badge.classList.add("hidden");
+        });
+
+        modifyTaskBtn.classList.remove("modify-active");
+        modifyTaskBtn.textContent="MODIFY"
     });
 
     closePanel.addEventListener("click", () => {
@@ -164,6 +175,7 @@ export function listenTaskButtons(taskBtn, closePanel, panel, overlay, calendarW
         buttonFooter.classList.remove("hidden-day-buttons");
         panel.classList.remove("active");
         overlay.classList.remove("active");
+
         document.body.style.transform = "scale(1)";
         setTimeout(() => {
             document.body.style.transform = "";
@@ -171,6 +183,7 @@ export function listenTaskButtons(taskBtn, closePanel, panel, overlay, calendarW
     });
     
 }
+
 
 
 
