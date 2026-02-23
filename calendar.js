@@ -197,4 +197,3 @@ export function updateProgress(calendarDays, progressBar, progressText) {
     progressBar.style.width = percent + "%";
     progressText.textContent = completedNumber; 
 }
-
