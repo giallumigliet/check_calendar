@@ -46,7 +46,6 @@ const huePreview = document.getElementById("hue-preview");
 const hueContainer = document.getElementById("hue-container");
 
 const modifyTaskBtn = document.getElementById("modifyTask-btn");
-let modifyMode = false;
 
 createCalendar(date, monthYear, calendarDays);
 
@@ -65,7 +64,6 @@ addTaskBtn.addEventListener("click", () => {
   taskManager.classList.add("hidden-task-buttons");
   taskForm.classList.remove("hidden-task-buttons");
   modifyTaskBtn.classList.remove("modify-active");
-  modifyTaskBtn.textContent="MODIFY";
 });
 
 
@@ -120,15 +118,14 @@ saveTaskBtn.addEventListener("click", () => {
 
 modifyTaskBtn.addEventListener("click", () => {
   const badges = document.querySelectorAll(".delete-badge");
-  modifyMode = !modifyMode;
 
   badges.forEach(badge => {
     badge.classList.toggle("hidden");
   });
 
   modifyTaskBtn.classList.toggle("modify-active");
-  modifyTaskBtn.textContent = modifyMode ? "✓" : "MODIFY";
 });
+
 
 
 
