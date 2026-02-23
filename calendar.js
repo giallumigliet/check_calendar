@@ -155,7 +155,6 @@ export function listenTaskButtons(taskBtn, closePanel, panel, overlay, calendarW
         });
 
         modifyTaskBtn.classList.remove("modify-active");
-        modifyTaskBtn.textContent="MODIFY"
     });
 
     closePanel.addEventListener("click", () => {
@@ -198,3 +197,4 @@ export function updateProgress(calendarDays, progressBar, progressText) {
     progressBar.style.width = percent + "%";
     progressText.textContent = completedNumber; 
 }
+
