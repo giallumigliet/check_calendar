@@ -194,7 +194,9 @@ button:hover {
 /* Grey overlay when floating panel opens */
 #overlay {
   position: fixed;
-  inset: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background: rgba(0,0,0,0.3);
   opacity: 0;
   pointer-events: none;
@@ -384,5 +386,6 @@ button:hover {
 .modify-active {
   background-color: var(--main-color-dark) !important;
 }
+
 
 
