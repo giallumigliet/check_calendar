@@ -87,7 +87,7 @@ huePreview.addEventListener("click", () => {
 
 taskHueInput.addEventListener("input", () => {
   const hue = taskHueInput.value;
-  huePreview.style.backgroundColor = `hsl(${hue}, 80%, 60%)`;
+  huePreview.style.backgroundColor = `hsl(${hue}, 90%, 60%)`;
 });
 
 
@@ -101,7 +101,7 @@ saveTaskBtn.addEventListener("click", () => {
   const newTask = document.createElement("div");
   newTask.classList.add("task-item");
   newTask.dataset.hue = hue;
-  newTask.style.backgroundColor = `hsl(${hue}, 80%, 60%)`;
+  newTask.style.backgroundColor = `hsl(${hue}, 90%, 60%)`;
   newTask.textContent = name;
 
   // crea badge delete
@@ -122,7 +122,7 @@ saveTaskBtn.addEventListener("click", () => {
   // reset form
   taskNameInput.value = "";
   taskHueInput.value = 162;
-  huePreview.style.backgroundColor = `hsl(162, 80%, 60%)`;
+  huePreview.style.backgroundColor = `hsl(162, 90%, 60%)`;
 
   
   taskForm.classList.add("hidden-task-buttons");
@@ -144,6 +144,7 @@ modifyTaskBtn.addEventListener("click", () => {
 
   modifyTaskBtn.classList.toggle("modify-active");
 });
+
 
 
 
