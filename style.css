@@ -1,8 +1,8 @@
 :root {
   --main-hue: 150;
-  --main-color: hsl(var(--main-hue), 80%, 65%);
-  --main-color-dark: hsl(var(--main-hue), 80%, 45%);
-  --main-color-light: hsl(var(--main-hue), 80%, 75%);
+  --main-color: hsl(var(--main-hue), 90%, 65%);
+  --main-color-dark: hsl(var(--main-hue), 90%, 45%);
+  --main-color-light: hsl(var(--main-hue), 90%, 75%);
 }
 
 
@@ -299,13 +299,13 @@ button:hover {
   appearance: none;
   background: linear-gradient(
     to right, 
-    hsl(0,80%,65%),
-    hsl(60,80%,65%),
-    hsl(120,80%,65%),
-    hsl(180,80%,65%),
-    hsl(240,80%,65%),
-    hsl(300,80%,65%),
-    hsl(360,80%,65%)
+    hsl(0,90%,65%),
+    hsl(60,90%,65%),
+    hsl(120,90%,65%),
+    hsl(180,90%,65%),
+    hsl(240,90%,65%),
+    hsl(300,90%,65%),
+    hsl(360,90%,65%)
   );
 }
 
@@ -336,7 +336,7 @@ button:hover {
   height: 32px;
   border-radius: 50%;
   border: 2px solid #e8e8e8;
-  background-color: hsl(156, 80%, 65%);
+  background-color: hsl(156, 90%, 65%);
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   flex-shrink: 0;
 }
@@ -381,6 +381,7 @@ button:hover {
 .modify-active {
   background-color: var(--main-color-dark) !important;
 }
+
 
 
 
