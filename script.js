@@ -33,15 +33,6 @@ const year = date.getFullYear();
 const month = date.getMonth();
 
 
-createCalendar(date, monthYear, calendarDays);
-
-listenClickCalendar(addBtn, cancelBtn, dayActions, calendarDays, progressBar, progressText);
-
-listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn, nextMonthBtn);
-
-listenTaskButtons(taskBtn, closePanel, panel, overlay, calendarWrapper, buttonFooter);
-
-
 
 const addTaskBtn = document.getElementById("addTask-btn");
 const saveTaskBtn = document.getElementById("save-task");
@@ -52,11 +43,34 @@ const taskForm = document.getElementById("task-form");
 const taskNameInput = document.getElementById("task-name");
 const taskHueInput = document.getElementById("task-hue");
 const huePreview = document.getElementById("hue-preview");
+const hueContainer = document.getElementById("hue-container");
+
+const modifyTaskBtn = document.getElementById("modifyTask-btn");
+let modifyMode = false;
+
+createCalendar(date, monthYear, calendarDays);
+
+listenClickCalendar(addBtn, cancelBtn, dayActions, calendarDays, progressBar, progressText);
+
+listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn, nextMonthBtn);
+
+listenTaskButtons(taskBtn, closePanel, panel, overlay, calendarWrapper, buttonFooter, taskManager, taskForm, modifyTaskBtn);
+
+
+
+
 
 
 addTaskBtn.addEventListener("click", () => {
   taskManager.classList.add("hidden-task-buttons");
   taskForm.classList.remove("hidden-task-buttons");
+  modifyTaskBtn.classList.remove("modify-active");
+  modifyTaskBtn.textContent="MODIFY";
+});
+
+
+huePreview.addEventListener("click", () => {
+  hueContainer.classList.toggle("hidden-task-buttons");
 });
 
 taskHueInput.addEventListener("input", () => {
@@ -72,12 +86,25 @@ saveTaskBtn.addEventListener("click", () => {
 
   if (!name) return;
 
-  const newTask = document.createElement("button");
-  newTask.textContent = name;
+  const newTask = document.createElement("div");
+  newTask.classList.add("task-item");
   newTask.style.backgroundColor = `hsl(${hue}, 80%, 50%)`;
-  newTask.style.color = "white";
+  newTask.textContent = name;
 
+  // crea badge delete
+  const deleteBadge = document.createElement("div");
+  deleteBadge.classList.add("delete-badge", "hidden");
+  deleteBadge.textContent = "-";
+
+  newTask.appendChild(deleteBadge);
   taskList.appendChild(newTask);
+
+  deleteBadge.addEventListener("click", (e) => {
+    if (confirm("Press OK to delete the task.")) {
+        e.stopPropagation(); // evita click sulla task
+        newTask.remove();
+    }
+  });
 
   // reset form
   taskNameInput.value = "";
@@ -88,5 +115,21 @@ saveTaskBtn.addEventListener("click", () => {
   taskForm.classList.add("hidden-task-buttons");
   taskManager.classList.remove("hidden-task-buttons");
 });
+
+
+
+modifyTaskBtn.addEventListener("click", () => {
+  const badges = document.querySelectorAll(".delete-badge");
+  modifyMode = !modifyMode;
+
+  badges.forEach(badge => {
+    badge.classList.toggle("hidden");
+  });
+
+  modifyTaskBtn.classList.toggle("modify-active");
+  modifyTaskBtn.textContent = modifyMode ? "✓" : "MODIFY";
+});
+
+
 
 
