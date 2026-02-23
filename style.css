@@ -1,8 +1,8 @@
 :root {
   --main-hue: 150;
-  --main-color: hsl(var(--main-hue), 80%, 45%);
-  --main-color-dark: hsl(var(--main-hue), 80%, 30%);
-  --main-color-light: hsl(var(--main-hue), 80%, 85%);
+  --main-color: hsl(var(--main-hue), 55%, 60%);
+  --main-color-dark: hsl(var(--main-hue), 55%, 45%);
+  --main-color-light: hsl(var(--main-hue), 45%, 88%);
 }
 
 
@@ -381,6 +381,7 @@ button:hover {
 .modify-active {
   background-color: var(--main-color-dark) !important;
 }
+
 
 
 
