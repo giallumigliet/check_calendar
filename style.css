@@ -265,6 +265,13 @@ button:hover {
   min-width: 55px;
 }
 
+.task-top-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+
 #task-name {
   font-size: 16px;
 }
@@ -272,19 +279,20 @@ button:hover {
 /* SLIDER HUE */
 #task-hue {
   flex: 1;
+  width: 100%;
   height: 14px;
   border-radius: 10px;
   outline: none;
   appearance: none;
   background: linear-gradient(
-    to right,
-    hsl(0,100%,50%),
-    hsl(60,100%,50%),
-    hsl(120,100%,50%),
-    hsl(180,100%,50%),
-    hsl(240,100%,50%),
-    hsl(300,100%,50%),
-    hsl(360,100%,50%)
+    to right, 
+    hsl(0,80%,50%),
+    hsl(60,80%,50%),
+    hsl(120,80%,50%),
+    hsl(180,80%,50%),
+    hsl(240,80%,50%),
+    hsl(300,80%,50%),
+    hsl(360,80%,50%)
   );
 }
 
@@ -320,3 +328,44 @@ button:hover {
   flex-shrink: 0;
 }
 
+
+
+.task-item {
+  position: relative;
+  border-radius: 57px;
+  padding: 12px 20px;
+  font-weight: bold;
+  color: white;
+  border: 3px solid #e8e8e8;
+  cursor: pointer;
+}
+
+/* Cerchietto rosso */
+.delete-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid #e8e8e8;
+  background: #ff4d4d;
+  color: white;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+/* nascosto di default */
+.delete-badge.hidden {
+  display: none;
+}
+
+.modify-active {
+  background-color: #08683f !important;
+  font-size: 13px;
+}
