@@ -5,6 +5,9 @@
   --main-color-light: hsl(var(--main-hue), 80%, 85%);
 }
 
+html {
+  background: #ffffff;
+}
 
 body {
     font-family: Roboto, sans-serif;
@@ -381,4 +384,5 @@ button:hover {
 .modify-active {
   background-color: var(--main-color-dark) !important;
 }
+
 
