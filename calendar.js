@@ -199,4 +199,3 @@ export function updateProgress(calendarDays, progressBar, progressText) {
     progressText.textContent = completedNumber; 
 }
 
-
