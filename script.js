@@ -65,6 +65,7 @@ listenTaskButtons(taskBtn, closePanel, panel, overlay, calendarWrapper, buttonFo
 addTaskBtn.addEventListener("click", () => {
   taskManager.classList.add("hidden-task-buttons");
   taskForm.classList.remove("hidden-task-buttons");
+  hueContainer.classList.add("hidden-task-buttons");
 
   const badges = document.querySelectorAll(".delete-badge");
   badges.forEach(badge => {
@@ -143,6 +144,7 @@ modifyTaskBtn.addEventListener("click", () => {
 
   modifyTaskBtn.classList.toggle("modify-active");
 });
+
 
 
 
