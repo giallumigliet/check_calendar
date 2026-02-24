@@ -5,6 +5,9 @@
     --main-color-light: hsl(var(--main-hue), 70%, 75%);
   }
 
+  html {
+      background: #ffffff;
+  }
 
   body {
       font-family: Roboto, sans-serif;
@@ -416,6 +419,7 @@
   .modify-active {
     background-color: var(--main-color-light) !important;
   }
+
 
 
 
