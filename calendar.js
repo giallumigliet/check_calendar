@@ -164,11 +164,8 @@ export function listenTaskButtons(taskBtn, closePanel, panel, overlay, calendarW
         overlay.classList.remove("active");
         
         requestAnimationFrame(() => {
-          document.documentElement.style.transform = "translateZ(0)";
-          requestAnimationFrame(() => {
-            document.documentElement.style.transform = "";
-          });
-        });
+          document.documentElement.style.backgroundColor = "#ffffff";
+        })
 
     });
 
@@ -199,6 +196,7 @@ export function updateProgress(calendarDays, progressBar, progressText) {
     progressBar.style.width = percent + "%";
     progressText.textContent = completedNumber; 
 }
+
 
 
 
