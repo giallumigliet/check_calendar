@@ -460,6 +460,8 @@
     border: 3px solid #ccc;
     padding: 0;
     cursor: pointer;
+    display: grid;
+    place-items: center;
   }
 
 
@@ -469,6 +471,7 @@
     border-radius: 50%;
     object-fit: cover;
   }
+
 
 
 
