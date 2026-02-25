@@ -1,8 +1,7 @@
 // Import Firebase for database
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, setPersistence, browserLocalPersistence} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import { setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 // Import functions 
 import { createCalendar, listenClickCalendar, listenMonthCalendar, listenTaskButtons, listenHue, listenPanelButtons, listenSaveTask} from "./calendar.js";
@@ -94,6 +93,7 @@ listenPanelButtons(addTaskBtn, goBackBtn, modifyTaskBtn, taskManager, taskForm, 
 listenHue(huePreview, hueContainer, taskHueInput);
 
 listenSaveTask(saveTaskBtn, taskList, taskNameInput, taskHueInput, huePreview, taskManager, taskForm);
+
 
 
 
