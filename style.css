@@ -73,7 +73,7 @@
     border: none;
     color: #aaa;
     padding: 8px 20px;;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: normal;
     border-radius: 0px;
     cursor: pointer;
@@ -503,6 +503,7 @@
     border-radius: 50%;
     object-fit: cover;
   }
+
 
 
 
