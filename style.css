@@ -66,7 +66,7 @@
   account-button {
       background-color:  #fff;
       border: none;
-      color: #bbb;
+      color: #aaa;
       padding-top: 4px;
       padding-bottom: 4px;
       font-size: 12px;
@@ -74,6 +74,7 @@
       border-radius: 0px;
       cursor: pointer;
       margin: 5px;
+      width: 100%;
       transition: background 0.3s;
   }
 
@@ -490,6 +491,7 @@
     border-radius: 50%;
     object-fit: cover;
   }
+
 
 
 
