@@ -448,20 +448,12 @@
   flex-direction: column;
   align-items: center;
   padding: 20px;
-
-  transform: translateY(120%);
-  opacity: 0;
-  pointer-events: none;
+  pointer-events: auto;
 
   transition: all 0.35s ease;
   z-index: 1002;
 }
 
-#account-floating-panel.active {
-  transform: translateY(0);
-  opacity: 1;
-  pointer-events: auto;
-}
 
   #profile-btn {
     background: none;
@@ -477,6 +469,7 @@
     border-radius: 50%;
     object-fit: cover;
   }
+
 
 
 
