@@ -45,10 +45,11 @@ const hueContainer = document.getElementById("hue-container");
 const modifyTaskBtn = document.getElementById("modifyTask-btn");
 
 
-const loginBtn = document.getElementById("loginBtn");
-const logoutBtn = document.getElementById("logoutBtn");
-const userInfo = document.getElementById("user-info");
+const loginBtn = document.getElementById("login-btn");
+const logoutBtn = document.getElementById("logout-btn");
 const userPhoto = document.getElementById("user-photo");
+const accountPanel = document.getElementById("account-floating-panel");
+
 
 
 
@@ -91,19 +92,32 @@ logoutBtn.addEventListener("click", async () => {
   await signOut(auth);
 });
 
+userPhoto.addEventListener("click", async () => {
+  accountPanel.classList.toggle("active");
+});
+
+document.addEventListener("click", function(e) {
+    const clickedAccountPanel = e.target.closest(".days div");
+
+    // if no panel button is clicked
+    if (!clickedAccountPanel) {
+        accountPanel.classList.remove("active");
+    }
+});
+
 
 onAuthStateChanged(auth, (user) => {
   if (user) {
     // Mostra UI utente
     loginBtn.classList.add("hidden-task-buttons");
-    userInfo.classList.remove("hidden-task-buttons");
+    userPhoto.classList.remove("hidden-task-buttons");
 
     // Imposta foto profilo
     userPhoto.src = user.photoURL;
   } else {
     // Mostra login
     loginBtn.classList.remove("hidden-task-buttons");
-    userInfo.classList.add("hidden-task-buttons");
+    userPhoto.classList.add("hidden-task-buttons");
   }
 });
 
