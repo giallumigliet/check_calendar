@@ -10,9 +10,7 @@
 </head>
 <body>
   <h1>CHECK CALENDAR</h1>
-  
-  <button id="loginBtn">Login con Google</button>
-  
+
   <div id="calendar-wrapper">
       <div class="calendar">
         <div class="calendar-header">
@@ -55,7 +53,14 @@
 
   <div id="button-footer">
     <button id="task-btn">TASKS</button>
-    <button id="undo-btn">↺</button>
+    <div id="auth-area">
+      <button id="loginBtn">LOG IN</button>
+
+      <div id="user-info" class="hidden-task-buttons">
+        <img id="user-photo" />
+        <button id="logoutBtn">Logout</button>
+      </div>
+    </div>
     <button id="save-btn">STATS</button>
   </div>
 
