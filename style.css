@@ -66,9 +66,10 @@
   account-button {
       background-color:  #fff;
       border: none;
-      color: #111;
-      padding: 12px 20px;
-      font-size: 10px;
+      color: #bbb;
+      padding-top: 4px;
+      padding-bottom: 4px;
+      font-size: 12px;
       font-weight: normal;
       border-radius: 0px;
       cursor: pointer;
@@ -452,8 +453,8 @@
 
   #account-floating-panel {
   position: fixed;
-  left: 120px;
-  right: 120px;
+  left: 100px;
+  right: 100px;
   bottom: 110px;
 
   background: white;
@@ -464,7 +465,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px;
+  padding: none;
   pointer-events: auto;
   gap: none;
 
@@ -489,6 +490,7 @@
     border-radius: 50%;
     object-fit: cover;
   }
+
 
 
 
