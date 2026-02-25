@@ -99,6 +99,8 @@ changeAccountBtn.addEventListener("click", async () => {
   } catch (error) {
     console.error(error);
   }
+  
+  accountPanel.classList.add("hidden-task-buttons");
 });
 
 
@@ -106,6 +108,7 @@ changeAccountBtn.addEventListener("click", async () => {
 
 logoutBtn.addEventListener("click", async () => {
   await signOut(auth);
+  accountPanel.classList.add("hidden-task-buttons");
 });
 
 profileButton.addEventListener("click", (e) => {
@@ -152,6 +155,7 @@ listenPanelButtons(addTaskBtn, goBackBtn, modifyTaskBtn, taskManager, taskForm, 
 listenHue(huePreview, hueContainer, taskHueInput);
 
 listenSaveTask(saveTaskBtn, taskList, taskNameInput, taskHueInput, huePreview, taskManager, taskForm);
+
 
 
 
