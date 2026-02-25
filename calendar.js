@@ -71,7 +71,7 @@ export function listenClickCalendar(addBtn, cancelBtn, dayActions, calendarDays,
         const clickedDay = e.target.closest(".days div");
         const clickedDayActions = e.target.closest("#day-actions");
 
-        // Se NON clicchi né su un giorno né sui bottoni extra
+        // if no day or add/cancel button button is clicked
         if (!clickedDay && !clickedDayActions) {
             
             // remove selection
@@ -199,5 +199,97 @@ export function updateProgress(calendarDays, progressBar, progressText) {
 
 
 
+export function listenPanelButtons(addTaskBtn, goBackBtn, modifyTaskBtn, taskManager, taskForm, hueContainer) {
+    addTaskBtn.addEventListener("click", () => {
+      taskManager.classList.add("hidden-task-buttons");
+      taskForm.classList.remove("hidden-task-buttons");
+      hueContainer.classList.add("hidden-task-buttons");
+    
+      const badges = document.querySelectorAll(".delete-badge");
+      badges.forEach(badge => {
+        badge.classList.add("hidden");
+      });
+      modifyTaskBtn.classList.remove("modify-active");
+    });
+
+
+    modifyTaskBtn.addEventListener("click", () => {
+        const badges = document.querySelectorAll(".delete-badge");
+
+        badges.forEach(badge => {
+            badge.classList.toggle("hidden");
+        });
+
+        modifyTaskBtn.classList.toggle("modify-active");
+        
+        taskManager.classList.remove("hidden-task-buttons");
+        taskForm.classList.add("hidden-task-buttons");
+    });
+    
+    
+    goBackBtn.addEventListener("click", () => {
+      taskManager.classList.remove("hidden-task-buttons");
+      taskForm.classList.add("hidden-task-buttons");
+    });
+}
+
+
+
+export function listenHue(huePreview, hueContainer, taskHueInput) {
+    huePreview.addEventListener("click", () => {
+      hueContainer.classList.toggle("hidden-task-buttons");
+    });
+
+    taskHueInput.addEventListener("input", () => {
+      const hue = taskHueInput.value;
+      huePreview.style.backgroundColor = `hsl(${hue}, 90%, 55%)`;
+    });
+}
+
+
+
+
+export function listenSaveTask(saveTaskBtn, taskList, taskNameInput, taskHueInput, huePreview, taskManager, taskForm) {
+    saveTaskBtn.addEventListener("click", () => {
+        const name = taskNameInput.value.trim();
+        const hue = taskHueInput.value;
+
+        if (!name) return;
+
+        const newTask = document.createElement("div");
+        newTask.classList.add("task-item");
+        newTask.dataset.hue = hue;
+        newTask.style.backgroundColor = `hsl(${hue}, 90%, 45%)`;
+        newTask.textContent = name;
+
+        // crea badge delete
+        const deleteBadge = document.createElement("div");
+        deleteBadge.classList.add("delete-badge", "hidden");
+        deleteBadge.textContent = "━";
+
+        newTask.appendChild(deleteBadge);
+        taskList.appendChild(newTask);
+
+        deleteBadge.addEventListener("click", (e) => {
+            if (confirm("Press OK to delete the task.")) {
+                e.stopPropagation(); // evita click sulla task
+                newTask.remove();
+            }
+        });
+
+        // reset form
+        taskNameInput.value = "";
+        taskHueInput.value = 162;
+        huePreview.style.backgroundColor = `hsl(162, 90%, 55%)`;
+
+        
+        taskForm.classList.add("hidden-task-buttons");
+        taskManager.classList.remove("hidden-task-buttons");
+
+        newTask.addEventListener("click", () => {
+            document.documentElement.style.setProperty("--main-hue", newTask.dataset.hue);
+        });
+    });
+}
 
 
