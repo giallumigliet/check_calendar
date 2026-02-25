@@ -430,18 +430,61 @@
     gap: 10px;
   }
 
-  #user-photo {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid #ccc;
+
+
+
+  #account-floating-panel {
+    position: fixed;
+
+    left: 120px;
+    right: 120px;
+    bottom: 10px;
+
+    background: white;
+    border-radius: 57px;
+    border: 3px solid #e8e8e8;
+    box-shadow: 0 -5px 5px rgba(0,0,0,0.05);
+
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+
+    transition: transform 0.4s ease;
+    display: none;
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+
+  #account-floating-panel.active {
+    position: fixed;
+
+    left: 120px;
+    right: 120px;
+    bottom: 110px;
+
+    background: white;
+    border-radius: 57px;
+    border: 3px solid #e8e8e8;
+    box-shadow: 0 -5px 5px rgba(0,0,0,0.05);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+
+    transition: transform 0.4s ease;
+    pointer-events: auto;
+    z-index: 1002;
   }
 
 
 
-
-
-
-
+  #user-photo {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #ccc;
+  }
 
