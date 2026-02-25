@@ -110,7 +110,7 @@ logoutBtn.addEventListener("click", async () => {
 
 profileButton.addEventListener("click", (e) => {
   e.stopPropagation();
-  accountPanel.classList.toggle("active");
+  accountPanel.classList.toggle("hidden-task-buttons");
 });
 
 document.addEventListener("click", function(e) {
@@ -118,7 +118,7 @@ document.addEventListener("click", function(e) {
   const clickedProfileBtn = profileButton.contains(e.target);
 
   if (!clickedInsidePanel && !clickedProfileBtn) {
-    accountPanel.classList.remove("active");
+    accountPanel.classList.add("hidden-task-buttons");
   }
 });
 
@@ -152,6 +152,7 @@ listenPanelButtons(addTaskBtn, goBackBtn, modifyTaskBtn, taskManager, taskForm, 
 listenHue(huePreview, hueContainer, taskHueInput);
 
 listenSaveTask(saveTaskBtn, taskList, taskNameInput, taskHueInput, huePreview, taskManager, taskForm);
+
 
 
 
