@@ -113,12 +113,12 @@ profileButton.addEventListener("click", async () => {
 });
 
 document.addEventListener("click", function(e) {
-    const clickedAccountPanel = e.target.closest(".days div");
+  const clickedInsidePanel = accountPanel.contains(e.target);
+  const clickedProfileBtn = profileButton.contains(e.target);
 
-    // if no panel button is clicked
-    if (!clickedAccountPanel) {
-        accountPanel.classList.remove("active");
-    }
+  if (!clickedInsidePanel && !clickedProfileBtn) {
+    accountPanel.classList.remove("active");
+  }
 });
 
 
@@ -151,4 +151,5 @@ listenPanelButtons(addTaskBtn, goBackBtn, modifyTaskBtn, taskManager, taskForm, 
 listenHue(huePreview, hueContainer, taskHueInput);
 
 listenSaveTask(saveTaskBtn, taskList, taskNameInput, taskHueInput, huePreview, taskManager, taskForm);
+
 
