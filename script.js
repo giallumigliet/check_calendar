@@ -1,6 +1,6 @@
 // Import Firebase for database
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup, setPersistence, browserLocalPersistence} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, setPersistence, browserLocalPersistence, onAuthStateChanged, signOut} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 // Import functions 
@@ -44,6 +44,14 @@ const hueContainer = document.getElementById("hue-container");
 
 const modifyTaskBtn = document.getElementById("modifyTask-btn");
 
+
+const loginBtn = document.getElementById("loginBtn");
+const logoutBtn = document.getElementById("logoutBtn");
+const userInfo = document.getElementById("user-info");
+const userPhoto = document.getElementById("user-photo");
+
+
+
 // Today
 const date = new Date();
 const year = date.getFullYear();
@@ -69,7 +77,8 @@ const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
 
 
-document.getElementById("loginBtn").addEventListener("click", async () => {
+
+loginBtn.addEventListener("click", async () => {
   try {
     const result = await signInWithPopup(auth, provider);
     console.log("Utente:", result.user);
@@ -78,6 +87,25 @@ document.getElementById("loginBtn").addEventListener("click", async () => {
   }
 });
 
+logoutBtn.addEventListener("click", async () => {
+  await signOut(auth);
+});
+
+
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    // Mostra UI utente
+    loginBtn.classList.add("hidden-task-buttons");
+    userInfo.classList.remove("hidden-task-buttons");
+
+    // Imposta foto profilo
+    userPhoto.src = user.photoURL;
+  } else {
+    // Mostra login
+    loginBtn.classList.remove("hidden-task-buttons");
+    userInfo.classList.add("hidden-task-buttons");
+  }
+});
 
 
 createCalendar(date, monthYear, calendarDays);
@@ -93,15 +121,4 @@ listenPanelButtons(addTaskBtn, goBackBtn, modifyTaskBtn, taskManager, taskForm, 
 listenHue(huePreview, hueContainer, taskHueInput);
 
 listenSaveTask(saveTaskBtn, taskList, taskNameInput, taskHueInput, huePreview, taskManager, taskForm);
-
-
-
-
-
-
-
-
-
-
-
 
