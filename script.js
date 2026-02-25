@@ -1,12 +1,15 @@
-import { createCalendar } from "./calendar.js";
-import { listenClickCalendar } from "./calendar.js";
-import { listenMonthCalendar } from "./calendar.js";
-import { listenTaskButtons } from "./calendar.js";
-import { listenHue } from "./calendar.js";
-import { listenPanelButtons } from "./calendar.js";
-import { listenSaveTask } from "./calendar.js";
+// Import Firebase for database
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 
+// Import functions 
+import { createCalendar, listenClickCalendar, listenMonthCalendar, listenTaskButtons, listenHue, listenPanelButtons, listenSaveTask} from "./calendar.js";
+
+
+
+// Getting html elements
 const calendarWrapper = document.getElementById("calendar-wrapper");
 const monthYear = document.getElementById("monthYear");
 const calendarDays = document.getElementById("calendarDays");
@@ -42,9 +45,38 @@ const hueContainer = document.getElementById("hue-container");
 
 const modifyTaskBtn = document.getElementById("modifyTask-btn");
 
+// Today
 const date = new Date();
 const year = date.getFullYear();
 const month = date.getMonth();
+
+
+// Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyAOkre2FhmRFlSBPYznZUVAJxLQh-QeExc",
+  authDomain: "check-calendar-giallumigliet.firebaseapp.com",
+  projectId: "check-calendar-giallumigliet",
+  storageBucket: "check-calendar-giallumigliet.firebasestorage.app",
+  messagingSenderId: "741223614800",
+  appId: "1:741223614800:web:41af2763f7c3c6ebb5c455"
+};
+// Firebase initialization
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// Login Google
+const provider = new GoogleAuthProvider();
+
+
+document.getElementById("loginBtn").addEventListener("click", async () => {
+  try {
+    const result = await signInWithPopup(auth, provider);
+    console.log("Utente:", result.user);
+  } catch (error) {
+    console.error(error);
+  }
+});
 
 
 
@@ -61,6 +93,8 @@ listenPanelButtons(addTaskBtn, goBackBtn, modifyTaskBtn, taskManager, taskForm, 
 listenHue(huePreview, hueContainer, taskHueInput);
 
 listenSaveTask(saveTaskBtn, taskList, taskNameInput, taskHueInput, huePreview, taskManager, taskForm);
+
+
 
 
 
