@@ -108,7 +108,8 @@ logoutBtn.addEventListener("click", async () => {
   await signOut(auth);
 });
 
-profileButton.addEventListener("click", async () => {
+profileButton.addEventListener("click", (e) => {
+  e.stopPropagation();
   accountPanel.classList.toggle("active");
 });
 
@@ -151,5 +152,6 @@ listenPanelButtons(addTaskBtn, goBackBtn, modifyTaskBtn, taskManager, taskForm, 
 listenHue(huePreview, hueContainer, taskHueInput);
 
 listenSaveTask(saveTaskBtn, taskList, taskNameInput, taskHueInput, huePreview, taskManager, taskForm);
+
 
 
