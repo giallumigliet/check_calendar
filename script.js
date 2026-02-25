@@ -47,9 +47,10 @@ const modifyTaskBtn = document.getElementById("modifyTask-btn");
 
 const loginBtn = document.getElementById("login-btn");
 const logoutBtn = document.getElementById("logout-btn");
+const profileButton = document.getElementById("profile-btn");
 const userPhoto = document.getElementById("user-photo");
 const accountPanel = document.getElementById("account-floating-panel");
-
+const changeAccountBtn = document.getElementById("changeAccount-btn");
 
 
 
@@ -88,11 +89,26 @@ loginBtn.addEventListener("click", async () => {
   }
 });
 
+
+changeAccountBtn.addEventListener("click", async () => {
+  await signOut(auth);
+  
+  try {
+    const result = await signInWithPopup(auth, provider);
+    console.log("Utente:", result.user);
+  } catch (error) {
+    console.error(error);
+  }
+});
+
+
+
+
 logoutBtn.addEventListener("click", async () => {
   await signOut(auth);
 });
 
-userPhoto.addEventListener("click", async () => {
+profileButton.addEventListener("click", async () => {
   accountPanel.classList.toggle("active");
 });
 
@@ -110,14 +126,14 @@ onAuthStateChanged(auth, (user) => {
   if (user) {
     // Mostra UI utente
     loginBtn.classList.add("hidden-task-buttons");
-    userPhoto.classList.remove("hidden-task-buttons");
+    profileButton.classList.remove("hidden-task-buttons");
 
     // Imposta foto profilo
     userPhoto.src = user.photoURL;
   } else {
     // Mostra login
     loginBtn.classList.remove("hidden-task-buttons");
-    userPhoto.classList.add("hidden-task-buttons");
+    profileButton.classList.add("hidden-task-buttons");
   }
 });
 
