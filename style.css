@@ -74,7 +74,6 @@
       border-radius: 0px;
       cursor: pointer;
       margin: 5px;
-      width: 100%;
       transition: background 0.3s;
   }
 
@@ -491,6 +490,7 @@
     border-radius: 50%;
     object-fit: cover;
   }
+
 
 
 
