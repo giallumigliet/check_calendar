@@ -1,7 +1,7 @@
 // Import Firebase for database
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup, setPersistence, browserLocalPersistence, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, collection, addDoc, doc, getDocs, setDoc, addDoc, updateDoc, increment, collection, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, setPersistence, browserLocalPersistence, onAuthStateChanged, signOut} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 // Import functions 
 import { createCalendar, listenClickCalendar, listenMonthCalendar, listenTaskButtons, listenHue, listenPanelButtons, listenSaveTask} from "./calendar.js";
@@ -79,6 +79,7 @@ const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
 
 
+
 loginBtn.addEventListener("click", async () => {
   try {
     const result = await signInWithPopup(auth, provider);
@@ -133,38 +134,12 @@ onAuthStateChanged(auth, (user) => {
 
     // Imposta foto profilo
     userPhoto.src = user.photoURL;
-    await loadTasks(user.uid);
   } else {
     // Mostra login
     loginBtn.classList.remove("hidden-task-buttons");
     profileButton.classList.add("hidden-task-buttons");
   }
 });
-
-async function loadTasks(uid) {
-    taskList.innerHTML = "";
-
-    const snapshot = await getDocs(
-        collection(db, "users", uid, "tasks")
-    );
-
-    snapshot.forEach(docSnap => {
-        createTaskElement(docSnap.id, docSnap.data());
-    });
-}
-
-async function markDayCompleted(taskId, dateString) {
-    const user = auth.currentUser;
-    if (!user) return;
-
-    const taskRef = doc(db, "users", user.uid, "tasks", taskId);
-
-    await updateDoc(taskRef, {
-        [`completions.${dateString}`]: 
-            increment(1)
-    });
-}
-
 
 
 createCalendar(date, monthYear, calendarDays);
@@ -180,9 +155,6 @@ listenPanelButtons(addTaskBtn, goBackBtn, modifyTaskBtn, taskManager, taskForm, 
 listenHue(huePreview, hueContainer, taskHueInput);
 
 listenSaveTask(saveTaskBtn, taskList, taskNameInput, taskHueInput, huePreview, taskManager, taskForm);
-
-
-
 
 
 
