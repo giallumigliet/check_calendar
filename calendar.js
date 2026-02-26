@@ -250,30 +250,11 @@ export function listenHue(huePreview, hueContainer, taskHueInput) {
 
 
 export function listenSaveTask(saveTaskBtn, taskList, taskNameInput, taskHueInput, huePreview, taskManager, taskForm) {
-    saveTaskBtn.addEventListener("click", () => { 
-        const user = auth.currentUser;
-        if (!user) return alert("Login required");
-    
+    saveTaskBtn.addEventListener("click", () => {
         const name = taskNameInput.value.trim();
-        const hue = Number(taskHueInput.value);
+        const hue = taskHueInput.value;
+
         if (!name) return;
-    
-        try {
-            const taskRef = await addDoc(
-                collection(db, "users", user.uid, "tasks"),
-                {
-                    name: name,
-                    hue: hue,
-                    createdAt: serverTimestamp(),
-                    completions: {}
-                }
-            );
-    
-            console.log("Task salvata con ID:", taskRef.id);
-        } catch (error) {
-            console.error(error);
-        }
-        
 
         const newTask = document.createElement("div");
         newTask.classList.add("task-item");
@@ -310,6 +291,4 @@ export function listenSaveTask(saveTaskBtn, taskList, taskNameInput, taskHueInpu
         });
     });
 }
-
-
 
