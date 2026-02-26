@@ -5,7 +5,7 @@ import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.c
 
 // Import functions 
 import { createCalendar, listenClickCalendar, listenMonthCalendar, listenTaskButtons, listenHue, listenPanelButtons, listenSaveTask} from "./calendar.js";
-import { createTask, getTasks, incrementCompletion, removeCompletion } from "./firebaseService.js";
+
 
 
 // Getting html elements
@@ -70,7 +70,7 @@ const firebaseConfig = {
   appId: "1:741223614800:web:41af2763f7c3c6ebb5c455"
 };
 // Firebase initialization
-export const app = initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 await setPersistence(auth, browserLocalPersistence);
 const db = getFirestore(app);
@@ -144,22 +144,7 @@ onAuthStateChanged(auth, (user) => {
 
 createCalendar(date, monthYear, calendarDays);
 
-listenClickCalendar(
-  addBtn,
-  cancelBtn,
-  async (dateString) => {
-    const user = auth.currentUser;
-    const activeTaskId = currentTaskId;
-
-    await incrementCompletion(user.uid, activeTaskId, dateString);
-  },
-  async (dateString) => {
-    const user = auth.currentUser;
-    const activeTaskId = currentTaskId;
-
-    await removeCompletion(user.uid, activeTaskId, dateString);
-  }
-);
+listenClickCalendar(addBtn, cancelBtn, dayActions, calendarDays, progressBar, progressText);
 
 listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn, nextMonthBtn);
 
@@ -169,17 +154,7 @@ listenPanelButtons(addTaskBtn, goBackBtn, modifyTaskBtn, taskManager, taskForm, 
 
 listenHue(huePreview, hueContainer, taskHueInput);
 
-
-
-listenSaveTask(saveTaskBtn, async ({ name, hue }) => {
-  const user = auth.currentUser;
-  if (!user) return alert("Login required");
-
-  await createTask(user.uid, name, Number(hue));
-
-  const tasks = await getTasks(user.uid);
-  renderTasks(tasks);
-});
+listenSaveTask(saveTaskBtn, taskList, taskNameInput, taskHueInput, huePreview, taskManager, taskForm);
 
 
 
