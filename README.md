@@ -2,10 +2,10 @@
 
 Do you want to register every time you took a medicine? Do you want to register if you have completed a daily task? This is the calendar web app for you!
 
-Frontend: HTML / CSS / JS
-Hosting: GitHub Pages
-Backend: Firebase
-Login: Google Auth
+Frontend: *HTML* / *CSS* / *JS*.  
+Hosting: *GitHub Pages*.  
+Backend: *Firebase*.  
+Login: *Google Auth*.
 
 ---
 
