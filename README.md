@@ -1,7 +1,12 @@
 # 🕒 Check Calendar Web App
 
 Do you want to register every time you took a medicine? Do you want to register if you have completed a daily task? This is the calendar web app for you!
-Built with **HTML, CSS, JavaScript and Firestore database**. 
+
+Frontend: HTML / CSS / JS
+Hosting: GitHub Pages
+Backend: Firebase
+Login: Google Auth
+
 ---
 
 ## 🚀 Features
