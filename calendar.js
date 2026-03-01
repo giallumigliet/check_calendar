@@ -1,4 +1,3 @@
-// calendar.js
 import { db, auth } from "./firebase.js";
 import { doc, setDoc, deleteDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
@@ -6,6 +5,7 @@ import { doc, setDoc, deleteDoc, collection, getDocs } from "https://www.gstatic
 export function createCalendar(date, monthYear, calendarDays) {
   const year = date.getFullYear();
   const month = date.getMonth();
+  const today = new Date();
   const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
   monthYear.textContent = `${months[month]} ${year}`;
   calendarDays.innerHTML = "";
@@ -18,9 +18,13 @@ export function createCalendar(date, monthYear, calendarDays) {
     const dayDiv = document.createElement("div");
     dayDiv.textContent = d;
     dayDiv.classList.add("day");
-    if (d === 1) dayDiv.style.gridColumnStart = startDay;
-    if (day === date.getDate() && month === new Date().getMonth() && year === new Date().getFullYear())
+
+    // evidenzia oggi
+    if (d === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
       dayDiv.classList.add("today");
+    }
+
+    if (d === 1) dayDiv.style.gridColumnStart = startDay;
     calendarDays.appendChild(dayDiv);
   }
 }
@@ -30,11 +34,16 @@ export async function saveOccurrence(taskName, dateStr, quantity = 1) {
   if (!auth.currentUser || !taskName) return;
   try {
     const uid = auth.currentUser.uid;
-    await setDoc(
-      doc(db, "users", uid, "tasks", taskName, "occurrences", dateStr),
-      { quantity },
-      { merge: true }
-    );
+    if (quantity > 0) {
+      await setDoc(
+        doc(db, "users", uid, "tasks", taskName, "occurrences", dateStr),
+        { quantity },
+        { merge: true }
+      );
+    } else {
+      // elimina occorrenza se quantity 0
+      await deleteDoc(doc(db, "users", uid, "tasks", taskName, "occurrences", dateStr));
+    }
   } catch(err) {
     console.error("Error saving occurrence:", err);
   }
@@ -103,6 +112,7 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, date)
     newTask.appendChild(deleteBadge);
     taskList.appendChild(newTask);
 
+    // click su delete
     deleteBadge.addEventListener("click", async e => {
       e.stopPropagation();
       if (!confirm("Press OK to delete the task.")) return;
@@ -113,7 +123,6 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, date)
       newTask.remove();
       const idx = tasks.findIndex(t => t.id === name);
       if (idx > -1) tasks.splice(idx, 1);
-
       if (currentTask.value === name) {
         currentTask.value = "";
         calendarDays.querySelectorAll(".day").forEach(day => day.classList.remove("completed"));
@@ -125,6 +134,14 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, date)
       document.documentElement.style.setProperty("--main-hue", hue);
       await markOccurrences(name, calendarDays, date);
     });
+  });
+}
+
+// -------- MODIFY MODE --------
+export function enableModifyMode(taskList, modifyBtn) {
+  modifyBtn.addEventListener("click", () => {
+    const active = modifyBtn.classList.toggle("modify-active");
+    taskList.querySelectorAll(".delete-badge").forEach(b => b.classList.toggle("hidden", !active));
   });
 }
 
@@ -200,7 +217,7 @@ export function listenTaskButtons(taskBtn, closePanelBtn, panel, overlay) {
   overlay.addEventListener("click", () => { panel.classList.remove("active"); overlay.classList.remove("active"); });
 }
 
-export function listenPanelButtons(addTaskBtn, goBackBtn, modifyBtn, taskManager, taskForm, hueContainer) {
+export function listenPanelButtons(addTaskBtn, goBackBtn, modifyBtn, taskManager, taskForm, hueContainer, taskList) {
   addTaskBtn.addEventListener("click", () => {
     taskForm.classList.remove("hidden-task-buttons");
     taskManager.classList.add("hidden-task-buttons");
@@ -211,9 +228,7 @@ export function listenPanelButtons(addTaskBtn, goBackBtn, modifyBtn, taskManager
     taskManager.classList.remove("hidden-task-buttons");
     hueContainer.classList.add("hidden-task-buttons");
   });
-  modifyBtn.addEventListener("click", () => {
-    // modalità modifica, opzionale
-  });
+  enableModifyMode(taskList, modifyBtn);
 }
 
 export function listenHue(huePreview, hueContainer, taskHueInput) {
@@ -224,13 +239,6 @@ export function listenHue(huePreview, hueContainer, taskHueInput) {
 }
 
 export function listenMonthCalendar(date, monthYear, calendarDays, prevBtn, nextBtn) {
-  prevBtn.addEventListener("click", () => {
-    date.setMonth(date.getMonth() - 1);
-    createCalendar(date, monthYear, calendarDays);
-  });
-  nextBtn.addEventListener("click", () => {
-    date.setMonth(date.getMonth() + 1);
-    createCalendar(date, monthYear, calendarDays);
-  });
+  prevBtn.addEventListener("click", () => { date.setMonth(date.getMonth() - 1); createCalendar(date, monthYear, calendarDays); });
+  nextBtn.addEventListener("click", () => { date.setMonth(date.getMonth() + 1); createCalendar(date, monthYear, calendarDays); });
 }
-
