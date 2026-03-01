@@ -175,7 +175,7 @@ export function listenClickCalendar(addBtn, cancelBtn, dayActions, calendarDays,
 
       await saveOccurrence(currentTask.value, key, 1);
       dayActions.classList.add("hidden-day-buttons");
-      updateProgress(calendarDays, progressBar, progressText);
+      updateProgress(currentTask.value, progressBar, progressText);
     }
   });
 
@@ -315,6 +315,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
