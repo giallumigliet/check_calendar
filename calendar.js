@@ -2,7 +2,7 @@ import { db, auth } from "./firebase.js";
 import { doc, setDoc, deleteDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 // -------- CALENDAR DRAW --------
-export async function createCalendar(date, monthYear, calendarDays, currentTask) {
+export async function createCalendar(date, monthYear, calendarDays, currentTask, progressBar, progressText) {
   const year = date.getFullYear();
   const month = date.getMonth();
   const today = new Date();
@@ -29,7 +29,11 @@ export async function createCalendar(date, monthYear, calendarDays, currentTask)
   }
 
   if (currentTask.value) {
+    calendarDays.querySelectorAll(".day").forEach(day =>
+      day.classList.remove("completed")
+    );
     await markOccurrences(currentTask.value, calendarDays, date);
+    updateProgress(calendarDays, progressBar, progressText);
   }
 }
 
@@ -87,10 +91,6 @@ export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePrev
     } catch(err) { console.error(err); return; }
 
     currentTask.value = name;
-    calendarDays.querySelectorAll(".day").forEach(day =>
-      day.classList.remove("completed")
-    );
-    await markOccurrences(name, calendarDays, date);
 
     taskNameInput.value = "";
     taskHueInput.value = 162;
@@ -100,7 +100,7 @@ export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePrev
   });
 }
 
-export function createTaskList(taskList, tasks, currentTask, calendarDays, date) {
+export function createTaskList(taskList, tasks, currentTask, calendarDays, date, progressBar, progressText) {
   taskList.innerHTML = "";
   tasks.forEach(task => {
     const { id: name, color: hue } = task;
@@ -140,6 +140,7 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, date)
         day.classList.remove("completed")
       );
       await markOccurrences(name, calendarDays, date);
+      updateProgress(calendarDays, progressBar, progressText)
     });
   });
 }
@@ -196,11 +197,6 @@ export function listenClickCalendar(addBtn, cancelBtn, dayActions, calendarDays,
       await saveOccurrence(currentTask.value, key, 0);
       dayActions.classList.add("hidden-day-buttons");
       updateProgress(calendarDays, progressBar, progressText);
-
-      calendarDays.querySelectorAll(".day").forEach(day =>
-        day.classList.remove("completed")
-      );
-      await markOccurrences(name, calendarDays, date);
     }
   });
 }
@@ -322,6 +318,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
