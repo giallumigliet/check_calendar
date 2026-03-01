@@ -127,6 +127,11 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, date,
       if (!confirm("Press OK to delete the task.")) return;
       try {
         const uid = auth.currentUser.uid;
+        const occRef = collection(db, "users", uid, "tasks", taskId, "occurrences");
+        const snapshot = await getDocs(occRef);
+        for (const occDoc of snapshot.docs) {
+          await deleteDoc(doc(db, "users", uid, "tasks", taskId, "occurrences", occDoc.id));
+        }
         await deleteDoc(doc(db, "users", uid, "tasks", taskId));
       } catch(err) { console.error(err); }
       newTask.remove();
@@ -323,6 +328,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
