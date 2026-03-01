@@ -253,16 +253,16 @@ export function listenHue(huePreview, hueContainer, taskHueInput) {
 
 
 
-export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks) {
+export function listenSaveTask(saveTaskBtn, taskList, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks, currentTask) {
     saveTaskBtn.addEventListener("click", () => {
         const name = taskNameInput.value.trim();
         const hue = taskHueInput.value;
 
-        if (!name || tasks.includes(name)) return;
+        if (!name || tasks.some(task => task.id === name)) return;
 
         // creating in DB
         setDoc(
-            doc(db, "users", uid, "tasks", name),
+            doc(db, "users", auth.currentUser.uid;, "tasks", name),
             { color: hue }
         );
 
@@ -274,10 +274,7 @@ export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePrev
         
         taskForm.classList.add("hidden-task-buttons");
         taskManager.classList.remove("hidden-task-buttons");
-
-        newTask.addEventListener("click", () => {
-            document.documentElement.style.setProperty("--main-hue", newTask.dataset.hue);
-        });
+        
     });
 }
 
@@ -309,7 +306,7 @@ export function createTaskList(taskList, tasks, currentTask) {
         newTask.remove();
         // deleting task from DB
         deleteDoc(
-            doc(db, "users", uid, "tasks", name)
+            doc(db, "users", auth.currentUser.uid;, "tasks", name)
         );
       }
     });
@@ -320,4 +317,5 @@ export function createTaskList(taskList, tasks, currentTask) {
     });
   });
 }
+
 
