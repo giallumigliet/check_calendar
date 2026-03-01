@@ -35,9 +35,6 @@ export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePrev
     const uid = auth.currentUser.uid;
     await setDoc(doc(db, "users", uid, "tasks", name), { color: hue });
 
-    tasks.push({ id: name, color: hue });
-    createTaskList(taskList, tasks);
-
     taskNameInput.value = "";
     taskHueInput.value = 162;
     huePreview.style.backgroundColor = `hsl(162, 90%, 55%)`;
@@ -284,3 +281,4 @@ export function listenHue(huePreview, hueContainer, taskHueInput) {
       huePreview.style.backgroundColor = `hsl(${hue}, 90%, 55%)`;
     });
 }
+
