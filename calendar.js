@@ -1,18 +1,18 @@
 // calendar.js
+import { db, auth } from "./firebase.js";
 import { doc, setDoc, deleteDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import { db, auth } from "./script.js";
 
 // -------- CALENDAR DRAW --------
 export function createCalendar(date, monthYear, calendarDays) {
   const year = date.getFullYear();
   const month = date.getMonth();
   const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-  monthYear.textContent = months[month] + " " + year;
+  monthYear.textContent = `${months[month]} ${year}`;
   calendarDays.innerHTML = "";
 
   const firstDay = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const startDay = (firstDay === 0) ? 7 : firstDay;
+  const startDay = (firstDay === 0) ? 7 : firstDay; // Monday start
 
   for (let d = 1; d <= daysInMonth; d++) {
     const dayDiv = document.createElement("div");
@@ -26,30 +26,37 @@ export function createCalendar(date, monthYear, calendarDays) {
 // -------- OCCURRENCES --------
 export async function saveOccurrence(taskName, dateStr, quantity = 1) {
   if (!auth.currentUser || !taskName) return;
-  const uid = auth.currentUser.uid;
-  await setDoc(
-    doc(db, "users", uid, "tasks", taskName, "occurrences", dateStr),
-    { quantity },
-    { merge: true }
-  );
+  try {
+    const uid = auth.currentUser.uid;
+    await setDoc(
+      doc(db, "users", uid, "tasks", taskName, "occurrences", dateStr),
+      { quantity },
+      { merge: true }
+    );
+  } catch(err) {
+    console.error("Error saving occurrence:", err);
+  }
 }
 
 export async function markOccurrences(taskName, calendarDays, date) {
   if (!auth.currentUser || !taskName) return;
-  const uid = auth.currentUser.uid;
+  try {
+    const uid = auth.currentUser.uid;
+    const occRef = collection(db, "users", uid, "tasks", taskName, "occurrences");
+    const snapshot = await getDocs(occRef);
+    const completedDates = snapshot.docs.map(doc => doc.id);
 
-  const occRef = collection(db, "users", uid, "tasks", taskName, "occurrences");
-  const snapshot = await getDocs(occRef);
-  const completedDates = snapshot.docs.map(doc => doc.id);
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const year = date.getFullYear();
 
-  const month = (date.getMonth() + 1).toString().padStart(2, "0");
-  const year = date.getFullYear();
-
-  calendarDays.querySelectorAll(".day").forEach(dayDiv => {
-    const day = dayDiv.textContent.padStart(2, "0");
-    const dateKey = `${year}-${month}-${day}`;
-    dayDiv.classList.toggle("completed", completedDates.includes(dateKey));
-  });
+    calendarDays.querySelectorAll(".day").forEach(dayDiv => {
+      const day = dayDiv.textContent.padStart(2, "0");
+      const dateKey = `${year}-${month}-${day}`;
+      dayDiv.classList.toggle("completed", completedDates.includes(dateKey));
+    });
+  } catch(err) {
+    console.error("Error marking occurrences:", err);
+  }
 }
 
 // -------- TASK UI --------
@@ -59,8 +66,10 @@ export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePrev
     const hue = taskHueInput.value;
     if (!name || tasks.some(t => t.id === name)) return;
 
-    const uid = auth.currentUser.uid;
-    await setDoc(doc(db, "users", uid, "tasks", name), { color: hue });
+    try {
+      const uid = auth.currentUser.uid;
+      await setDoc(doc(db, "users", uid, "tasks", name), { color: hue });
+    } catch(err) { console.error(err); return; }
 
     tasks.push({ id: name, color: hue });
     createTaskList(taskList, tasks, currentTask, calendarDays, date);
@@ -95,10 +104,11 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, date)
     deleteBadge.addEventListener("click", async e => {
       e.stopPropagation();
       if (!confirm("Press OK to delete the task.")) return;
-      const uid = auth.currentUser.uid;
-      await deleteDoc(doc(db, "users", uid, "tasks", name));
+      try {
+        const uid = auth.currentUser.uid;
+        await deleteDoc(doc(db, "users", uid, "tasks", name));
+      } catch(err) { console.error(err); }
       newTask.remove();
-
       const idx = tasks.findIndex(t => t.id === name);
       if (idx > -1) tasks.splice(idx, 1);
 
@@ -121,16 +131,15 @@ export function listenClickCalendar(addBtn, cancelBtn, dayActions, calendarDays,
   let selectedDay = null;
 
   calendarDays.addEventListener("click", e => {
+    if (!e.target.classList.contains("day")) return;
     selectedDay = e.target;
-    if (selectedDay.tagName === "DIV") {
-      calendarDays.querySelectorAll(".day").forEach(d => d.classList.remove("selected"));
-      selectedDay.classList.add("selected");
-      dayActions.classList.remove("hidden-day-buttons");
-    }
+    calendarDays.querySelectorAll(".day").forEach(d => d.classList.remove("selected"));
+    selectedDay.classList.add("selected");
+    dayActions.classList.remove("hidden-day-buttons");
   });
 
   document.addEventListener("click", e => {
-    if (!e.target.closest(".days div") && !e.target.closest("#day-actions")) {
+    if (!e.target.closest(".days") && !e.target.closest("#day-actions")) {
       calendarDays.querySelectorAll(".day").forEach(d => d.classList.remove("selected"));
       selectedDay = null;
       dayActions.classList.add("hidden-day-buttons");
@@ -139,9 +148,9 @@ export function listenClickCalendar(addBtn, cancelBtn, dayActions, calendarDays,
 
   addBtn.addEventListener("click", async () => {
     if (selectedDay && currentTask.value) {
-      const d   = selectedDay.textContent.padStart(2, "0");
-      const m   = (date.getMonth()+1).toString().padStart(2,"0");
-      const y   = date.getFullYear();
+      const d = selectedDay.textContent.padStart(2, "0");
+      const m = (date.getMonth()+1).toString().padStart(2,"0");
+      const y = date.getFullYear();
       const key = `${y}-${m}-${d}`;
 
       selectedDay.classList.remove("selected");
@@ -156,9 +165,9 @@ export function listenClickCalendar(addBtn, cancelBtn, dayActions, calendarDays,
 
   cancelBtn.addEventListener("click", async () => {
     if (selectedDay && currentTask.value) {
-      const d   = selectedDay.textContent.padStart(2, "0");
-      const m   = (date.getMonth()+1).toString().padStart(2,"0");
-      const y   = date.getFullYear();
+      const d = selectedDay.textContent.padStart(2, "0");
+      const m = (date.getMonth()+1).toString().padStart(2,"0");
+      const y = date.getFullYear();
       const key = `${y}-${m}-${d}`;
 
       selectedDay.classList.remove("selected");
@@ -175,29 +184,18 @@ export function listenClickCalendar(addBtn, cancelBtn, dayActions, calendarDays,
 // -------- PROGRESS --------
 export function updateProgress(calendarDays, progressBar, progressText) {
   const total = calendarDays.querySelectorAll(".day").length;
-  const done  = calendarDays.querySelectorAll(".day.completed").length;
+  const done = calendarDays.querySelectorAll(".day.completed").length;
   if (!total) return;
   const pct = (done / total) * 100;
   progressBar.style.width = pct + "%";
   progressText.textContent = done;
 }
 
-
-
-// calendar.js
-export function listenTaskButtons(taskBtn, closePanelBtn, panel, overlay, calendarWrapper, buttonFooter, taskManager, taskForm, modifyBtn) {
-  taskBtn.addEventListener("click", () => {
-    panel.classList.add("active");
-    overlay.classList.add("active");
-  });
-  closePanelBtn.addEventListener("click", () => {
-    panel.classList.remove("active");
-    overlay.classList.remove("active");
-  });
-  overlay.addEventListener("click", () => {
-    panel.classList.remove("active");
-    overlay.classList.remove("active");
-  });
+// -------- PANEL LISTENERS --------
+export function listenTaskButtons(taskBtn, closePanelBtn, panel, overlay) {
+  taskBtn.addEventListener("click", () => { panel.classList.add("active"); overlay.classList.add("active"); });
+  closePanelBtn.addEventListener("click", () => { panel.classList.remove("active"); overlay.classList.remove("active"); });
+  overlay.addEventListener("click", () => { panel.classList.remove("active"); overlay.classList.remove("active"); });
 }
 
 export function listenPanelButtons(addTaskBtn, goBackBtn, modifyBtn, taskManager, taskForm, hueContainer) {
@@ -233,4 +231,3 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevBtn, next
     createCalendar(date, monthYear, calendarDays);
   });
 }
-
