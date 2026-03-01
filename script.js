@@ -1,4 +1,3 @@
-// script.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup, setPersistence, browserLocalPersistence, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -82,25 +81,12 @@ export const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
 
 // ------------------- Login / Logout -------------------
-loginBtn.addEventListener("click", async () => {
-  try { await signInWithPopup(auth, provider); } catch (err) { console.error(err); }
-});
-
-changeAccountBtn.addEventListener("click", async () => {
-  await signOut(auth);
-  try { await signInWithPopup(auth, provider); } catch (err) { console.error(err); }
-  accountPanel.classList.add("hidden-task-buttons");
-});
-
-logoutBtn.addEventListener("click", async () => {
-  await signOut(auth);
-  accountPanel.classList.add("hidden-task-buttons");
-});
+loginBtn.addEventListener("click", async () => { try { await signInWithPopup(auth, provider); } catch (err) { console.error(err); } });
+changeAccountBtn.addEventListener("click", async () => { await signOut(auth); try { await signInWithPopup(auth, provider); } catch (err) { console.error(err); } accountPanel.classList.add("hidden-task-buttons"); });
+logoutBtn.addEventListener("click", async () => { await signOut(auth); accountPanel.classList.add("hidden-task-buttons"); });
 
 profileButton.addEventListener("click", e => { e.stopPropagation(); accountPanel.classList.toggle("hidden-task-buttons"); });
-document.addEventListener("click", e => {
-  if (!accountPanel.contains(e.target) && !profileButton.contains(e.target)) accountPanel.classList.add("hidden-task-buttons");
-});
+document.addEventListener("click", e => { if (!accountPanel.contains(e.target) && !profileButton.contains(e.target)) accountPanel.classList.add("hidden-task-buttons"); });
 
 // ------------------- Auth state -------------------
 onAuthStateChanged(auth, user => {
@@ -112,16 +98,16 @@ onAuthStateChanged(auth, user => {
     const tasksRef = collection(db, "users", user.uid, "tasks");
     onSnapshot(tasksRef, snapshot => {
       tasks = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      createTaskList(taskList, tasks, currentTask);
-      if (currentTask.value) markOccurrences(currentTask.value, calendarDays);
+      createTaskList(taskList, tasks, currentTask, calendarDays, date);
+      if (currentTask.value) markOccurrences(currentTask.value, calendarDays, date);
     });
   } else {
     loginBtn.classList.remove("hidden-task-buttons");
     profileButton.classList.add("hidden-task-buttons");
-    // clear tasks and UI on logout
+
     tasks = [];
-    taskList.innerHTML = "";
     currentTask.value = "";
+    taskList.innerHTML = "";
     calendarDays.querySelectorAll(".day").forEach(day => day.classList.remove("completed"));
     updateProgress(calendarDays, progressBar, progressText);
   }
@@ -129,12 +115,9 @@ onAuthStateChanged(auth, user => {
 
 // ------------------- Initialize App -------------------
 createCalendar(date, monthYear, calendarDays);
-listenClickCalendar(addBtn, cancelBtn, dayActions, calendarDays, progressBar, progressText, currentTask);
+listenClickCalendar(addBtn, cancelBtn, dayActions, calendarDays, progressBar, progressText, currentTask, date);
 listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn, nextMonthBtn);
 listenTaskButtons(taskBtn, closePanel, panel, overlay, calendarWrapper, buttonFooter, taskManager, taskForm, modifyTaskBtn);
 listenPanelButtons(addTaskBtn, goBackBtn, modifyTaskBtn, taskManager, taskForm, hueContainer);
 listenHue(huePreview, hueContainer, taskHueInput);
-
-// Save Task
-listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks, taskList);
-
+listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks, taskList, currentTask, calendarDays, date);
