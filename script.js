@@ -104,13 +104,16 @@ onAuthStateChanged(auth, user => {
 });
 
 // ---- INIT UI ----
-await createCalendar(date, monthYear, calendarDays, currentTask, progressBar, progressText);
+(async () => {
+  await createCalendar(date, monthYear, calendarDays, currentTask, progressBar, progressText);
+})();
 listenClickCalendar(addBtn, cancelBtn, dayActions, calendarDays, progressBar, progressText, currentTask, date);
 listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn, nextMonthBtn, progressBar, progressText, currentTask);
 listenTaskButtons(taskBtn, closePanel, panel, overlay, calendarWrapper, buttonFooter, taskManager, taskForm, modifyTaskBtn);
 listenPanelButtons(addTaskBtn, goBackBtn, modifyTaskBtn, taskManager, taskForm, hueContainer);
 listenHue(huePreview, hueContainer, taskHueInput);
 listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks, taskList, currentTask, calendarDays, date, progressBar, progressText);
+
 
 
 
