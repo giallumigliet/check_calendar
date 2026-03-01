@@ -61,7 +61,7 @@ const changeAccountBtn = document.getElementById("changeAccount-btn");
 
 // ------------------- State -------------------
 let tasks = [];
-let currentTaskRef = { value: "" };
+let currentTask = { value: "" };
 const date = new Date();
 
 // ------------------- Firebase -------------------
@@ -112,8 +112,8 @@ onAuthStateChanged(auth, user => {
     const tasksRef = collection(db, "users", user.uid, "tasks");
     onSnapshot(tasksRef, snapshot => {
       tasks = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      createTaskList(taskList, tasks, currentTaskRef);
-      if (currentTaskRef.value) markOccurrences(currentTaskRef.value, calendarDays);
+      createTaskList(taskList, tasks, currentTask);
+      if (currentTask.value) markOccurrences(currentTask.value, calendarDays);
     });
   } else {
     loginBtn.classList.remove("hidden-task-buttons");
@@ -121,7 +121,7 @@ onAuthStateChanged(auth, user => {
     // clear tasks and UI on logout
     tasks = [];
     taskList.innerHTML = "";
-    currentTaskRef.value = "";
+    currentTask.value = "";
     calendarDays.querySelectorAll(".day").forEach(day => day.classList.remove("completed"));
     updateProgress(calendarDays, progressBar, progressText);
   }
@@ -129,7 +129,7 @@ onAuthStateChanged(auth, user => {
 
 // ------------------- Initialize App -------------------
 createCalendar(date, monthYear, calendarDays);
-listenClickCalendar(addBtn, cancelBtn, dayActions, calendarDays, progressBar, progressText, currentTaskRef);
+listenClickCalendar(addBtn, cancelBtn, dayActions, calendarDays, progressBar, progressText, currentTask);
 listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn, nextMonthBtn);
 listenTaskButtons(taskBtn, closePanel, panel, overlay, calendarWrapper, buttonFooter, taskManager, taskForm, modifyTaskBtn);
 listenPanelButtons(addTaskBtn, goBackBtn, modifyTaskBtn, taskManager, taskForm, hueContainer);
@@ -137,3 +137,4 @@ listenHue(huePreview, hueContainer, taskHueInput);
 
 // Save Task
 listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks, taskList);
+
