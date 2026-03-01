@@ -303,17 +303,18 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
     // left arrow
     prevMonthBtn.addEventListener("click", async () => {
         date.setMonth(date.getMonth() - 1);
-        createCalendar(date, monthYear, calendarDays);
+        await createCalendar(date, monthYear, calendarDays, currentTask);
         updateProgress(calendarDays, progressBar, progressText);
     });
 
     // right arrow
     nextMonthBtn.addEventListener("click", async () => {
         date.setMonth(date.getMonth() + 1);
-        createCalendar(date, monthYear, calendarDays);
+        await createCalendar(date, monthYear, calendarDays, currentTask);
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
