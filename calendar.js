@@ -204,7 +204,7 @@ export function updateProgress(calendarDays, progressBar, progressText) {
 }
 
 // -------- PANEL LISTENERS --------
-export function listenTaskButtons(taskBtn, closePanelBtn, panel, overlay) {
+export function listenTaskButtons(taskBtn, closePanel, panel, overlay, calendarWrapper, buttonFooter, taskManager, taskForm, modifyTaskBtn) {
   taskBtn.addEventListener("click", () => {
         calendarWrapper.classList.add("hidden-day-buttons");
         buttonFooter.classList.add("hidden-day-buttons");
@@ -310,6 +310,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
