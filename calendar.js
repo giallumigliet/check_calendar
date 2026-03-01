@@ -247,7 +247,7 @@ export function listenTaskButtons(taskBtn, closePanel, panel, overlay, calendarW
     });
 }
 
-export function listenPanelButtons(addTaskBtn, goBackBtn, modifyBtn, taskManager, taskForm, hueContainer, taskList) {
+export function listenPanelButtons(addTaskBtn, goBackBtn, modifyTaskBtn, taskManager, taskForm, hueContainer, taskList) {
   addTaskBtn.addEventListener("click", () => {
     taskForm.classList.remove("hidden-task-buttons");
     taskManager.classList.add("hidden-task-buttons");
@@ -310,6 +310,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
