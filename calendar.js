@@ -87,6 +87,9 @@ export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePrev
     } catch(err) { console.error(err); return; }
 
     currentTask.value = name;
+    calendarDays.querySelectorAll(".day").forEach(day =>
+      day.classList.remove("completed")
+    );
     await markOccurrences(name, calendarDays, date);
 
     taskNameInput.value = "";
@@ -133,6 +136,9 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, date)
     newTask.addEventListener("click", async () => {
       currentTask.value = name;
       document.documentElement.style.setProperty("--main-hue", hue);
+      calendarDays.querySelectorAll(".day").forEach(day =>
+        day.classList.remove("completed")
+      );
       await markOccurrences(name, calendarDays, date);
     });
   });
@@ -190,6 +196,10 @@ export function listenClickCalendar(addBtn, cancelBtn, dayActions, calendarDays,
       await saveOccurrence(currentTask.value, key, 0);
       dayActions.classList.add("hidden-day-buttons");
       updateProgress(calendarDays, progressBar, progressText);
+
+      calendarDays.querySelectorAll(".day").forEach(day =>
+        day.classList.remove("completed")
+      );
       await markOccurrences(name, calendarDays, date);
     }
   });
@@ -312,6 +322,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
