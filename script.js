@@ -17,6 +17,7 @@ import {
 const calendarWrapper = document.getElementById("calendar-wrapper");
 const monthYear = document.getElementById("monthYear");
 const calendarDays = document.getElementById("calendarDays");
+const calendarTitle = document.getElementById("calendar-title");
 
 const dayActions = document.getElementById("day-actions");
 const addBtn = document.getElementById("add-btn");
@@ -88,7 +89,7 @@ onAuthStateChanged(auth, user => {
     const tasksRef = collection(db, "users", user.uid, "tasks");
     onSnapshot(tasksRef, snapshot => {
       tasks = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      createTaskList(taskList, tasks, currentTask, calendarDays, date, progressBar, progressText, calendarWrapper, buttonFooter, panel, overlay);
+      createTaskList(taskList, tasks, currentTask, calendarDays, calendarTitle, date, progressBar, progressText, calendarWrapper, buttonFooter, panel, overlay);
       if(currentTask.value){
         markOccurrences(currentTask.value, calendarDays, date);
         updateProgress(calendarDays, progressBar, progressText);
@@ -116,6 +117,7 @@ listenTaskButtons(taskBtn, closePanel, panel, overlay, calendarWrapper, buttonFo
 listenPanelButtons(addTaskBtn, goBackBtn, modifyTaskBtn, taskManager, taskForm, hueContainer);
 listenHue(huePreview, hueContainer, taskHueInput);
 listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks, taskList, currentTask, calendarDays, date, progressBar, progressText);
+
 
 
 
