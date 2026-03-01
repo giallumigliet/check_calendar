@@ -181,3 +181,56 @@ export function updateProgress(calendarDays, progressBar, progressText) {
   progressBar.style.width = pct + "%";
   progressText.textContent = done;
 }
+
+
+
+// calendar.js
+export function listenTaskButtons(taskBtn, closePanelBtn, panel, overlay, calendarWrapper, buttonFooter, taskManager, taskForm, modifyBtn) {
+  taskBtn.addEventListener("click", () => {
+    panel.classList.add("active");
+    overlay.classList.add("active");
+  });
+  closePanelBtn.addEventListener("click", () => {
+    panel.classList.remove("active");
+    overlay.classList.remove("active");
+  });
+  overlay.addEventListener("click", () => {
+    panel.classList.remove("active");
+    overlay.classList.remove("active");
+  });
+}
+
+export function listenPanelButtons(addTaskBtn, goBackBtn, modifyBtn, taskManager, taskForm, hueContainer) {
+  addTaskBtn.addEventListener("click", () => {
+    taskForm.classList.remove("hidden-task-buttons");
+    taskManager.classList.add("hidden-task-buttons");
+    hueContainer.classList.remove("hidden-task-buttons");
+  });
+  goBackBtn.addEventListener("click", () => {
+    taskForm.classList.add("hidden-task-buttons");
+    taskManager.classList.remove("hidden-task-buttons");
+    hueContainer.classList.add("hidden-task-buttons");
+  });
+  modifyBtn.addEventListener("click", () => {
+    // modalità modifica, opzionale
+  });
+}
+
+export function listenHue(huePreview, hueContainer, taskHueInput) {
+  taskHueInput.addEventListener("input", () => {
+    huePreview.style.backgroundColor = `hsl(${taskHueInput.value}, 90%, 55%)`;
+    document.documentElement.style.setProperty("--main-hue", taskHueInput.value);
+  });
+}
+
+export function listenMonthCalendar(date, monthYear, calendarDays, prevBtn, nextBtn) {
+  prevBtn.addEventListener("click", () => {
+    date.setMonth(date.getMonth() - 1);
+    createCalendar(date, monthYear, calendarDays);
+  });
+  nextBtn.addEventListener("click", () => {
+    date.setMonth(date.getMonth() + 1);
+    createCalendar(date, monthYear, calendarDays);
+  });
+}
+
