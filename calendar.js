@@ -19,6 +19,8 @@ export function createCalendar(date, monthYear, calendarDays) {
     dayDiv.textContent = d;
     dayDiv.classList.add("day");
     if (d === 1) dayDiv.style.gridColumnStart = startDay;
+    if (day === date.getDate() && month === new Date().getMonth() && year === new Date().getFullYear())
+      dayDiv.classList.add("today");
     calendarDays.appendChild(dayDiv);
   }
 }
@@ -231,3 +233,4 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevBtn, next
     createCalendar(date, monthYear, calendarDays);
   });
 }
+
