@@ -2,7 +2,7 @@ import { db, auth } from "./firebase.js";
 import { doc, setDoc, deleteDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 // -------- CALENDAR DRAW --------
-export function createCalendar(date, monthYear, calendarDays) {
+export function createCalendar(date, monthYear, calendarDays, currentTask) {
   const year = date.getFullYear();
   const month = date.getMonth();
   const today = new Date();
@@ -314,6 +314,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
