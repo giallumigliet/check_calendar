@@ -288,7 +288,7 @@ export function listenHue(huePreview, hueContainer, taskHueInput) {
     });
 
     taskHueInput.addEventListener("input", () => {
-      huePreview.style.backgroundColor = `hsl(${taskHueInput.value;}, 90%, 55%)`;
+      huePreview.style.backgroundColor = `hsl(${taskHueInput.value}, 90%, 55%)`;
     });
 }
 
@@ -310,5 +310,6 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
