@@ -105,7 +105,7 @@ export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePrev
   });
 }
 
-export function createTaskList(taskList, tasks, currentTask, calendarDays, date, progressBar, progressText, calendarWrapper, buttonFooter, panel, overlay) {
+export function createTaskList(taskList, tasks, currentTask, calendarDays, calendarTitle, date, progressBar, progressText, calendarWrapper, buttonFooter, panel, overlay) {
   taskList.innerHTML = "";
   tasks.forEach(task => {
     const { id: taskId, name, color: hue } = task;
@@ -139,6 +139,7 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, date,
       if (idx > -1) tasks.splice(idx, 1);
       if (currentTask.value === taskId) {
         currentTask.value = "";
+        calendarTitle.textContent = "CHECK CALENDAR";
         calendarDays.querySelectorAll(".day").forEach(day => day.classList.remove("completed"));
       }
     });
@@ -146,6 +147,7 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, date,
     newTask.addEventListener("click", async () => {
       currentTask.value = taskId;
       document.documentElement.style.setProperty("--main-hue", hue);
+      calendarTitle.textContent = name;
       calendarDays.querySelectorAll(".day").forEach(day =>
         day.classList.remove("completed")
       );
@@ -336,6 +338,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
