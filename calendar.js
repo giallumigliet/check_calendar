@@ -83,7 +83,6 @@ export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePrev
   saveTaskBtn.addEventListener("click", async () => {
     const name = taskNameInput.value.trim();
     const hue = taskHueInput.value;
-    if (!name || tasks.some(t => t.name === name)) return;
 
     try {
       const uid = auth.currentUser.uid;
@@ -338,6 +337,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
