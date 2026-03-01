@@ -1,4 +1,4 @@
-import { doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { doc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { db, auth } from "./script.js";
 
 
@@ -253,38 +253,39 @@ export function listenHue(huePreview, hueContainer, taskHueInput) {
 
 
 
-export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks) {
-    saveTaskBtn.addEventListener("click", () => {
+export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks, taskList) {
+    saveTaskBtn.addEventListener("click", async () => {
         const name = taskNameInput.value.trim();
         const hue = taskHueInput.value;
 
         if (!name || tasks.some(task => task.id === name)) return;
 
-        // creating in DB
-        setDoc(
-            doc(db, "users", auth.currentUser.uid, "tasks", name),
-            { color: hue }
-        );
+        const uid = auth.currentUser.uid;
+
+        // crea task nel DB
+        await setDoc(doc(db, "users", uid, "tasks", name), { color: hue });
+
+        // aggiorna array e UI
+        tasks.push({ id: name, color: hue });
+        createTaskList(taskList, tasks);
 
         // reset form
         taskNameInput.value = "";
         taskHueInput.value = 162;
         huePreview.style.backgroundColor = `hsl(162, 90%, 55%)`;
 
-        
         taskForm.classList.add("hidden-task-buttons");
         taskManager.classList.remove("hidden-task-buttons");
-        
     });
 }
 
 
 
-export function createTaskList(taskList, tasks, currentTask) {
-  taskList.innerHTML = ""; // opzionale: pulisce la lista prima di ricrearla
+export function createTaskList(taskList, tasks) {
+  taskList.innerHTML = "";
 
   tasks.forEach(task => {
-    const { id: name, color: hue } = task; // id = taskName, color = hue
+    const { id: name, color: hue } = task;
 
     const newTask = document.createElement("div");
     newTask.classList.add("task-item");
@@ -292,7 +293,6 @@ export function createTaskList(taskList, tasks, currentTask) {
     newTask.style.backgroundColor = `hsl(${hue}, 90%, 45%)`;
     newTask.textContent = name;
 
-    // crea badge delete
     const deleteBadge = document.createElement("div");
     deleteBadge.classList.add("delete-badge", "hidden");
     deleteBadge.textContent = "━";
@@ -300,23 +300,25 @@ export function createTaskList(taskList, tasks, currentTask) {
     newTask.appendChild(deleteBadge);
     taskList.appendChild(newTask);
 
-    deleteBadge.addEventListener("click", (e) => {
-      if (confirm("Press OK to delete the task.")) {
-        e.stopPropagation();
-        newTask.remove();
-        // deleting task from DB
-        deleteDoc(
-            doc(db, "users", auth.currentUser.uid;, "tasks", name)
-        );
-      }
+    deleteBadge.addEventListener("click", async (e) => {
+      if (!confirm("Press OK to delete the task.")) return;
+      e.stopPropagation();
+
+      const uid = auth.currentUser.uid;
+      await deleteDoc(doc(db, "users", uid, "tasks", name));
+
+      // rimuove dal DOM e dall’array locale
+      newTask.remove();
+      const index = tasks.findIndex(t => t.id === name);
+      if (index > -1) tasks.splice(index, 1);
     });
 
     newTask.addEventListener("click", () => {
-      document.documentElement.style.setProperty("--main-hue", newTask.dataset.hue);
-      currentTask = newTask.textContent;
+      document.documentElement.style.setProperty("--main-hue", hue);
     });
   });
 }
+
 
 
 
