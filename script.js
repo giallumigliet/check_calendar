@@ -64,9 +64,9 @@ const changeAccountBtn = document.getElementById("changeAccount-btn");
 
 
 // ---- STATE ----
-let tasks         = [];
-let currentTask   = { value: "" };
-const date        = new Date();
+let tasks = [];
+let currentTask = { value: "" };
+const date = new Date();
 
 // ---- FIREBASE INIT ----
 const firebaseConfig = {
@@ -135,6 +135,6 @@ listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn, nextMonthBtn);
 listenTaskButtons(taskBtn, closePanel, panel, overlay, calendarWrapper, buttonFooter, taskManager, taskForm, modifyTaskBtn);
 listenPanelButtons(addTaskBtn, goBackBtn, modifyTaskBtn, taskManager, taskForm, hueContainer);
 listenHue(huePreview, hueContainer, taskHueInput);
-
 listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks, taskList, currentTask, calendarDays, date);
+
 
