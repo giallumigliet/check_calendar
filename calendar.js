@@ -77,6 +77,26 @@ export function createTaskList(taskList, tasks) {
   });
 }
 
+
+export async function addOccurrence(taskName, dateStr, quantity = 1) {
+  if (!auth.currentUser || !taskName) return;
+  const uid = auth.currentUser.uid;
+
+  await setDoc(
+    doc(db, "users", uid, "tasks", taskName, "occurrences", dateStr),
+    { quantity },
+    { merge: true } // merge evita di sovrascrivere altre info eventualmente presenti
+  );
+}
+
+export async function removeOccurrence(taskName, dateStr) {
+  if (!auth.currentUser || !taskName) return;
+  const uid = auth.currentUser.uid;
+
+  await deleteDoc(doc(db, "users", uid, "tasks", taskName, "occurrences", dateStr));
+}
+
+
 // ---------------- Other UI Functions ----------------
 export function listenClickCalendar(addBtn, cancelBtn, dayActions, calendarDays, progressBar, progressText) {
     let selectedDay=null;
@@ -134,6 +154,8 @@ export function listenClickCalendar(addBtn, cancelBtn, dayActions, calendarDays,
             selectedDay.classList.add("completed");
             selectedDay = null;
 
+            await saveOccurrence(currentTask, dateStr, 1);
+
             dayActions.classList.add("hidden-day-buttons");
             updateProgress(calendarDays, progressBar, progressText);
         }
@@ -146,6 +168,8 @@ export function listenClickCalendar(addBtn, cancelBtn, dayActions, calendarDays,
             selectedDay.classList.remove("selected");
             selectedDay.classList.remove("completed");
             selectedDay = null;
+
+            await removeOccurrence(currentTask, dateStr);
 
             dayActions.classList.add("hidden-day-buttons");
             updateProgress(calendarDays, progressBar, progressText);
@@ -281,4 +305,5 @@ export function listenHue(huePreview, hueContainer, taskHueInput) {
       huePreview.style.backgroundColor = `hsl(${hue}, 90%, 55%)`;
     });
 }
+
 
