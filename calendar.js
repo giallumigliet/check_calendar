@@ -1,3 +1,7 @@
+import { doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { db, auth } from "./script.js";
+
+
 export function createCalendar(date, monthYear, calendarDays) {
     const year = date.getFullYear();
     const month = date.getMonth();
@@ -249,33 +253,18 @@ export function listenHue(huePreview, hueContainer, taskHueInput) {
 
 
 
-export function listenSaveTask(saveTaskBtn, taskList, taskNameInput, taskHueInput, huePreview, taskManager, taskForm) {
+export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks) {
     saveTaskBtn.addEventListener("click", () => {
         const name = taskNameInput.value.trim();
         const hue = taskHueInput.value;
 
-        if (!name) return;
+        if (!name || tasks.includes(name)) return;
 
-        const newTask = document.createElement("div");
-        newTask.classList.add("task-item");
-        newTask.dataset.hue = hue;
-        newTask.style.backgroundColor = `hsl(${hue}, 90%, 45%)`;
-        newTask.textContent = name;
-
-        // crea badge delete
-        const deleteBadge = document.createElement("div");
-        deleteBadge.classList.add("delete-badge", "hidden");
-        deleteBadge.textContent = "━";
-
-        newTask.appendChild(deleteBadge);
-        taskList.appendChild(newTask);
-
-        deleteBadge.addEventListener("click", (e) => {
-            if (confirm("Press OK to delete the task.")) {
-                e.stopPropagation(); // evita click sulla task
-                newTask.remove();
-            }
-        });
+        // creating in DB
+        setDoc(
+            doc(db, "users", uid, "tasks", name),
+            { color: hue }
+        );
 
         // reset form
         taskNameInput.value = "";
@@ -290,5 +279,45 @@ export function listenSaveTask(saveTaskBtn, taskList, taskNameInput, taskHueInpu
             document.documentElement.style.setProperty("--main-hue", newTask.dataset.hue);
         });
     });
+}
+
+
+
+export function createTaskList(taskList, tasks, currentTask) {
+  taskList.innerHTML = ""; // opzionale: pulisce la lista prima di ricrearla
+
+  tasks.forEach(task => {
+    const { id: name, color: hue } = task; // id = taskName, color = hue
+
+    const newTask = document.createElement("div");
+    newTask.classList.add("task-item");
+    newTask.dataset.hue = hue;
+    newTask.style.backgroundColor = `hsl(${hue}, 90%, 45%)`;
+    newTask.textContent = name;
+
+    // crea badge delete
+    const deleteBadge = document.createElement("div");
+    deleteBadge.classList.add("delete-badge", "hidden");
+    deleteBadge.textContent = "━";
+
+    newTask.appendChild(deleteBadge);
+    taskList.appendChild(newTask);
+
+    deleteBadge.addEventListener("click", (e) => {
+      if (confirm("Press OK to delete the task.")) {
+        e.stopPropagation();
+        newTask.remove();
+        // deleting task from DB
+        deleteDoc(
+            doc(db, "users", uid, "tasks", name)
+        );
+      }
+    });
+
+    newTask.addEventListener("click", () => {
+      document.documentElement.style.setProperty("--main-hue", newTask.dataset.hue);
+      currentTask = newTask.textContent;
+    });
+  });
 }
 
