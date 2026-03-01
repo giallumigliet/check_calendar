@@ -1,4 +1,5 @@
-import { doc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+// calendar.js
+import { doc, setDoc, deleteDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { db, auth } from "./script.js";
 
 // ---------------- Calendar ----------------
@@ -24,6 +25,35 @@ export function createCalendar(date, monthYear, calendarDays) {
   }
 }
 
+// ---------------- Occurrences ----------------
+export async function saveOccurrence(taskName, dateStr, quantity = 1) {
+  if (!auth.currentUser || !taskName) return;
+  const uid = auth.currentUser.uid;
+
+  await setDoc(
+    doc(db, "users", uid, "tasks", taskName, "occurrences", dateStr),
+    { quantity },
+    { merge: true }
+  );
+}
+
+export async function markOccurrences(taskName, calendarDays) {
+  if (!auth.currentUser || !taskName) return;
+  const uid = auth.currentUser.uid;
+  const occRef = collection(db, "users", uid, "tasks", taskName, "occurrences");
+  const snapshot = await getDocs(occRef);
+  const completedDates = snapshot.docs.map(doc => doc.id); // YYYY-MM-DD
+
+  calendarDays.querySelectorAll(".day").forEach(dayDiv => {
+    const day = dayDiv.textContent.padStart(2, "0");
+    const month = (new Date().getMonth() + 1).toString().padStart(2, "0");
+    const year = new Date().getFullYear();
+    const dateStr = `${year}-${month}-${day}`;
+    if (completedDates.includes(dateStr)) dayDiv.classList.add("completed");
+    else dayDiv.classList.remove("completed");
+  });
+}
+
 // ---------------- Task UI ----------------
 export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks, taskList) {
   saveTaskBtn.addEventListener("click", async () => {
@@ -35,6 +65,9 @@ export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePrev
     const uid = auth.currentUser.uid;
     await setDoc(doc(db, "users", uid, "tasks", name), { color: hue });
 
+    tasks.push({ id: name, color: hue });
+    createTaskList(taskList, tasks);
+
     taskNameInput.value = "";
     taskHueInput.value = 162;
     huePreview.style.backgroundColor = `hsl(162, 90%, 55%)`;
@@ -43,7 +76,7 @@ export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePrev
   });
 }
 
-export function createTaskList(taskList, tasks) {
+export function createTaskList(taskList, tasks, currentTask) {
   taskList.innerHTML = "";
 
   tasks.forEach(task => {
@@ -65,245 +98,86 @@ export function createTaskList(taskList, tasks) {
       if (!confirm("Press OK to delete the task.")) return;
       const uid = auth.currentUser.uid;
       await deleteDoc(doc(db, "users", uid, "tasks", name));
-
       newTask.remove();
       const index = tasks.findIndex(t => t.id === name);
       if (index > -1) tasks.splice(index, 1);
     });
 
-    newTask.addEventListener("click", () => {
+    newTask.addEventListener("click", async () => {
+      if (currentTask) currentTask.value = name;
       document.documentElement.style.setProperty("--main-hue", hue);
+      await markOccurrences(name, document.getElementById("calendarDays"));
     });
   });
 }
 
+// ---------------- Calendar click ----------------
+export function listenClickCalendar(addBtn, cancelBtn, dayActions, calendarDays, progressBar, progressText, currentTask) {
+  let selectedDay = null;
 
-export async function addOccurrence(taskName, dateStr, quantity = 1) {
-  if (!auth.currentUser || !taskName) return;
-  const uid = auth.currentUser.uid;
+  calendarDays.addEventListener("click", function(e) {
+    selectedDay = e.target;
+    if (selectedDay.tagName === "DIV") {
+      document.querySelectorAll(".days div").forEach(day => day.classList.remove("selected"));
+      selectedDay.classList.add("selected");
+      dayActions.classList.remove("hidden-day-buttons");
+    }
+  });
 
-  await setDoc(
-    doc(db, "users", uid, "tasks", taskName, "occurrences", dateStr),
-    { quantity },
-    { merge: true } // merge evita di sovrascrivere altre info eventualmente presenti
-  );
+  document.addEventListener("click", function(e) {
+    const clickedDay = e.target.closest(".days div");
+    const clickedDayActions = e.target.closest("#day-actions");
+    if (!clickedDay && !clickedDayActions) {
+      document.querySelectorAll(".days div").forEach(day => day.classList.remove("selected"));
+      selectedDay = null;
+      dayActions.classList.add("hidden-day-buttons");
+    }
+  });
+
+  addBtn.addEventListener("click", async function() {
+    if (selectedDay && currentTask && currentTask.value) {
+      const day = selectedDay.textContent.padStart(2, "0");
+      const month = (new Date().getMonth() + 1).toString().padStart(2, "0");
+      const year = new Date().getFullYear();
+      const dateStr = `${year}-${month}-${day}`;
+
+      selectedDay.classList.remove("selected");
+      selectedDay.classList.add("completed");
+      selectedDay = null;
+
+      await saveOccurrence(currentTask.value, dateStr, 1);
+
+      dayActions.classList.add("hidden-day-buttons");
+      updateProgress(calendarDays, progressBar, progressText);
+    }
+  });
+
+  cancelBtn.addEventListener("click", async function() {
+    if (selectedDay && currentTask && currentTask.value) {
+      const day = selectedDay.textContent.padStart(2, "0");
+      const month = (new Date().getMonth() + 1).toString().padStart(2, "0");
+      const year = new Date().getFullYear();
+      const dateStr = `${year}-${month}-${day}`;
+
+      selectedDay.classList.remove("selected");
+      selectedDay.classList.remove("completed");
+      selectedDay = null;
+
+      // set quantity 0 to cancel occurrence
+      await saveOccurrence(currentTask.value, dateStr, 0);
+
+      dayActions.classList.add("hidden-day-buttons");
+      updateProgress(calendarDays, progressBar, progressText);
+    }
+  });
 }
 
-export async function removeOccurrence(taskName, dateStr) {
-  if (!auth.currentUser || !taskName) return;
-  const uid = auth.currentUser.uid;
-
-  await deleteDoc(doc(db, "users", uid, "tasks", taskName, "occurrences", dateStr));
-}
-
-
-// ---------------- Other UI Functions ----------------
-export function listenClickCalendar(addBtn, cancelBtn, dayActions, calendarDays, progressBar, progressText) {
-    let selectedDay=null;
-    
-    // to select the day by clicking it
-    calendarDays.addEventListener("click", function(e) {
-        selectedDay = e.target;
-        if (selectedDay.tagName === "DIV") {
-            
-            // remove previous selection
-            document.querySelectorAll(".days div").forEach(day => {
-            day.classList.remove("selected");
-            });
-            
-            // select clicked day
-            selectedDay.classList.add("selected");
-
-            // show day actions
-            dayActions.classList.remove("hidden-day-buttons");
-            
-        }
-    });
-
-    
-
-    // to unselect the day by clicking outside
-    document.addEventListener("click", function(e) {
-        const clickedDay = e.target.closest(".days div");
-        const clickedDayActions = e.target.closest("#day-actions");
-
-        // if no day or add/cancel button button is clicked
-        if (!clickedDay && !clickedDayActions) {
-            
-            // remove selection
-            document.querySelectorAll(".days div").forEach(day => {
-            day.classList.remove("selected");
-            });
-
-            selectedDay = null;
-
-            // hide day actions
-            dayActions.classList.add("hidden-day-buttons");
-        }
-
-
-        
-    });
-
-
-    // day completed
-    addBtn.addEventListener("click", function() {
-
-        if (selectedDay) {
-            selectedDay.classList.remove("selected");
-            selectedDay.classList.add("completed");
-            selectedDay = null;
-
-            await saveOccurrence(currentTask, dateStr, 1);
-
-            dayActions.classList.add("hidden-day-buttons");
-            updateProgress(calendarDays, progressBar, progressText);
-        }
-    });
-
-    // day annulled
-    cancelBtn.addEventListener("click", function() {
-
-        if (selectedDay) {
-            selectedDay.classList.remove("selected");
-            selectedDay.classList.remove("completed");
-            selectedDay = null;
-
-            await removeOccurrence(currentTask, dateStr);
-
-            dayActions.classList.add("hidden-day-buttons");
-            updateProgress(calendarDays, progressBar, progressText);
-        }
-    });
-
-
-}
-
-
-
-export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn, nextMonthBtn) {
-    // left arrow
-    prevMonthBtn.addEventListener("click", () => {
-        date.setMonth(date.getMonth() - 1);
-        createCalendar(date, monthYear, calendarDays);
-        updateProgress(calendarDays, progressBar, progressText);
-    });
-
-    // right arrow
-    nextMonthBtn.addEventListener("click", () => {
-        date.setMonth(date.getMonth() + 1);
-        createCalendar(date, monthYear, calendarDays);
-        updateProgress(calendarDays, progressBar, progressText);
-    });
-}
-
-
-
-export function listenTaskButtons(taskBtn, closePanel, panel, overlay, calendarWrapper, buttonFooter, taskManager, taskForm, modifyTaskBtn) {
-    taskBtn.addEventListener("click", () => {
-        calendarWrapper.classList.add("hidden-day-buttons");
-        buttonFooter.classList.add("hidden-day-buttons");
-        panel.classList.add("active");
-        overlay.classList.add("active");
-
-        taskManager.classList.remove("hidden-task-buttons");
-        taskForm.classList.add("hidden-task-buttons");
-
-        const badges = document.querySelectorAll(".delete-badge");
-        badges.forEach(badge => {
-            badge.classList.add("hidden");
-        });
-
-        modifyTaskBtn.classList.remove("modify-active");
-    });
-
-    closePanel.addEventListener("click", () => {
-        calendarWrapper.classList.remove("hidden-day-buttons");
-        buttonFooter.classList.remove("hidden-day-buttons");
-        panel.classList.remove("active");
-        overlay.classList.remove("active");
-        
-        requestAnimationFrame(() => {
-          document.documentElement.style.backgroundColor = "#ffffff";
-        })
-
-    });
-
-    overlay.addEventListener("click", () => {
-        calendarWrapper.classList.remove("hidden-day-buttons");
-        buttonFooter.classList.remove("hidden-day-buttons");
-        panel.classList.remove("active");
-        overlay.classList.remove("active");
-
-        requestAnimationFrame(() => {
-          document.documentElement.style.backgroundColor = "#ffffff";
-        })
-
-    });
-}
-
-
-
-
+// ---------------- Progress ----------------
 export function updateProgress(calendarDays, progressBar, progressText) {
-    const completedNumber = calendarDays.querySelectorAll(".day.completed").length;
-    const total = calendarDays.querySelectorAll(".day").length;
-    
-    
-    if (total === 0) return; 
-    const percent = (completedNumber / total) * 100;
-
-    progressBar.style.width = percent + "%";
-    progressText.textContent = completedNumber; 
+  const completedNumber = calendarDays.querySelectorAll(".day.completed").length;
+  const total = calendarDays.querySelectorAll(".day").length;
+  if (total === 0) return;
+  const percent = (completedNumber / total) * 100;
+  progressBar.style.width = percent + "%";
+  progressText.textContent = completedNumber;
 }
-
-
-
-export function listenPanelButtons(addTaskBtn, goBackBtn, modifyTaskBtn, taskManager, taskForm, hueContainer) {
-    addTaskBtn.addEventListener("click", () => {
-      taskManager.classList.add("hidden-task-buttons");
-      taskForm.classList.remove("hidden-task-buttons");
-      hueContainer.classList.add("hidden-task-buttons");
-    
-      const badges = document.querySelectorAll(".delete-badge");
-      badges.forEach(badge => {
-        badge.classList.add("hidden");
-      });
-      modifyTaskBtn.classList.remove("modify-active");
-    });
-
-
-    modifyTaskBtn.addEventListener("click", () => {
-        const badges = document.querySelectorAll(".delete-badge");
-
-        badges.forEach(badge => {
-            badge.classList.toggle("hidden");
-        });
-
-        modifyTaskBtn.classList.toggle("modify-active");
-        
-        taskManager.classList.remove("hidden-task-buttons");
-        taskForm.classList.add("hidden-task-buttons");
-    });
-    
-    
-    goBackBtn.addEventListener("click", () => {
-      taskManager.classList.remove("hidden-task-buttons");
-      taskForm.classList.add("hidden-task-buttons");
-    });
-}
-
-
-
-export function listenHue(huePreview, hueContainer, taskHueInput) {
-    huePreview.addEventListener("click", () => {
-      hueContainer.classList.toggle("hidden-task-buttons");
-    });
-
-    taskHueInput.addEventListener("input", () => {
-      const hue = taskHueInput.value;
-      huePreview.style.backgroundColor = `hsl(${hue}, 90%, 55%)`;
-    });
-}
-
-
