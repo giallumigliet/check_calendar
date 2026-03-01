@@ -48,6 +48,9 @@ export async function saveOccurrence(taskName, dateStr, quantity = 1) {
         { quantity },
         { merge: true }
       );
+
+      console.log("Saving for task:", taskName);
+      console.log("Path:", "users", uid, "tasks", taskName, "occurrences", dateStr);
     } else {
       // elimina occorrenza se quantity 0
       await deleteDoc(doc(db, "users", uid, "tasks", taskName, "occurrences", dateStr));
@@ -318,6 +321,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
