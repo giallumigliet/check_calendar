@@ -1,4 +1,3 @@
-// calendar.js
 import { doc, setDoc, deleteDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { db, auth } from "./script.js";
 
@@ -19,7 +18,7 @@ export function createCalendar(date, monthYear, calendarDays) {
     dayDiv.textContent = day;
     dayDiv.classList.add("day");
     if (day === 1) dayDiv.style.gridColumnStart = startDay;
-    if (day === date.getDate() && month === new Date().getMonth() && year === new Date().getFullYear())
+    if (day === new Date().getDate() && month === new Date().getMonth() && year === new Date().getFullYear())
       dayDiv.classList.add("today");
     calendarDays.appendChild(dayDiv);
   }
@@ -29,7 +28,6 @@ export function createCalendar(date, monthYear, calendarDays) {
 export async function saveOccurrence(taskName, dateStr, quantity = 1) {
   if (!auth.currentUser || !taskName) return;
   const uid = auth.currentUser.uid;
-
   await setDoc(
     doc(db, "users", uid, "tasks", taskName, "occurrences", dateStr),
     { quantity },
@@ -37,17 +35,20 @@ export async function saveOccurrence(taskName, dateStr, quantity = 1) {
   );
 }
 
-export async function markOccurrences(taskName, calendarDays) {
+export async function markOccurrences(taskName, calendarDays, date) {
   if (!auth.currentUser || !taskName) return;
   const uid = auth.currentUser.uid;
   const occRef = collection(db, "users", uid, "tasks", taskName, "occurrences");
   const snapshot = await getDocs(occRef);
   const completedDates = snapshot.docs.map(doc => doc.id); // YYYY-MM-DD
 
+  const currentMonth = date.getMonth();
+  const currentYear = date.getFullYear();
+
   calendarDays.querySelectorAll(".day").forEach(dayDiv => {
     const day = dayDiv.textContent.padStart(2, "0");
-    const month = (new Date().getMonth() + 1).toString().padStart(2, "0");
-    const year = new Date().getFullYear();
+    const month = (currentMonth + 1).toString().padStart(2, "0");
+    const year = currentYear;
     const dateStr = `${year}-${month}-${day}`;
     if (completedDates.includes(dateStr)) dayDiv.classList.add("completed");
     else dayDiv.classList.remove("completed");
@@ -55,7 +56,7 @@ export async function markOccurrences(taskName, calendarDays) {
 }
 
 // ---------------- Task UI ----------------
-export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks, taskList) {
+export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks, taskList, currentTask, calendarDays, date) {
   saveTaskBtn.addEventListener("click", async () => {
     const name = taskNameInput.value.trim();
     const hue = taskHueInput.value;
@@ -66,8 +67,13 @@ export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePrev
     await setDoc(doc(db, "users", uid, "tasks", name), { color: hue });
 
     tasks.push({ id: name, color: hue });
-    createTaskList(taskList, tasks);
+    createTaskList(taskList, tasks, currentTask, calendarDays, date);
 
+    // Seleziona subito la nuova task
+    currentTask.value = name;
+    await markOccurrences(name, calendarDays, date);
+
+    // reset form
     taskNameInput.value = "";
     taskHueInput.value = 162;
     huePreview.style.backgroundColor = `hsl(162, 90%, 55%)`;
@@ -76,7 +82,7 @@ export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePrev
   });
 }
 
-export function createTaskList(taskList, tasks, currentTask) {
+export function createTaskList(taskList, tasks, currentTask, calendarDays, date) {
   taskList.innerHTML = "";
 
   tasks.forEach(task => {
@@ -101,18 +107,23 @@ export function createTaskList(taskList, tasks, currentTask) {
       newTask.remove();
       const index = tasks.findIndex(t => t.id === name);
       if (index > -1) tasks.splice(index, 1);
+
+      if (currentTask.value === name) {
+        currentTask.value = "";
+        calendarDays.querySelectorAll(".day").forEach(day => day.classList.remove("completed"));
+      }
     });
 
     newTask.addEventListener("click", async () => {
-      if (currentTask) currentTask.value = name;
+      currentTask.value = name;
       document.documentElement.style.setProperty("--main-hue", hue);
-      await markOccurrences(name, document.getElementById("calendarDays"));
+      await markOccurrences(name, calendarDays, date);
     });
   });
 }
 
 // ---------------- Calendar click ----------------
-export function listenClickCalendar(addBtn, cancelBtn, dayActions, calendarDays, progressBar, progressText, currentTask) {
+export function listenClickCalendar(addBtn, cancelBtn, dayActions, calendarDays, progressBar, progressText, currentTask, date) {
   let selectedDay = null;
 
   calendarDays.addEventListener("click", function(e) {
@@ -135,10 +146,10 @@ export function listenClickCalendar(addBtn, cancelBtn, dayActions, calendarDays,
   });
 
   addBtn.addEventListener("click", async function() {
-    if (selectedDay && currentTask && currentTask.value) {
+    if (selectedDay && currentTask.value) {
       const day = selectedDay.textContent.padStart(2, "0");
-      const month = (new Date().getMonth() + 1).toString().padStart(2, "0");
-      const year = new Date().getFullYear();
+      const month = (date.getMonth() + 1).toString().padStart(2, "0");
+      const year = date.getFullYear();
       const dateStr = `${year}-${month}-${day}`;
 
       selectedDay.classList.remove("selected");
@@ -153,17 +164,16 @@ export function listenClickCalendar(addBtn, cancelBtn, dayActions, calendarDays,
   });
 
   cancelBtn.addEventListener("click", async function() {
-    if (selectedDay && currentTask && currentTask.value) {
+    if (selectedDay && currentTask.value) {
       const day = selectedDay.textContent.padStart(2, "0");
-      const month = (new Date().getMonth() + 1).toString().padStart(2, "0");
-      const year = new Date().getFullYear();
+      const month = (date.getMonth() + 1).toString().padStart(2, "0");
+      const year = date.getFullYear();
       const dateStr = `${year}-${month}-${day}`;
 
       selectedDay.classList.remove("selected");
       selectedDay.classList.remove("completed");
       selectedDay = null;
 
-      // set quantity 0 to cancel occurrence
       await saveOccurrence(currentTask.value, dateStr, 0);
 
       dayActions.classList.add("hidden-day-buttons");
