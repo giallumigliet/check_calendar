@@ -27,6 +27,10 @@ export function createCalendar(date, monthYear, calendarDays) {
     if (d === 1) dayDiv.style.gridColumnStart = startDay;
     calendarDays.appendChild(dayDiv);
   }
+
+  if (currentTask.value) {
+    await markOccurrences(currentTask.value, calendarDays, date);
+  }
 }
 
 // -------- OCCURRENCES --------
@@ -310,6 +314,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
