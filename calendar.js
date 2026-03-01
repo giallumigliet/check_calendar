@@ -105,7 +105,7 @@ export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePrev
   });
 }
 
-export function createTaskList(taskList, tasks, currentTask, calendarDays, date, progressBar, progressText) {
+export function createTaskList(taskList, tasks, currentTask, calendarDays, date, progressBar, progressText, calendarWrapper, buttonFooter, panel, overlay) {
   taskList.innerHTML = "";
   tasks.forEach(task => {
     const { id: taskId, name, color: hue } = task;
@@ -150,7 +150,15 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, date,
         day.classList.remove("completed")
       );
       await markOccurrences(taskId, calendarDays, date);
-      updateProgress(calendarDays, progressBar, progressText)
+      updateProgress(calendarDays, progressBar, progressText);
+      calendarWrapper.classList.remove("hidden-day-buttons");
+      buttonFooter.classList.remove("hidden-day-buttons");
+      panel.classList.remove("active");
+      overlay.classList.remove("active");
+      
+      requestAnimationFrame(() => {
+        document.documentElement.style.backgroundColor = "#ffffff";
+      })
     });
   });
 }
@@ -328,6 +336,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
