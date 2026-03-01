@@ -20,31 +20,48 @@ import {
 } from "./calendar.js";
 
 // ---- HTML ELEMENTS ----
-const calendarDays  = document.getElementById("calendarDays");
-const monthYear     = document.getElementById("monthYear");
-const addBtn        = document.getElementById("add-btn");
-const cancelBtn     = document.getElementById("cancel-btn");
-const dayActions    = document.getElementById("day-actions");
-const progressBar   = document.getElementById("progressBar");
-const progressText  = document.getElementById("progressText");
-const prevMonthBtn  = document.getElementById("prevMonth");
-const nextMonthBtn  = document.getElementById("nextMonth");
+const calendarWrapper = document.getElementById("calendar-wrapper");
+const monthYear = document.getElementById("monthYear");
+const calendarDays = document.getElementById("calendarDays");
 
-const taskList      = document.getElementById("task-list");
-const taskManager   = document.getElementById("task-manager");
-const taskForm      = document.getElementById("task-form");
+const dayActions = document.getElementById("day-actions");
+const addBtn = document.getElementById("add-btn");
+const cancelBtn = document.getElementById("cancel-btn");
+const taskBtn = document.getElementById("task-btn");
+
+const progressBar = document.getElementById("progressBar");
+const progressText = document.getElementById("progressText");
+
+const prevMonthBtn = document.getElementById("prevMonth");
+const nextMonthBtn = document.getElementById("nextMonth");
+
+const panel = document.getElementById("floating-panel");
+const overlay = document.getElementById("overlay");
+const closePanel = document.getElementById("close-panel");
+const buttonFooter = document.getElementById("button-footer");
+
+const addTaskBtn = document.getElementById("addTask-btn");
+const saveTaskBtn = document.getElementById("save-task");
+const goBackBtn = document.getElementById("goback-task");
+
+const taskList = document.getElementById("task-list");
+const taskManager = document.getElementById("task-manager");
+const taskForm = document.getElementById("task-form");
 
 const taskNameInput = document.getElementById("task-name");
-const taskHueInput  = document.getElementById("task-hue");
-const huePreview    = document.getElementById("hue-preview");
-const hueContainer  = document.getElementById("hue-container");
+const taskHueInput = document.getElementById("task-hue");
+const huePreview = document.getElementById("hue-preview");
+const hueContainer = document.getElementById("hue-container");
 
-const loginBtn      = document.getElementById("login-btn");
-const logoutBtn     = document.getElementById("logout-btn");
-const profileBtn    = document.getElementById("profile-btn");
-const userPhoto     = document.getElementById("user-photo");
-const accountPanel  = document.getElementById("account-floating-panel");
+const modifyTaskBtn = document.getElementById("modifyTask-btn");
+
+const loginBtn = document.getElementById("login-btn");
+const logoutBtn = document.getElementById("logout-btn");
+const profileButton = document.getElementById("profile-btn");
+const userPhoto = document.getElementById("user-photo");
+const accountPanel = document.getElementById("account-floating-panel");
 const changeAccountBtn = document.getElementById("changeAccount-btn");
+
 
 // ---- STATE ----
 let tasks         = [];
@@ -115,8 +132,9 @@ onAuthStateChanged(auth, user => {
 createCalendar(date, monthYear, calendarDays);
 listenClickCalendar(addBtn, cancelBtn, dayActions, calendarDays, progressBar, progressText, currentTask, date);
 listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn, nextMonthBtn);
-listenTaskButtons(taskBtn, document.getElementById("close-panel"), document.getElementById("floating-panel"), document.getElementById("overlay"), document.getElementById("calendar-wrapper"), document.getElementById("button-footer"), taskManager, taskForm, modifyTaskBtn);
+listenTaskButtons(taskBtn, closePanel, panel, overlay, calendarWrapper, buttonFooter, taskManager, taskForm, modifyTaskBtn);
 listenPanelButtons(addTaskBtn, goBackBtn, modifyTaskBtn, taskManager, taskForm, hueContainer);
 listenHue(huePreview, hueContainer, taskHueInput);
 
 listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks, taskList, currentTask, calendarDays, date);
+
