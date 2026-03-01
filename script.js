@@ -1,14 +1,12 @@
-// Import Firebase for database
+// Import Firebase
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup, setPersistence, browserLocalPersistence, onAuthStateChanged, signOut} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, setPersistence, browserLocalPersistence, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-// Import functions 
-import { createCalendar, listenClickCalendar, listenMonthCalendar, listenTaskButtons, listenHue, listenPanelButtons, listenSaveTask, createTaskList} from "./calendar.js";
+// Import functions
+import { createCalendar, listenClickCalendar, listenMonthCalendar, listenTaskButtons, listenHue, listenPanelButtons, listenSaveTask, createTaskList } from "./calendar.js";
 
-
-
-// Getting html elements
+// HTML Elements
 const calendarWrapper = document.getElementById("calendar-wrapper");
 const monthYear = document.getElementById("monthYear");
 const calendarDays = document.getElementById("calendarDays");
@@ -44,7 +42,6 @@ const hueContainer = document.getElementById("hue-container");
 
 const modifyTaskBtn = document.getElementById("modifyTask-btn");
 
-
 const loginBtn = document.getElementById("login-btn");
 const logoutBtn = document.getElementById("logout-btn");
 const profileButton = document.getElementById("profile-btn");
@@ -52,14 +49,12 @@ const userPhoto = document.getElementById("user-photo");
 const accountPanel = document.getElementById("account-floating-panel");
 const changeAccountBtn = document.getElementById("changeAccount-btn");
 
+// State
 let tasks = [];
 let currentTask = '';
-
-
-// Date
 const date = new Date();
 
-// Firebase configuration
+// Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyAOkre2FhmRFlSBPYznZUVAJxLQh-QeExc",
   authDomain: "check-calendar-giallumigliet.firebaseapp.com",
@@ -68,37 +63,25 @@ const firebaseConfig = {
   messagingSenderId: "741223614800",
   appId: "1:741223614800:web:41af2763f7c3c6ebb5c455"
 };
-// Firebase initialization
+
+// Firebase init
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 await setPersistence(auth, browserLocalPersistence);
 export const db = getFirestore(app);
 
-// Login Google
+// Google login
 const provider = new GoogleAuthProvider();
 
-
-//---------------------------------------------
-//---------------------------------------------
+// ---------------------------------------------
+// Login / Logout / Account
 loginBtn.addEventListener("click", async () => {
-  try {
-    const result = await signInWithPopup(auth, provider);
-    console.log("Utente:", result.user);
-  } catch (error) {
-    console.error(error);
-  }
+  try { await signInWithPopup(auth, provider); } catch (err) { console.error(err); }
 });
 
 changeAccountBtn.addEventListener("click", async () => {
   await signOut(auth);
-  
-  try {
-    const result = await signInWithPopup(auth, provider);
-    console.log("Utente:", result.user);
-  } catch (error) {
-    console.error(error);
-  }
-  
+  try { await signInWithPopup(auth, provider); } catch (err) { console.error(err); }
   accountPanel.classList.add("hidden-task-buttons");
 });
 
@@ -107,62 +90,39 @@ logoutBtn.addEventListener("click", async () => {
   accountPanel.classList.add("hidden-task-buttons");
 });
 
-profileButton.addEventListener("click", (e) => {
-  e.stopPropagation();
-  accountPanel.classList.toggle("hidden-task-buttons");
+profileButton.addEventListener("click", e => { e.stopPropagation(); accountPanel.classList.toggle("hidden-task-buttons"); });
+document.addEventListener("click", e => {
+  if (!accountPanel.contains(e.target) && !profileButton.contains(e.target)) accountPanel.classList.add("hidden-task-buttons");
 });
 
-document.addEventListener("click", function(e) {
-  const clickedInsidePanel = accountPanel.contains(e.target);
-  const clickedProfileBtn = profileButton.contains(e.target);
-
-  if (!clickedInsidePanel && !clickedProfileBtn) {
-    accountPanel.classList.add("hidden-task-buttons");
-  }
-});
-
-
-onAuthStateChanged(auth, (user) => {
+// ---------------------------------------------
+// Auth state & task listener
+onAuthStateChanged(auth, user => {
   if (user) {
-    // Mostra UI utente
     loginBtn.classList.add("hidden-task-buttons");
     profileButton.classList.remove("hidden-task-buttons");
-
-    // Imposta foto profilo
     userPhoto.src = user.photoURL;
 
-    
-    const tasksRef = collection(db, "users", uid, "tasks");
-      
-    onSnapshot(tasksRef, (snapshot) => {
+    const tasksRef = collection(db, "users", user.uid, "tasks");
+    onSnapshot(tasksRef, snapshot => {
       tasks = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       createTaskList(taskList, tasks);
     });
   } else {
-    // Mostra login
     loginBtn.classList.remove("hidden-task-buttons");
     profileButton.classList.add("hidden-task-buttons");
   }
 });
 
-
-//---------------------------------------------
-//---------------------------------------------
+// ---------------------------------------------
+// Init app
 createCalendar(date, monthYear, calendarDays);
 
 listenClickCalendar(addBtn, cancelBtn, dayActions, calendarDays, progressBar, progressText);
-
 listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn, nextMonthBtn);
-
 listenTaskButtons(taskBtn, closePanel, panel, overlay, calendarWrapper, buttonFooter, taskManager, taskForm, modifyTaskBtn);
-
 listenPanelButtons(addTaskBtn, goBackBtn, modifyTaskBtn, taskManager, taskForm, hueContainer);
-
 listenHue(huePreview, hueContainer, taskHueInput);
 
-listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks);
-
-createTaskList(taskList, tasks, currentTask)
-
-
-
+// Save Task
+listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks, taskList);
