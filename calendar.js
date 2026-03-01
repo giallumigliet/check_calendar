@@ -262,7 +262,7 @@ export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePrev
 
         // creating in DB
         setDoc(
-            doc(db, "users", auth.currentUser.uid;, "tasks", name),
+            doc(db, "users", auth.currentUser.uid, "tasks", name),
             { color: hue }
         );
 
@@ -317,6 +317,7 @@ export function createTaskList(taskList, tasks, currentTask) {
     });
   });
 }
+
 
 
 
