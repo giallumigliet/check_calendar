@@ -1,5 +1,5 @@
 import { db, auth } from "./firebase.js";
-import { doc, setDoc, deleteDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { doc, setDoc, deleteDoc, addDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 // -------- CALENDAR DRAW --------
 export async function createCalendar(date, monthYear, calendarDays, currentTask, progressBar, progressText) {
@@ -38,33 +38,30 @@ export async function createCalendar(date, monthYear, calendarDays, currentTask,
 }
 
 // -------- OCCURRENCES --------
-export async function saveOccurrence(taskName, dateStr, quantity = 1) {
-  if (!auth.currentUser || !taskName) return;
+export async function saveOccurrence(taskId, dateStr, quantity = 1) {
+  if (!auth.currentUser || !taskId) return;
   try {
     const uid = auth.currentUser.uid;
     if (quantity > 0) {
       await setDoc(
-        doc(db, "users", uid, "tasks", taskName, "occurrences", dateStr),
+        doc(db, "users", uid, "tasks", taskId, "occurrences", dateStr),
         { quantity },
         { merge: true }
       );
-
-      console.log("Saving for task:", taskName);
-      console.log("Path:", "users", uid, "tasks", taskName, "occurrences", dateStr);
     } else {
       // elimina occorrenza se quantity 0
-      await deleteDoc(doc(db, "users", uid, "tasks", taskName, "occurrences", dateStr));
+      await deleteDoc(doc(db, "users", uid, "tasks", taskId, "occurrences", dateStr));
     }
   } catch(err) {
     console.error("Error saving occurrence:", err);
   }
 }
 
-export async function markOccurrences(taskName, calendarDays, date) {
-  if (!auth.currentUser || !taskName) return;
+export async function markOccurrences(taskId, calendarDays, date) {
+  if (!auth.currentUser || !taskId) return;
   try {
     const uid = auth.currentUser.uid;
-    const occRef = collection(db, "users", uid, "tasks", taskName, "occurrences");
+    const occRef = collection(db, "users", uid, "tasks", taskId, "occurrences");
     const snapshot = await getDocs(occRef);
     const completedDates = snapshot.docs.map(doc => doc.id);
 
@@ -86,14 +83,19 @@ export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePrev
   saveTaskBtn.addEventListener("click", async () => {
     const name = taskNameInput.value.trim();
     const hue = taskHueInput.value;
-    if (!name || tasks.some(t => t.id === name)) return;
+    if (!name || tasks.some(t => t.name === name)) return;
 
     try {
       const uid = auth.currentUser.uid;
-      await setDoc(doc(db, "users", uid, "tasks", name), { color: hue });
+      const docRef = await addDoc(
+        collection(db, "users", uid, "tasks"),
+        { name: name, color: hue }
+      );
+      const taskId = docRef.id;
+      currentTask.value = taskId;
     } catch(err) { console.error(err); return; }
 
-    currentTask.value = name;
+    
 
     taskNameInput.value = "";
     taskHueInput.value = 162;
@@ -106,7 +108,7 @@ export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePrev
 export function createTaskList(taskList, tasks, currentTask, calendarDays, date, progressBar, progressText) {
   taskList.innerHTML = "";
   tasks.forEach(task => {
-    const { id: name, color: hue } = task;
+    const { id: taskId, name, color: hue } = task;
 
     const newTask = document.createElement("div");
     newTask.classList.add("task-item");
@@ -125,24 +127,24 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, date,
       if (!confirm("Press OK to delete the task.")) return;
       try {
         const uid = auth.currentUser.uid;
-        await deleteDoc(doc(db, "users", uid, "tasks", name));
+        await deleteDoc(doc(db, "users", uid, "tasks", taskId));
       } catch(err) { console.error(err); }
       newTask.remove();
-      const idx = tasks.findIndex(t => t.id === name);
+      const idx = tasks.findIndex(t => t.id === taskId);
       if (idx > -1) tasks.splice(idx, 1);
-      if (currentTask.value === name) {
+      if (currentTask.value === taskId) {
         currentTask.value = "";
         calendarDays.querySelectorAll(".day").forEach(day => day.classList.remove("completed"));
       }
     });
 
     newTask.addEventListener("click", async () => {
-      currentTask.value = name;
+      currentTask.value = taskId;
       document.documentElement.style.setProperty("--main-hue", hue);
       calendarDays.querySelectorAll(".day").forEach(day =>
         day.classList.remove("completed")
       );
-      await markOccurrences(name, calendarDays, date);
+      await markOccurrences(taskId, calendarDays, date);
       updateProgress(calendarDays, progressBar, progressText)
     });
   });
@@ -321,6 +323,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
