@@ -2,7 +2,7 @@ import { db, auth } from "./firebase.js";
 import { doc, setDoc, deleteDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 // -------- CALENDAR DRAW --------
-export function createCalendar(date, monthYear, calendarDays, currentTask) {
+export async function createCalendar(date, monthYear, calendarDays, currentTask) {
   const year = date.getFullYear();
   const month = date.getMonth();
   const today = new Date();
@@ -301,19 +301,20 @@ export function listenHue(huePreview, hueContainer, taskHueInput) {
 
 export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn, nextMonthBtn, progressBar, progressText) {
     // left arrow
-    prevMonthBtn.addEventListener("click", () => {
+    prevMonthBtn.addEventListener("click", async () => {
         date.setMonth(date.getMonth() - 1);
         createCalendar(date, monthYear, calendarDays);
         updateProgress(calendarDays, progressBar, progressText);
     });
 
     // right arrow
-    nextMonthBtn.addEventListener("click", () => {
+    nextMonthBtn.addEventListener("click", async () => {
         date.setMonth(date.getMonth() + 1);
         createCalendar(date, monthYear, calendarDays);
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
