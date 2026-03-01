@@ -1,12 +1,22 @@
-// Import Firebase
+// script.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup, setPersistence, browserLocalPersistence, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-// Import functions
-import { createCalendar, listenClickCalendar, listenMonthCalendar, listenTaskButtons, listenHue, listenPanelButtons, listenSaveTask, createTaskList } from "./calendar.js";
+import {
+  createCalendar,
+  listenClickCalendar,
+  listenMonthCalendar,
+  listenTaskButtons,
+  listenHue,
+  listenPanelButtons,
+  listenSaveTask,
+  createTaskList,
+  markOccurrences,
+  updateProgress
+} from "./calendar.js";
 
-// HTML Elements
+// ------------------- HTML Elements -------------------
 const calendarWrapper = document.getElementById("calendar-wrapper");
 const monthYear = document.getElementById("monthYear");
 const calendarDays = document.getElementById("calendarDays");
@@ -49,12 +59,12 @@ const userPhoto = document.getElementById("user-photo");
 const accountPanel = document.getElementById("account-floating-panel");
 const changeAccountBtn = document.getElementById("changeAccount-btn");
 
-// State
+// ------------------- State -------------------
 let tasks = [];
-let currentTask = '';
+let currentTaskRef = { value: "" };
 const date = new Date();
 
-// Firebase config
+// ------------------- Firebase -------------------
 const firebaseConfig = {
   apiKey: "AIzaSyAOkre2FhmRFlSBPYznZUVAJxLQh-QeExc",
   authDomain: "check-calendar-giallumigliet.firebaseapp.com",
@@ -64,17 +74,14 @@ const firebaseConfig = {
   appId: "1:741223614800:web:41af2763f7c3c6ebb5c455"
 };
 
-// Firebase init
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 await setPersistence(auth, browserLocalPersistence);
 export const db = getFirestore(app);
 
-// Google login
 const provider = new GoogleAuthProvider();
 
-// ---------------------------------------------
-// Login / Logout / Account
+// ------------------- Login / Logout -------------------
 loginBtn.addEventListener("click", async () => {
   try { await signInWithPopup(auth, provider); } catch (err) { console.error(err); }
 });
@@ -95,8 +102,7 @@ document.addEventListener("click", e => {
   if (!accountPanel.contains(e.target) && !profileButton.contains(e.target)) accountPanel.classList.add("hidden-task-buttons");
 });
 
-// ---------------------------------------------
-// Auth state & task listener
+// ------------------- Auth state -------------------
 onAuthStateChanged(auth, user => {
   if (user) {
     loginBtn.classList.add("hidden-task-buttons");
@@ -106,23 +112,24 @@ onAuthStateChanged(auth, user => {
     const tasksRef = collection(db, "users", user.uid, "tasks");
     onSnapshot(tasksRef, snapshot => {
       tasks = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      createTaskList(taskList, tasks);
+      createTaskList(taskList, tasks, currentTaskRef);
+      if (currentTaskRef.value) markOccurrences(currentTaskRef.value, calendarDays);
     });
   } else {
     loginBtn.classList.remove("hidden-task-buttons");
     profileButton.classList.add("hidden-task-buttons");
-    
-    // **Svuota task array e UI**
+    // clear tasks and UI on logout
     tasks = [];
     taskList.innerHTML = "";
+    currentTaskRef.value = "";
+    calendarDays.querySelectorAll(".day").forEach(day => day.classList.remove("completed"));
+    updateProgress(calendarDays, progressBar, progressText);
   }
 });
 
-// ---------------------------------------------
-// Init app
+// ------------------- Initialize App -------------------
 createCalendar(date, monthYear, calendarDays);
-
-listenClickCalendar(addBtn, cancelBtn, dayActions, calendarDays, progressBar, progressText);
+listenClickCalendar(addBtn, cancelBtn, dayActions, calendarDays, progressBar, progressText, currentTaskRef);
 listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn, nextMonthBtn);
 listenTaskButtons(taskBtn, closePanel, panel, overlay, calendarWrapper, buttonFooter, taskManager, taskForm, modifyTaskBtn);
 listenPanelButtons(addTaskBtn, goBackBtn, modifyTaskBtn, taskManager, taskForm, hueContainer);
@@ -130,4 +137,3 @@ listenHue(huePreview, hueContainer, taskHueInput);
 
 // Save Task
 listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks, taskList);
-
