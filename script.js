@@ -4,7 +4,7 @@ import { getAuth, GoogleAuthProvider, signInWithPopup, setPersistence, browserLo
 import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 // Import functions 
-import { createCalendar, listenClickCalendar, listenMonthCalendar, listenTaskButtons, listenHue, listenPanelButtons, listenSaveTask} from "./calendar.js";
+import { createCalendar, listenClickCalendar, listenMonthCalendar, listenTaskButtons, listenHue, listenPanelButtons, listenSaveTask, createTaskList} from "./calendar.js";
 
 
 
@@ -52,13 +52,12 @@ const userPhoto = document.getElementById("user-photo");
 const accountPanel = document.getElementById("account-floating-panel");
 const changeAccountBtn = document.getElementById("changeAccount-btn");
 
+let tasks = [];
+let currentTask = '';
 
 
-// Today
+// Date
 const date = new Date();
-const year = date.getFullYear();
-const month = date.getMonth();
-
 
 // Firebase configuration
 const firebaseConfig = {
@@ -71,15 +70,16 @@ const firebaseConfig = {
 };
 // Firebase initialization
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+export const auth = getAuth(app);
 await setPersistence(auth, browserLocalPersistence);
-const db = getFirestore(app);
+export const db = getFirestore(app);
 
 // Login Google
 const provider = new GoogleAuthProvider();
 
 
-
+//---------------------------------------------
+//---------------------------------------------
 loginBtn.addEventListener("click", async () => {
   try {
     const result = await signInWithPopup(auth, provider);
@@ -88,7 +88,6 @@ loginBtn.addEventListener("click", async () => {
     console.error(error);
   }
 });
-
 
 changeAccountBtn.addEventListener("click", async () => {
   await signOut(auth);
@@ -102,9 +101,6 @@ changeAccountBtn.addEventListener("click", async () => {
   
   accountPanel.classList.add("hidden-task-buttons");
 });
-
-
-
 
 logoutBtn.addEventListener("click", async () => {
   await signOut(auth);
@@ -134,6 +130,20 @@ onAuthStateChanged(auth, (user) => {
 
     // Imposta foto profilo
     userPhoto.src = user.photoURL;
+
+    
+    const tasksRef = collection(db, "users", uid, "tasks");
+      
+    onSnapshot(tasksRef, (snapshot) => {
+      tasks = [];
+
+      snapshot.forEach(doc => {
+        tasks.push({
+          id: doc.id,
+          ...doc.data()
+        });
+      });
+    });
   } else {
     // Mostra login
     loginBtn.classList.remove("hidden-task-buttons");
@@ -142,6 +152,8 @@ onAuthStateChanged(auth, (user) => {
 });
 
 
+//---------------------------------------------
+//---------------------------------------------
 createCalendar(date, monthYear, calendarDays);
 
 listenClickCalendar(addBtn, cancelBtn, dayActions, calendarDays, progressBar, progressText);
@@ -154,8 +166,8 @@ listenPanelButtons(addTaskBtn, goBackBtn, modifyTaskBtn, taskManager, taskForm, 
 
 listenHue(huePreview, hueContainer, taskHueInput);
 
-listenSaveTask(saveTaskBtn, taskList, taskNameInput, taskHueInput, huePreview, taskManager, taskForm);
+listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks);
 
-
+createTaskList(taskList, tasks, currentTask)
 
 
