@@ -86,9 +86,6 @@ export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePrev
       await setDoc(doc(db, "users", uid, "tasks", name), { color: hue });
     } catch(err) { console.error(err); return; }
 
-    tasks.push({ id: name, color: hue });
-    createTaskList(taskList, tasks, currentTask, calendarDays, date);
-
     currentTask.value = name;
     await markOccurrences(name, calendarDays, date);
 
@@ -315,6 +312,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
