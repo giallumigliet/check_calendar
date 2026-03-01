@@ -111,6 +111,10 @@ onAuthStateChanged(auth, user => {
   } else {
     loginBtn.classList.remove("hidden-task-buttons");
     profileButton.classList.add("hidden-task-buttons");
+    
+    // **Svuota task array e UI**
+    tasks = [];
+    taskList.innerHTML = "";
   }
 });
 
@@ -126,3 +130,4 @@ listenHue(huePreview, hueContainer, taskHueInput);
 
 // Save Task
 listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks, taskList);
+
