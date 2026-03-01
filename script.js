@@ -89,7 +89,10 @@ onAuthStateChanged(auth, user => {
     onSnapshot(tasksRef, snapshot => {
       tasks = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       createTaskList(taskList, tasks, currentTask, calendarDays, date, progressBar, progressText);
-      if(currentTask.value) markOccurrences(currentTask.value, calendarDays, date);
+      if(currentTask.value){
+        markOccurrences(currentTask.value, calendarDays, date);
+        updateProgress(calendarDays, progressBar, progressText);
+      }
     });
 
   } else {
@@ -113,6 +116,7 @@ listenTaskButtons(taskBtn, closePanel, panel, overlay, calendarWrapper, buttonFo
 listenPanelButtons(addTaskBtn, goBackBtn, modifyTaskBtn, taskManager, taskForm, hueContainer);
 listenHue(huePreview, hueContainer, taskHueInput);
 listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks, taskList, currentTask, calendarDays, date, progressBar, progressText);
+
 
 
 
