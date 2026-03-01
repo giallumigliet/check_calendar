@@ -295,7 +295,7 @@ export function listenHue(huePreview, hueContainer, taskHueInput) {
 
 
 
-export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn, nextMonthBtn) {
+export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn, nextMonthBtn, progressBar, progressText) {
     // left arrow
     prevMonthBtn.addEventListener("click", () => {
         date.setMonth(date.getMonth() - 1);
@@ -310,6 +310,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
