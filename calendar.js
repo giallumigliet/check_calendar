@@ -137,13 +137,6 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, date)
   });
 }
 
-// -------- MODIFY MODE --------
-export function enableModifyMode(taskList, modifyBtn) {
-  modifyBtn.addEventListener("click", () => {
-    const active = modifyBtn.classList.toggle("modify-active");
-    taskList.querySelectorAll(".delete-badge").forEach(b => b.classList.toggle("hidden", !active));
-  });
-}
 
 // -------- CALENDAR CLICK --------
 export function listenClickCalendar(addBtn, cancelBtn, dayActions, calendarDays, progressBar, progressText, currentTask, date) {
@@ -212,9 +205,46 @@ export function updateProgress(calendarDays, progressBar, progressText) {
 
 // -------- PANEL LISTENERS --------
 export function listenTaskButtons(taskBtn, closePanelBtn, panel, overlay) {
-  taskBtn.addEventListener("click", () => { panel.classList.add("active"); overlay.classList.add("active"); });
-  closePanelBtn.addEventListener("click", () => { panel.classList.remove("active"); overlay.classList.remove("active"); });
-  overlay.addEventListener("click", () => { panel.classList.remove("active"); overlay.classList.remove("active"); });
+  taskBtn.addEventListener("click", () => {
+        calendarWrapper.classList.add("hidden-day-buttons");
+        buttonFooter.classList.add("hidden-day-buttons");
+        panel.classList.add("active");
+        overlay.classList.add("active");
+
+        taskManager.classList.remove("hidden-task-buttons");
+        taskForm.classList.add("hidden-task-buttons");
+
+        const badges = document.querySelectorAll(".delete-badge");
+        badges.forEach(badge => {
+            badge.classList.add("hidden");
+        });
+
+        modifyTaskBtn.classList.remove("modify-active");
+    });
+
+    closePanel.addEventListener("click", () => {
+        calendarWrapper.classList.remove("hidden-day-buttons");
+        buttonFooter.classList.remove("hidden-day-buttons");
+        panel.classList.remove("active");
+        overlay.classList.remove("active");
+        
+        requestAnimationFrame(() => {
+          document.documentElement.style.backgroundColor = "#ffffff";
+        })
+
+    });
+
+    overlay.addEventListener("click", () => {
+        calendarWrapper.classList.remove("hidden-day-buttons");
+        buttonFooter.classList.remove("hidden-day-buttons");
+        panel.classList.remove("active");
+        overlay.classList.remove("active");
+
+        requestAnimationFrame(() => {
+          document.documentElement.style.backgroundColor = "#ffffff";
+        })
+
+    });
 }
 
 export function listenPanelButtons(addTaskBtn, goBackBtn, modifyBtn, taskManager, taskForm, hueContainer, taskList) {
@@ -222,23 +252,63 @@ export function listenPanelButtons(addTaskBtn, goBackBtn, modifyBtn, taskManager
     taskForm.classList.remove("hidden-task-buttons");
     taskManager.classList.add("hidden-task-buttons");
     hueContainer.classList.remove("hidden-task-buttons");
+
+    const badges = document.querySelectorAll(".delete-badge");
+    badges.forEach(badge => {
+      badge.classList.add("hidden");
+    });
+    modifyTaskBtn.classList.remove("modify-active");
   });
+  
   goBackBtn.addEventListener("click", () => {
     taskForm.classList.add("hidden-task-buttons");
     taskManager.classList.remove("hidden-task-buttons");
     hueContainer.classList.add("hidden-task-buttons");
   });
-  enableModifyMode(taskList, modifyBtn);
-}
 
-export function listenHue(huePreview, hueContainer, taskHueInput) {
-  taskHueInput.addEventListener("input", () => {
-    huePreview.style.backgroundColor = `hsl(${taskHueInput.value}, 90%, 55%)`;
-    document.documentElement.style.setProperty("--main-hue", taskHueInput.value);
+  
+  modifyTaskBtn.addEventListener("click", () => {
+      const badges = document.querySelectorAll(".delete-badge");
+
+      badges.forEach(badge => {
+          badge.classList.toggle("hidden");
+      });
+
+      modifyTaskBtn.classList.toggle("modify-active");
+      
+      taskManager.classList.remove("hidden-task-buttons");
+      taskForm.classList.add("hidden-task-buttons");
   });
 }
 
-export function listenMonthCalendar(date, monthYear, calendarDays, prevBtn, nextBtn) {
-  prevBtn.addEventListener("click", () => { date.setMonth(date.getMonth() - 1); createCalendar(date, monthYear, calendarDays); });
-  nextBtn.addEventListener("click", () => { date.setMonth(date.getMonth() + 1); createCalendar(date, monthYear, calendarDays); });
+
+export function listenHue(huePreview, hueContainer, taskHueInput) {
+    huePreview.addEventListener("click", () => {
+      hueContainer.classList.toggle("hidden-task-buttons");
+    });
+
+    taskHueInput.addEventListener("input", () => {
+      const hue = taskHueInput.value;
+      huePreview.style.backgroundColor = `hsl(${hue}, 90%, 55%)`;
+    });
 }
+
+
+
+
+export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn, nextMonthBtn) {
+    // left arrow
+    prevMonthBtn.addEventListener("click", () => {
+        date.setMonth(date.getMonth() - 1);
+        createCalendar(date, monthYear, calendarDays);
+        updateProgress(calendarDays, progressBar, progressText);
+    });
+
+    // right arrow
+    nextMonthBtn.addEventListener("click", () => {
+        date.setMonth(date.getMonth() + 1);
+        createCalendar(date, monthYear, calendarDays);
+        updateProgress(calendarDays, progressBar, progressText);
+    });
+}
+
