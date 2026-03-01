@@ -135,14 +135,8 @@ onAuthStateChanged(auth, (user) => {
     const tasksRef = collection(db, "users", uid, "tasks");
       
     onSnapshot(tasksRef, (snapshot) => {
-      tasks = [];
-
-      snapshot.forEach(doc => {
-        tasks.push({
-          id: doc.id,
-          ...doc.data()
-        });
-      });
+      tasks = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      createTaskList(taskList, tasks);
     });
   } else {
     // Mostra login
@@ -169,5 +163,6 @@ listenHue(huePreview, hueContainer, taskHueInput);
 listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks);
 
 createTaskList(taskList, tasks, currentTask)
+
 
 
