@@ -253,7 +253,7 @@ export function listenHue(huePreview, hueContainer, taskHueInput) {
 
 
 
-export function listenSaveTask(saveTaskBtn, taskList, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks, currentTask) {
+export function listenSaveTask(saveTaskBtn, taskList, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks) {
     saveTaskBtn.addEventListener("click", () => {
         const name = taskNameInput.value.trim();
         const hue = taskHueInput.value;
@@ -317,5 +317,6 @@ export function createTaskList(taskList, tasks, currentTask) {
     });
   });
 }
+
 
 
