@@ -157,6 +157,7 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
     
       menu.classList.toggle("show");
     });
+    
 
     document.addEventListener("click", () => {
       document.querySelectorAll(".task-menu").forEach(m => {
@@ -377,6 +378,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
