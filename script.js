@@ -37,7 +37,6 @@ const closePanel = document.getElementById("close-panel");
 const addTaskBtn = document.getElementById("addTask-btn");
 const saveTaskBtn = document.getElementById("save-task");
 const goBackBtn = document.getElementById("goback-task");
-const modifyTaskBtn = document.getElementById("modifyTask-btn");
 const buttonFooter = document.getElementById("button-footer");
 
 const taskList = document.getElementById("task-list");
@@ -113,10 +112,11 @@ onAuthStateChanged(auth, user => {
 })();
 listenClickCalendar(addBtn, cancelBtn, dayActions, calendarDays, progressBar, progressText, currentTask, date);
 listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn, nextMonthBtn, progressBar, progressText, currentTask);
-listenTaskButtons(taskBtn, closePanel, panel, overlay, calendarWrapper, buttonFooter, taskManager, taskForm, modifyTaskBtn);
-listenPanelButtons(addTaskBtn, goBackBtn, modifyTaskBtn, taskManager, taskForm, hueContainer);
+listenTaskButtons(taskBtn, closePanel, panel, overlay, calendarWrapper, buttonFooter, taskManager, taskForm);
+listenPanelButtons(addTaskBtn, goBackBtn, taskManager, taskForm, hueContainer);
 listenHue(huePreview, hueContainer, taskHueInput);
 listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks, taskList, currentTask, calendarDays, date, progressBar, progressText);
+
 
 
 
