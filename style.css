@@ -457,18 +457,11 @@
     display: none;
   }
 
-  .modify-active {
-    background-color: var(--main-color-light) !important;
-  }
-
-
-
   #auth-area {
     display: flex;
     align-items: center;
     gap: 10px;
   }
-
 
 
 
@@ -516,6 +509,7 @@
     border-radius: 50%;
     object-fit: cover;
   }
+
 
 
 
