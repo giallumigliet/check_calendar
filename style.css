@@ -321,6 +321,7 @@
 
   #addTask-btn {
     font-size: 30px;
+    margin-top: 8px;
   }
 
   .color-picker-row {
@@ -506,6 +507,7 @@
     border-radius: 50%;
     object-fit: cover;
   }
+
 
 
 
