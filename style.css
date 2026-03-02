@@ -557,7 +557,6 @@
     transform-origin: top right;
     transition: all 0.2s ease;
     z-index: 2000; 
-    overflow: visible;
   }
   
   /* quando attivo */
@@ -581,6 +580,7 @@
   .menu-item.delete {
     color: #e74c3c;
   }
+
 
 
 
