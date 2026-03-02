@@ -519,7 +519,7 @@
   
   /* MENU */
   .task-menu {
-    position: fixed;
+    position: absolute;
     top: 35px;
     right: 0;
     background: #fff;
@@ -555,6 +555,7 @@
   .menu-item.delete {
     color: #e74c3c;
   }
+
 
 
 
