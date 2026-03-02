@@ -269,7 +269,6 @@
 
     display: flex;
     flex-direction: column;
-    padding: 20px;
 
     transform: translateY(120%);
     transition: transform 0.4s ease;
@@ -283,12 +282,22 @@
 
 
   .panel-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px;
-    font-weight: bold;
-    border-bottom: 1px solid #eee;
+    padding: 16px;
+    background: #fff;
+    color: #aaa;
+    text-align: right;
+    padding-right: 50px;
+    font-weight: normal;
+    cursor: pointer;
+    border-top-left-radius: 57px;
+    border-top-right-radius: 57px;
+    transition: opacity 0.2s ease;
+    border-bottom: 2px solid #eee;
+  }
+
+  .panel-header:hover {
+    background-color:  #ddd;
+    color: #666;
   }
 
 
@@ -507,6 +516,7 @@
     border-radius: 50%;
     object-fit: cover;
   }
+
 
 
 
