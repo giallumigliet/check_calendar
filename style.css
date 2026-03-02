@@ -515,7 +515,7 @@
   }
 
   .task-item.menu-open {
-    z-index: 1000;
+    z-index: 1500;
   }
   
   .task-actions {
@@ -532,7 +532,7 @@
     justify-content: center;
     cursor: pointer;
     font-weight: bold;
-    font-size: 18px;
+    font-size: 20px;
     line-height: 1;  
     padding: 0;
     transition: background 0.2s ease;
@@ -556,6 +556,7 @@
     opacity: 0;
     transform-origin: top right;
     transition: all 0.2s ease;
+    z-index: 2000; 
   }
   
   /* quando attivo */
@@ -579,6 +580,7 @@
   .menu-item.delete {
     color: #e74c3c;
   }
+
 
 
 
