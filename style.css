@@ -286,7 +286,7 @@
     background: #fff;
     color: #aaa;
     text-align: right;
-    padding-right: 50px;
+    padding-right: 30px;
     font-weight: normal;
     cursor: pointer;
     border-top-left-radius: 57px;
@@ -509,6 +509,7 @@
     border-radius: 50%;
     object-fit: cover;
   }
+
 
 
 
