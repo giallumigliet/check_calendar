@@ -511,6 +511,7 @@
     
     font-weight: bold;
     color: white;
+    z-index: 1;
   }
   
   .task-actions {
@@ -560,6 +561,7 @@
     padding: 10px 16px;
     cursor: pointer;
     font-size: 14px;
+    z-index: 1000;
   }
   
   .menu-item:hover {
@@ -569,6 +571,7 @@
   .menu-item.delete {
     color: #e74c3c;
   }
+
 
 
 
