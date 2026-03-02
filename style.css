@@ -540,7 +540,7 @@
     position: absolute;
     top: 35px;
     right: 0;
-    background: white;
+    background: #fff;
     border-radius: 12px;
     box-shadow: 0 8px 20px rgba(0,0,0,0.15);
     overflow: hidden;
@@ -562,15 +562,18 @@
     cursor: pointer;
     font-size: 14px;
     z-index: 1000;
+    color: #aaa;
   }
   
   .menu-item:hover {
-    background: #f3f3f3;
+    background-color:  #ddd;
+    color: #000;
   }
   
   .menu-item.delete {
     color: #e74c3c;
   }
+
 
 
 
