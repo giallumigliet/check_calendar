@@ -231,7 +231,7 @@ export function updateProgress(calendarDays, progressBar, progressText) {
 }
 
 // -------- PANEL LISTENERS --------
-export function listenTaskButtons(taskBtn, closePanel, panel, overlay, calendarWrapper, buttonFooter, taskManager, taskForm, modifyTaskBtn) {
+export function listenTaskButtons(taskBtn, closePanel, panel, overlay, calendarWrapper, buttonFooter, taskManager, taskForm) {
   taskBtn.addEventListener("click", () => {
         calendarWrapper.classList.add("hidden-day-buttons");
         buttonFooter.classList.add("hidden-day-buttons");
@@ -245,8 +245,6 @@ export function listenTaskButtons(taskBtn, closePanel, panel, overlay, calendarW
         badges.forEach(badge => {
             badge.classList.add("hidden");
         });
-
-        modifyTaskBtn.classList.remove("modify-active");
     });
 
     closePanel.addEventListener("click", () => {
@@ -274,7 +272,7 @@ export function listenTaskButtons(taskBtn, closePanel, panel, overlay, calendarW
     });
 }
 
-export function listenPanelButtons(addTaskBtn, goBackBtn, modifyTaskBtn, taskManager, taskForm, hueContainer) {
+export function listenPanelButtons(addTaskBtn, goBackBtn, taskManager, taskForm, hueContainer) {
   addTaskBtn.addEventListener("click", () => {
     taskForm.classList.remove("hidden-task-buttons");
     taskManager.classList.add("hidden-task-buttons");
@@ -284,27 +282,12 @@ export function listenPanelButtons(addTaskBtn, goBackBtn, modifyTaskBtn, taskMan
     badges.forEach(badge => {
       badge.classList.add("hidden");
     });
-    modifyTaskBtn.classList.remove("modify-active");
   });
   
   goBackBtn.addEventListener("click", () => {
     taskForm.classList.add("hidden-task-buttons");
     taskManager.classList.remove("hidden-task-buttons");
     hueContainer.classList.add("hidden-task-buttons");
-  });
-
-  
-  modifyTaskBtn.addEventListener("click", () => {
-      const badges = document.querySelectorAll(".delete-badge");
-
-      badges.forEach(badge => {
-          badge.classList.toggle("hidden");
-      });
-
-      modifyTaskBtn.classList.toggle("modify-active");
-      
-      taskManager.classList.remove("hidden-task-buttons");
-      taskForm.classList.add("hidden-task-buttons");
   });
 }
 
@@ -337,6 +320,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
