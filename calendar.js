@@ -109,21 +109,70 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
   tasks.forEach(task => {
     const { id: taskId, name, color: hue } = task;
 
+
+    ////
     const newTask = document.createElement("div");
     newTask.classList.add("task-item");
     newTask.style.backgroundColor = `hsl(${hue}, 90%, 45%)`;
-    newTask.textContent = name;
-
-    const deleteBadge = document.createElement("div");
-    deleteBadge.classList.add("delete-badge", "hidden");
-    deleteBadge.textContent = "━";
-    newTask.appendChild(deleteBadge);
+    
+    const taskName = document.createElement("span");
+    taskName.classList.add("task-name");
+    taskName.textContent = name;
+    
+    const actions = document.createElement("div");
+    actions.classList.add("task-actions");
+    
+    const moreBtn = document.createElement("div");
+    moreBtn.classList.add("task-more");
+    moreBtn.textContent = "⋮";
+    
+    const menu = document.createElement("div");
+    menu.classList.add("task-menu");
+    
+    const editItem = document.createElement("div");
+    editItem.classList.add("menu-item", "edit");
+    editItem.textContent = "Edit";
+    
+    const deleteItem = document.createElement("div");
+    deleteItem.classList.add("menu-item", "delete");
+    deleteItem.textContent = "Delete";
+    
+    menu.appendChild(editItem);
+    menu.appendChild(deleteItem);
+    actions.appendChild(moreBtn);
+    actions.appendChild(menu);
+    
+    newTask.appendChild(taskName);
+    newTask.appendChild(actions);
     taskList.appendChild(newTask);
+    ////
+
+    moreBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+    
+      // chiudi altri menu aperti
+      document.querySelectorAll(".task-menu").forEach(m => {
+        if (m !== menu) m.classList.remove("show");
+      });
+    
+      menu.classList.toggle("show");
+    });
+
+    document.addEventListener("click", () => {
+      document.querySelectorAll(".task-menu").forEach(m => {
+        m.classList.remove("show");
+      });
+    });
+
 
     // click su delete
-    deleteBadge.addEventListener("click", async e => {
+
+
+    deleteItem.addEventListener("click", async (e) => {
       e.stopPropagation();
-      if (!confirm("Press OK to delete the task.")) return;
+      menu.classList.remove("show");
+    
+      if (!confirm("Press OK to delete this task.")) return;
       try {
         const uid = auth.currentUser.uid;
         const occRef = collection(db, "users", uid, "tasks", taskId, "occurrences");
@@ -134,6 +183,7 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
         await deleteDoc(doc(db, "users", uid, "tasks", taskId));
       } catch(err) { console.error(err); }
       newTask.remove();
+
       const idx = tasks.findIndex(t => t.id === taskId);
       if (idx > -1) tasks.splice(idx, 1);
       if (currentTask.value === taskId) {
@@ -141,7 +191,24 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
         calendarTitle.textContent = "CHECK CALENDAR";
         calendarDays.querySelectorAll(".day").forEach(day => day.classList.remove("completed"));
       }
+    
     });
+
+
+    editItem.addEventListener("click", (e) => {
+      e.stopPropagation();
+      menu.classList.remove("show");
+    
+    });
+
+    
+
+
+
+
+
+
+    
 
     newTask.addEventListener("click", async () => {
       currentTask.value = taskId;
@@ -240,11 +307,6 @@ export function listenTaskButtons(taskBtn, closePanel, panel, overlay, calendarW
 
         taskManager.classList.remove("hidden-task-buttons");
         taskForm.classList.add("hidden-task-buttons");
-
-        const badges = document.querySelectorAll(".delete-badge");
-        badges.forEach(badge => {
-            badge.classList.add("hidden");
-        });
     });
 
     closePanel.addEventListener("click", () => {
@@ -277,11 +339,6 @@ export function listenPanelButtons(addTaskBtn, goBackBtn, taskManager, taskForm,
     taskForm.classList.remove("hidden-task-buttons");
     taskManager.classList.add("hidden-task-buttons");
     hueContainer.classList.remove("hidden-task-buttons");
-
-    const badges = document.querySelectorAll(".delete-badge");
-    badges.forEach(badge => {
-      badge.classList.add("hidden");
-    });
   });
   
   goBackBtn.addEventListener("click", () => {
@@ -320,6 +377,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
