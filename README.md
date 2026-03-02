@@ -16,7 +16,7 @@ Login: *Google Auth*.
 - Modify your tasks (`Modify`).
 
 ✅ **Check the day**
-- A ** progress bar** fills up as you check your days.  
+- A **progress bar** fills up as you check your days.  
 - A text indicator shows how many times you completed your task.
 
 - ✅ **Google Login**
