@@ -47,7 +47,7 @@
 
 
   neutral-button {
-      background-color:  rgb(223, 223, 223);
+      background-color:  #fff;
       border: 3px solid var(--main-color-dark);
       color: var(--main-color-dark);
       padding: 12px 20px;
@@ -60,7 +60,7 @@
   }
 
   neutral-button:hover {
-      background-color:  rgb(159, 159, 159);
+      background-color:  #e8e8e8;
       border: 3px solid var(--main-color-dark);
       color: var(--main-color-dark);
   }
@@ -486,6 +486,7 @@
     
     font-weight: bold;
     color: white;
+    gap: 10px;
   }
 
   .task-item.menu-open {
@@ -557,6 +558,7 @@
   .menu-item.delete {
     color: #e74c3c;
   }
+
 
 
 
