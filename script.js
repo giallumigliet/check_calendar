@@ -35,6 +35,7 @@ const overlay = document.getElementById("overlay");
 const closePanel = document.getElementById("close-panel");
 
 const addTaskBtn = document.getElementById("addTask-btn");
+const editTaskBtn = document.getElementById("edit-task");
 const saveTaskBtn = document.getElementById("save-task");
 const goBackBtn = document.getElementById("goback-task");
 const buttonFooter = document.getElementById("button-footer");
@@ -88,7 +89,7 @@ onAuthStateChanged(auth, user => {
     const tasksRef = collection(db, "users", user.uid, "tasks");
     onSnapshot(tasksRef, snapshot => {
       tasks = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      createTaskList(taskList, tasks, currentTask, calendarDays, calendarTitle, date, progressBar, progressText, calendarWrapper, buttonFooter, panel, overlay, taskForm, taskManager, hueContainer);
+      createTaskList(taskList, tasks, currentTask, calendarDays, calendarTitle, date, progressBar, progressText, calendarWrapper, buttonFooter, panel, overlay, taskForm, taskManager, hueContainer, editTaskBtn, saveTaskBtn);
       if(currentTask.value){
         markOccurrences(currentTask.value, calendarDays, date);
         updateProgress(calendarDays, progressBar, progressText);
@@ -116,6 +117,7 @@ listenTaskButtons(taskBtn, closePanel, panel, overlay, calendarWrapper, buttonFo
 listenPanelButtons(addTaskBtn, goBackBtn, taskManager, taskForm, hueContainer);
 listenHue(huePreview, hueContainer, taskHueInput);
 listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks, taskList, currentTask, calendarDays, date, progressBar, progressText);
+
 
 
 
