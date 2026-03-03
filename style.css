@@ -530,13 +530,14 @@
     opacity: 0;
     transform-origin: top right;
     transition: all 0.2s ease;
-    z-index: 2000; 
+    z-index: 1; 
   }
   
   /* quando attivo */
   .task-menu.show {
     transform: scale(1);
     opacity: 1;
+    z-index: 2000;
   }
   
   .menu-item {
@@ -554,6 +555,7 @@
   .menu-item.delete {
     color: #e74c3c;
   }
+
 
 
 
