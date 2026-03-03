@@ -354,7 +354,7 @@
   #task-list {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 5px;
   }
 
 
@@ -565,6 +565,7 @@
   .menu-item.delete {
     color: #e74c3c;
   }
+
 
 
 
