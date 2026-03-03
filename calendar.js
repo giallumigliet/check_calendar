@@ -104,7 +104,7 @@ export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePrev
   });
 }
 
-export function createTaskList(taskList, tasks, currentTask, calendarDays, calendarTitle, date, progressBar, progressText, calendarWrapper, buttonFooter, panel, overlay) {
+export function createTaskList(taskList, tasks, currentTask, calendarDays, calendarTitle, date, progressBar, progressText, calendarWrapper, buttonFooter, panel, overlay, taskForm, taskManager, hueContainer) {
   taskList.innerHTML = "";
   tasks.forEach(task => {
     const { id: taskId, name, color: hue } = task;
@@ -380,6 +380,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
