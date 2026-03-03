@@ -486,7 +486,6 @@
     
     font-weight: bold;
     color: white;
-    z-index: 1;
   }
 
   .task-item.menu-open {
@@ -555,6 +554,7 @@
   .menu-item.delete {
     color: #e74c3c;
   }
+
 
 
 
