@@ -104,7 +104,7 @@ export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePrev
   });
 }
 
-export function createTaskList(taskList, tasks, currentTask, calendarDays, calendarTitle, date, progressBar, progressText, calendarWrapper, buttonFooter, panel, overlay, taskForm, taskManager, hueContainer) {
+export function createTaskList(taskList, tasks, currentTask, calendarDays, calendarTitle, date, progressBar, progressText, calendarWrapper, buttonFooter, panel, overlay, taskForm, taskManager, hueContainer, editTaskBtn, saveTaskBtn) {
   taskList.innerHTML = "";
   tasks.forEach(task => {
     const { id: taskId, name, color: hue } = task;
@@ -202,11 +202,9 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
       taskForm.classList.remove("hidden-task-buttons");
       taskManager.classList.add("hidden-task-buttons");
       hueContainer.classList.remove("hidden-task-buttons");
+      saveTaskBtn.classList.add("hidden-task-buttons");
+      editTaskBtn.classList.remove("hidden-task-buttons");
     });
-
-    
-
-
 
 
 
@@ -301,7 +299,7 @@ export function updateProgress(calendarDays, progressBar, progressText) {
 }
 
 // -------- PANEL LISTENERS --------
-export function listenTaskButtons(taskBtn, closePanel, panel, overlay, calendarWrapper, buttonFooter, taskManager, taskForm) {
+export function listenTaskButtons(taskBtn, closePanel, panel, overlay, calendarWrapper, buttonFooter, taskManager, taskForm, editTaskBtn, saveTaskBtn) {
   taskBtn.addEventListener("click", () => {
         calendarWrapper.classList.add("hidden-day-buttons");
         buttonFooter.classList.add("hidden-day-buttons");
@@ -310,6 +308,9 @@ export function listenTaskButtons(taskBtn, closePanel, panel, overlay, calendarW
 
         taskManager.classList.remove("hidden-task-buttons");
         taskForm.classList.add("hidden-task-buttons");
+        
+        editTaskBtn.classList.add("hidden-task-buttons");
+        saveTaskBtn.classList.remove("hidden-task-buttons");
     });
 
     closePanel.addEventListener("click", () => {
@@ -380,6 +381,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
