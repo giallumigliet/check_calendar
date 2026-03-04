@@ -86,6 +86,7 @@ export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePrev
 
     if (!name) {
       alert("Insert a name to create the task!");
+      taskNameInput.focus();
       return;
     }
 
@@ -121,6 +122,7 @@ export function listenEditTask(editTaskBtn, taskNameInput, taskHueInput, huePrev
     
     if (!name) {
       alert("Insert a name to save the task!");
+      taskNameInput.focus();
       return;
     }
 
@@ -269,7 +271,10 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
       
       saveTaskBtn.classList.add("hidden-task-buttons");
       editTaskBtn.classList.remove("hidden-task-buttons");
-      taskNameInput.value = newTask.querySelector(".task-name").textContent;
+      requestAnimationFrame(() => {
+        taskNameInput.value = newTask.querySelector(".task-name").textContent;
+        taskNameInput.focus();
+      });
       
       exitEditMode(taskList);
       enterEditMode(taskList, newTask);
@@ -459,6 +464,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
