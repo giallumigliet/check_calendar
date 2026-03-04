@@ -331,6 +331,7 @@
   #addTask-btn {
     font-size: 30px;
     margin-top: 8px;
+    padding: 8px 20px;
   }
 
   .color-picker-row {
@@ -566,6 +567,7 @@
   .menu-item.delete {
     color: #e74c3c;
   }
+
 
 
 
