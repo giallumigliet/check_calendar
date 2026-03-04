@@ -373,7 +373,7 @@
     flex-direction: column;
     gap: 5px; 
     justify-content: center;
-    margin-bottom: 0px;
+    margin: 0px;
   }
 
   /* Hue slider */
@@ -566,6 +566,7 @@
   .menu-item.delete {
     color: #e74c3c;
   }
+
 
 
 
