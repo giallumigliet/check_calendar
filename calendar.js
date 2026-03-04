@@ -115,7 +115,7 @@ export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePrev
 
 
 
-export function listenEditTask(editTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, taskList, calendarTitle, currentTask) {
+export function listenEditTask(editTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, taskList) {
   editTaskBtn.addEventListener("click", async () => {
     const name = taskNameInput.value.trim();
     const hue = taskHueInput.value;
@@ -140,10 +140,7 @@ export function listenEditTask(editTaskBtn, taskNameInput, taskHueInput, huePrev
       return;
     }
     
-    if (editingTask.dataset.id === currentTask.value) {
-      document.documentElement.style.setProperty("--main-hue", hue);
-      calendarTitle.textContent = name;
-    }
+    
     taskNameInput.value = "";
     taskHueInput.value = 162;
     huePreview.style.backgroundColor = `hsl(162, 80%, 55%)`;
@@ -467,6 +464,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
