@@ -86,7 +86,6 @@ export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePrev
 
     if (!name) {
       alert("Insert a name to create the task!");
-      taskNameInput.focus();
       return;
     }
 
@@ -109,6 +108,34 @@ export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePrev
     taskManager.classList.remove("hidden-task-buttons");
   });
 }
+
+
+
+export function listenSaveTask(editTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks, taskList, currentTask, calendarDays, date) {
+  editTaskBtn.addEventListener("click", async () => {
+    const name = taskNameInput.value.trim();
+    const hue = taskHueInput.value;
+    
+    if (!name) {
+      alert("Insert a name to save the task!");
+      return;
+    }
+
+    //TODO: add name and color change to db
+    
+
+    taskNameInput.value = "";
+    taskHueInput.value = 162;
+    huePreview.style.backgroundColor = `hsl(162, 90%, 55%)`;
+    taskForm.classList.add("hidden-task-buttons");
+    taskManager.classList.remove("hidden-task-buttons");
+    exitEditMode(taskList);
+  });
+}
+
+
+
+
 
 
 export function enterEditMode(taskList, newTask) {
@@ -412,6 +439,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
