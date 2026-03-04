@@ -129,7 +129,7 @@ export function listenEditTask(editTaskBtn, taskNameInput, taskHueInput, huePrev
       const editingTask = taskList.querySelector(".task-item.editing");
       if (!editingTask) return;
       await updateDoc(
-        doc(db, "users", uid, "tasks", editingTask.value),
+        doc(db, "users", uid, "tasks", editingTask.dataset.id),
         { name: name, color: hue }
       );
 
@@ -174,6 +174,7 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
 
     ////
     const newTask = document.createElement("div");
+    newTask.dataset.id = taskId;
     newTask.classList.add("task-item");
     newTask.style.backgroundColor = `hsl(${hue}, 90%, 45%)`;
     
@@ -454,6 +455,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
