@@ -84,6 +84,12 @@ export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePrev
     const name = taskNameInput.value.trim();
     const hue = taskHueInput.value;
 
+    if (!name) {
+      alert("Insert a name to create the task!");
+      taskNameInput.focus();
+      return;
+    }
+
     try {
       const uid = auth.currentUser.uid;
       const docRef = await addDoc(
@@ -381,6 +387,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
