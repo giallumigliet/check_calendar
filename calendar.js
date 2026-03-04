@@ -364,7 +364,7 @@ export function updateProgress(calendarDays, progressBar, progressText) {
 }
 
 // -------- PANEL LISTENERS --------
-export function listenTaskButtons(taskBtn, closePanel, panel, overlay, calendarWrapper, buttonFooter, taskManager, taskForm, taskList) {
+export function listenTaskButtons(taskBtn, closePanel, panel, overlay, calendarWrapper, buttonFooter, taskManager, taskForm, taskList, taskNameInput, taskHueInput, huePreview) {
   taskBtn.addEventListener("click", () => {
         calendarWrapper.classList.add("hidden-day-buttons");
         buttonFooter.classList.add("hidden-day-buttons");
@@ -386,6 +386,9 @@ export function listenTaskButtons(taskBtn, closePanel, panel, overlay, calendarW
         })
 
         exitEditMode(taskList);
+      taskNameInput.value = "";
+      taskHueInput.value = 162;
+      huePreview.style.backgroundColor = `hsl(162, 90%, 55%)`;
 
     });
 
@@ -400,11 +403,14 @@ export function listenTaskButtons(taskBtn, closePanel, panel, overlay, calendarW
         })
 
         exitEditMode(taskList);
+        taskNameInput.value = "";
+        taskHueInput.value = 162;
+        huePreview.style.backgroundColor = `hsl(162, 90%, 55%)`;
 
     });
 }
 
-export function listenPanelButtons(addTaskBtn, goBackBtn, taskManager, taskForm, taskList, hueContainer, editTaskBtn, saveTaskBtn) {
+export function listenPanelButtons(addTaskBtn, goBackBtn, taskManager, taskForm, taskList, hueContainer, editTaskBtn, saveTaskBtn, taskNameInput, taskHueInput, huePreview) {
   addTaskBtn.addEventListener("click", () => {
     taskForm.classList.remove("hidden-task-buttons");
     taskManager.classList.add("hidden-task-buttons");
@@ -418,6 +424,9 @@ export function listenPanelButtons(addTaskBtn, goBackBtn, taskManager, taskForm,
     taskManager.classList.remove("hidden-task-buttons");
     hueContainer.classList.add("hidden-task-buttons");
     exitEditMode(taskList);
+    taskNameInput.value = "";
+    taskHueInput.value = 162;
+    huePreview.style.backgroundColor = `hsl(162, 90%, 55%)`;
   });
 }
 
@@ -455,6 +464,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
