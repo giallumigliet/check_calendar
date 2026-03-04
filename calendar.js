@@ -107,7 +107,7 @@ export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePrev
 
     taskNameInput.value = "";
     taskHueInput.value = 162;
-    huePreview.style.backgroundColor = `hsl(162, 90%, 55%)`;
+    huePreview.style.backgroundColor = `hsl(162, 80%, 55%)`;
     taskForm.classList.add("hidden-task-buttons");
     taskManager.classList.remove("hidden-task-buttons");
   });
@@ -115,7 +115,7 @@ export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePrev
 
 
 
-export function listenEditTask(editTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, taskList) {
+export function listenEditTask(editTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, taskList, calendarTitle, currentTask) {
   editTaskBtn.addEventListener("click", async () => {
     const name = taskNameInput.value.trim();
     const hue = taskHueInput.value;
@@ -140,10 +140,13 @@ export function listenEditTask(editTaskBtn, taskNameInput, taskHueInput, huePrev
       return;
     }
     
-
+    if (editingTask.dataset.id === currentTask.value) {
+      document.documentElement.style.setProperty("--main-hue", hue);
+      calendarTitle.textContent = name;
+    }
     taskNameInput.value = "";
     taskHueInput.value = 162;
-    huePreview.style.backgroundColor = `hsl(162, 90%, 55%)`;
+    huePreview.style.backgroundColor = `hsl(162, 80%, 55%)`;
     taskForm.classList.add("hidden-task-buttons");
     taskManager.classList.remove("hidden-task-buttons");
     exitEditMode(taskList);
@@ -410,7 +413,7 @@ export function listenTaskButtons(taskBtn, closePanel, panel, overlay, calendarW
         exitEditMode(taskList);
         taskNameInput.value = "";
         taskHueInput.value = 162;
-        huePreview.style.backgroundColor = `hsl(162, 90%, 55%)`;
+        huePreview.style.backgroundColor = `hsl(162, 80%, 55%)`;
 
     });
 }
@@ -431,7 +434,7 @@ export function listenPanelButtons(addTaskBtn, goBackBtn, taskManager, taskForm,
     exitEditMode(taskList);
     taskNameInput.value = "";
     taskHueInput.value = 162;
-    huePreview.style.backgroundColor = `hsl(162, 90%, 55%)`;
+    huePreview.style.backgroundColor = `hsl(162, 80%, 55%)`;
   });
 }
 
@@ -442,7 +445,7 @@ export function listenHue(huePreview, hueContainer, taskHueInput, taskList) {
     });
 
     taskHueInput.addEventListener("input", () => {
-      huePreview.style.backgroundColor = `hsl(${taskHueInput.value}, 90%, 55%)`;
+      huePreview.style.backgroundColor = `hsl(${taskHueInput.value}, 80%, 55%)`;
     });
 }
 
@@ -464,6 +467,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
