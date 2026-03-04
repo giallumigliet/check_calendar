@@ -212,10 +212,6 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
       saveTaskBtn.classList.add("hidden-task-buttons");
       editTaskBtn.classList.remove("hidden-task-buttons");
     });
-
-
-
-
     
 
     newTask.addEventListener("click", async () => {
@@ -387,6 +383,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
