@@ -178,7 +178,7 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
     const newTask = document.createElement("div");
     newTask.dataset.id = taskId;
     newTask.classList.add("task-item");
-    newTask.style.backgroundColor = `hsl(${hue}, 90%, 45%)`;
+    newTask.style.backgroundColor = `hsl(${hue}, 80%, 55%)`;
     
     const taskName = document.createElement("span");
     taskName.classList.add("task-name");
@@ -393,7 +393,7 @@ export function listenTaskButtons(taskBtn, closePanel, panel, overlay, calendarW
         exitEditMode(taskList);
       taskNameInput.value = "";
       taskHueInput.value = 162;
-      huePreview.style.backgroundColor = `hsl(162, 90%, 55%)`;
+      huePreview.style.backgroundColor = `hsl(162, 80%, 55%)`;
 
     });
 
@@ -464,6 +464,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
