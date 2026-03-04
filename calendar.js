@@ -379,13 +379,18 @@ export function listenPanelButtons(addTaskBtn, goBackBtn, taskManager, taskForm,
 }
 
 
-export function listenHue(huePreview, hueContainer, taskHueInput) {
+export function listenHue(huePreview, hueContainer, taskHueInput, taskList) {
     huePreview.addEventListener("click", () => {
       hueContainer.classList.toggle("hidden-task-buttons");
     });
 
     taskHueInput.addEventListener("input", () => {
       huePreview.style.backgroundColor = `hsl(${taskHueInput.value}, 90%, 55%)`;
+      
+      const editingTask = taskList.querySelector(".task-item.editing");
+      if (editingTask) {
+        editingTask.style.backgroundColor = `hsl(${taskHueInput.value}, 70%, 55%)`;
+      }
     });
 }
 
@@ -407,6 +412,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
