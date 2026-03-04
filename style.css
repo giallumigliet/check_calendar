@@ -57,6 +57,7 @@
       cursor: pointer;
       margin: 8px;
       transition: background 0.3s;
+      display: inline-block;
   }
 
   neutral-button:hover {
@@ -565,6 +566,7 @@
   .menu-item.delete {
     color: #e74c3c;
   }
+
 
 
 
