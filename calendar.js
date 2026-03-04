@@ -110,6 +110,20 @@ export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePrev
   });
 }
 
+
+export function enterEditMode(taskList, newTask) {
+  taskList.classList.add("editing-mode");
+  newTask.classList.add("editing");
+}
+
+export function exitEditMode(taskList) {
+  taskList.classList.remove("editing-mode");
+  taskList.querySelectorAll(".task-item").forEach(task => {
+    task.classList.remove("editing");
+  });
+}
+
+
 export function createTaskList(taskList, tasks, currentTask, calendarDays, calendarTitle, date, progressBar, progressText, calendarWrapper, buttonFooter, panel, overlay, taskForm, taskManager, hueContainer, editTaskBtn, saveTaskBtn) {
   taskList.innerHTML = "";
   tasks.forEach(task => {
@@ -212,6 +226,10 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
       
       saveTaskBtn.classList.add("hidden-task-buttons");
       editTaskBtn.classList.remove("hidden-task-buttons");
+
+      
+      exitEditMode(taskList);
+      enterEditMode(taskList, newTask);
     });
     
 
@@ -324,6 +342,8 @@ export function listenTaskButtons(taskBtn, closePanel, panel, overlay, calendarW
           document.documentElement.style.backgroundColor = "#ffffff";
         })
 
+        exitEditMode(taskList);
+
     });
 
     overlay.addEventListener("click", () => {
@@ -336,10 +356,12 @@ export function listenTaskButtons(taskBtn, closePanel, panel, overlay, calendarW
           document.documentElement.style.backgroundColor = "#ffffff";
         })
 
+        exitEditMode(taskList);
+
     });
 }
 
-export function listenPanelButtons(addTaskBtn, goBackBtn, taskManager, taskForm, hueContainer, editTaskBtn, saveTaskBtn) {
+export function listenPanelButtons(addTaskBtn, goBackBtn, taskManager, taskForm, taskList, hueContainer, editTaskBtn, saveTaskBtn) {
   addTaskBtn.addEventListener("click", () => {
     taskForm.classList.remove("hidden-task-buttons");
     taskManager.classList.add("hidden-task-buttons");
@@ -352,6 +374,7 @@ export function listenPanelButtons(addTaskBtn, goBackBtn, taskManager, taskForm,
     taskForm.classList.add("hidden-task-buttons");
     taskManager.classList.remove("hidden-task-buttons");
     hueContainer.classList.add("hidden-task-buttons");
+    exitEditMode(taskList);
   });
 }
 
@@ -384,6 +407,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
