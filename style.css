@@ -362,11 +362,13 @@
   .editing-mode .task-item {
     opacity: 0.25;
     transform: scale(0.95);
+    pointer-events: none;
   }
   
   .editing-mode .task-item.editing {
     opacity: 1;
     transform: scale(1.00);
+    pointer-events: auto;
   }
 
 
@@ -506,6 +508,7 @@
     
     font-weight: bold;
     color: white;
+    pointer-events: auto;
   }
 
   .task-item.menu-open {
@@ -577,6 +580,7 @@
   .menu-item.delete {
     color: #e74c3c;
   }
+
 
 
 
