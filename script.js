@@ -71,11 +71,23 @@ const provider = new GoogleAuthProvider();
 loginBtn.addEventListener("click", async () => {
   try { await signInWithPopup(auth, provider); } catch(err) { console.error(err); }
 });
+
 changeAccountBtn.addEventListener("click", async () => {
   try { await signOut(auth); await signInWithPopup(auth, provider); } catch(err){ console.error(err); }
   accountPanel.classList.add("hidden-task-buttons");
+  currentTask.value = "";
+  calendarTitle.textContent = "CHECK CALENDAR";
+  calendarDays.querySelectorAll(".day").forEach(day => day.classList.remove("completed"));
 });
-logoutBtn.addEventListener("click", async () => { await signOut(auth); accountPanel.classList.add("hidden-task-buttons"); });
+
+logoutBtn.addEventListener("click", async () => { 
+  await signOut(auth); 
+  accountPanel.classList.add("hidden-task-buttons"); 
+  currentTask.value = "";
+  calendarTitle.textContent = "CHECK CALENDAR";
+  calendarDays.querySelectorAll(".day").forEach(day => day.classList.remove("completed"));
+});
+
 profileBtn.addEventListener("click", e => { e.stopPropagation(); accountPanel.classList.toggle("hidden-task-buttons"); });
 document.addEventListener("click", e => { if (!accountPanel.contains(e.target) && !profileBtn.contains(e.target)) accountPanel.classList.add("hidden-task-buttons"); });
 
@@ -117,6 +129,7 @@ listenTaskButtons(taskBtn, closePanel, panel, overlay, calendarWrapper, buttonFo
 listenPanelButtons(addTaskBtn, goBackBtn, taskManager, taskForm, hueContainer);
 listenHue(huePreview, hueContainer, taskHueInput);
 listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks, taskList, currentTask, calendarDays, date, progressBar, progressText);
+
 
 
 
