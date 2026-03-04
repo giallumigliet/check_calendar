@@ -366,7 +366,6 @@
   
   .editing-mode .task-item.editing {
     opacity: 1;
-    transform: scale(1.02);
   }
 
 
@@ -577,6 +576,7 @@
   .menu-item.delete {
     color: #e74c3c;
   }
+
 
 
 
