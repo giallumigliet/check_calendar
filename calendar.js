@@ -1,5 +1,5 @@
 import { db, auth } from "./firebase.js";
-import { doc, setDoc, deleteDoc, addDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { doc, setDoc, deleteDoc, addDoc, updateDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 // -------- CALENDAR DRAW --------
 export async function createCalendar(date, monthYear, calendarDays, currentTask, progressBar, progressText) {
@@ -97,7 +97,10 @@ export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePrev
       );
       const taskId = docRef.id;
       currentTask.value = taskId;
-    } catch(err) { console.error(err); return; }
+    } catch(err) { 
+      console.error(err); 
+      return; 
+    }
 
     
 
@@ -111,7 +114,7 @@ export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePrev
 
 
 
-export function listenEditTask(editTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks, taskList, currentTask, calendarDays, date) {
+export function listenEditTask(editTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, taskList) {
   editTaskBtn.addEventListener("click", async () => {
     const name = taskNameInput.value.trim();
     const hue = taskHueInput.value;
@@ -121,7 +124,19 @@ export function listenEditTask(editTaskBtn, taskNameInput, taskHueInput, huePrev
       return;
     }
 
-    //TODO: add name and color change to db
+    try {
+      const uid = auth.currentUser.uid;
+      const editingTask = taskList.querySelector(".task-item.editing");
+      if (!editingTask) return;
+      await updateDoc(
+        doc(db, "users", uid, "tasks", editingTask.value),
+        { name: name, color: hue }
+      );
+
+    } catch (err) {
+      console.error(err);
+      return;
+    }
     
 
     taskNameInput.value = "";
@@ -439,6 +454,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
