@@ -306,7 +306,7 @@ export function updateProgress(calendarDays, progressBar, progressText) {
 }
 
 // -------- PANEL LISTENERS --------
-export function listenTaskButtons(taskBtn, closePanel, panel, overlay, calendarWrapper, buttonFooter, taskManager, taskForm, editTaskBtn, saveTaskBtn) {
+export function listenTaskButtons(taskBtn, closePanel, panel, overlay, calendarWrapper, buttonFooter, taskManager, taskForm) {
   taskBtn.addEventListener("click", () => {
         calendarWrapper.classList.add("hidden-day-buttons");
         buttonFooter.classList.add("hidden-day-buttons");
@@ -315,9 +315,6 @@ export function listenTaskButtons(taskBtn, closePanel, panel, overlay, calendarW
 
         taskManager.classList.remove("hidden-task-buttons");
         taskForm.classList.add("hidden-task-buttons");
-        
-        editTaskBtn.classList.add("hidden-task-buttons");
-        saveTaskBtn.classList.remove("hidden-task-buttons");
     });
 
     closePanel.addEventListener("click", () => {
@@ -345,11 +342,13 @@ export function listenTaskButtons(taskBtn, closePanel, panel, overlay, calendarW
     });
 }
 
-export function listenPanelButtons(addTaskBtn, goBackBtn, taskManager, taskForm, hueContainer) {
+export function listenPanelButtons(addTaskBtn, goBackBtn, taskManager, taskForm, hueContainer, editTaskBtn, saveTaskBtn) {
   addTaskBtn.addEventListener("click", () => {
     taskForm.classList.remove("hidden-task-buttons");
     taskManager.classList.add("hidden-task-buttons");
     hueContainer.classList.remove("hidden-task-buttons");
+    editTaskBtn.classList.add("hidden-task-buttons");
+    saveTaskBtn.classList.remove("hidden-task-buttons");
   });
   
   goBackBtn.addEventListener("click", () => {
@@ -388,6 +387,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
