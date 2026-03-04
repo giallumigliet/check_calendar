@@ -359,6 +359,15 @@
     gap: 5px;
   }
 
+  .editing-mode .task-item {
+    opacity: 0.3;
+  }
+  
+  .editing-mode .task-item.editing {
+    opacity: 1;
+    transform: scale(1.03);
+  }
+
 
   #task-name {
     font-size: 16px;
@@ -567,6 +576,7 @@
   .menu-item.delete {
     color: #e74c3c;
   }
+
 
 
 
