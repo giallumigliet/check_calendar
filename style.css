@@ -370,7 +370,7 @@
   #task-form {
     display: flex;
     flex-direction: column;
-    gap: 25px; 
+    gap: 5px; 
     align-items: center;
     margin-bottom: 10px;
   }
@@ -565,6 +565,7 @@
   .menu-item.delete {
     color: #e74c3c;
   }
+
 
 
 
