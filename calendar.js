@@ -438,11 +438,6 @@ export function listenHue(huePreview, hueContainer, taskHueInput, taskList) {
 
     taskHueInput.addEventListener("input", () => {
       huePreview.style.backgroundColor = `hsl(${taskHueInput.value}, 90%, 55%)`;
-      
-      const editingTask = taskList.querySelector(".task-item.editing");
-      if (editingTask) {
-        editingTask.style.backgroundColor = `hsl(${taskHueInput.value}, 70%, 55%)`;
-      }
     });
 }
 
@@ -464,6 +459,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
