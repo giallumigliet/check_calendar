@@ -77,6 +77,7 @@ changeAccountBtn.addEventListener("click", async () => {
   accountPanel.classList.add("hidden-task-buttons");
   currentTask.value = "";
   calendarTitle.textContent = "CHECK CALENDAR";
+  document.documentElement.style.setProperty("--main-hue", 150);
   calendarDays.querySelectorAll(".day").forEach(day => day.classList.remove("completed"));
 });
 
@@ -130,6 +131,7 @@ listenTaskButtons(taskBtn, closePanel, panel, overlay, calendarWrapper, buttonFo
 listenPanelButtons(addTaskBtn, goBackBtn, taskManager, taskForm, hueContainer);
 listenHue(huePreview, hueContainer, taskHueInput);
 listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks, taskList, currentTask, calendarDays, date, progressBar, progressText);
+
 
 
 
