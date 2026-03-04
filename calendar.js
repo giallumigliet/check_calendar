@@ -166,7 +166,7 @@ export function exitEditMode(taskList) {
 }
 
 
-export function createTaskList(taskList, tasks, currentTask, calendarDays, calendarTitle, date, progressBar, progressText, calendarWrapper, buttonFooter, panel, overlay, taskForm, taskManager, hueContainer, editTaskBtn, saveTaskBtn) {
+export function createTaskList(taskList, tasks, currentTask, calendarDays, calendarTitle, date, progressBar, progressText, calendarWrapper, buttonFooter, panel, overlay, taskForm, taskManager, hueContainer, editTaskBtn, saveTaskBtn, taskNameInput) {
   taskList.innerHTML = "";
   tasks.forEach(task => {
     const { id: taskId, name, color: hue } = task;
@@ -269,7 +269,7 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
       
       saveTaskBtn.classList.add("hidden-task-buttons");
       editTaskBtn.classList.remove("hidden-task-buttons");
-
+      taskNameInput.value = newTask.querySelector(".task-name").textContent;
       
       exitEditMode(taskList);
       enterEditMode(taskList, newTask);
@@ -459,6 +459,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
