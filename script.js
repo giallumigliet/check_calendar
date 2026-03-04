@@ -10,7 +10,7 @@ import { collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12
 import {
   createCalendar, listenClickCalendar, listenMonthCalendar, listenTaskButtons,
   listenHue, listenPanelButtons, listenSaveTask, createTaskList, markOccurrences,
-  updateProgress
+  updateProgress, enterEditMode, exitEditMode
 } from "./calendar.js";
 
 // ---- ELEMENTS ----
@@ -131,6 +131,7 @@ listenTaskButtons(taskBtn, closePanel, panel, overlay, calendarWrapper, buttonFo
 listenPanelButtons(addTaskBtn, goBackBtn, taskManager, taskForm, hueContainer, editTaskBtn, saveTaskBtn);
 listenHue(huePreview, hueContainer, taskHueInput);
 listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks, taskList, currentTask, calendarDays, date, progressBar, progressText);
+
 
 
 
