@@ -209,6 +209,7 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
       taskForm.classList.remove("hidden-task-buttons");
       taskManager.classList.add("hidden-task-buttons");
       hueContainer.classList.remove("hidden-task-buttons");
+      
       saveTaskBtn.classList.add("hidden-task-buttons");
       editTaskBtn.classList.remove("hidden-task-buttons");
     });
@@ -383,6 +384,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
