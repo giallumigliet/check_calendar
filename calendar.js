@@ -273,6 +273,7 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
       editTaskBtn.classList.remove("hidden-task-buttons");
 
       taskHueInput.value = hue;
+      huePreview.style.backgroundColor = `hsl(${taskHueInput.value}, 80%, 55%)`;
       requestAnimationFrame(() => {
         taskNameInput.value = newTask.querySelector(".task-name").textContent;
         taskNameInput.focus();
@@ -466,6 +467,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
