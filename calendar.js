@@ -147,8 +147,11 @@ export function listenEditTask(editTaskBtn, taskNameInput, taskHueInput, huePrev
     taskForm.classList.add("hidden-task-buttons");
     taskManager.classList.remove("hidden-task-buttons");
     exitEditMode(taskList);
-    calendarTitle.textContent = name;
-    document.documentElement.style.setProperty("--main-hue", hue);
+    
+    if (calendarTitle.textContent !== "CHECK CALENDAR") {
+      calendarTitle.textContent = name;
+      document.documentElement.style.setProperty("--main-hue", hue);
+    }
   });
 }
 
@@ -469,6 +472,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
