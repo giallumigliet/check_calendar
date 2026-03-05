@@ -190,10 +190,8 @@
 
 
   .today {
-      background-color: #a5ffd8;
       font-weight: bold;
       font-size: 20px;
-      border: 2px solid #a2a1a1;
   }
 
 
@@ -585,6 +583,7 @@
   .menu-item.delete {
     color: #e74c3c;
   }
+
 
 
 
