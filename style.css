@@ -3,6 +3,9 @@
     --main-color: hsl(var(--main-hue), 70%, 55%);
     --main-color-dark: hsl(var(--main-hue), 70%, 40%);
     --main-color-light: hsl(var(--main-hue), 70%, 75%);
+    
+    --preview-hue: 150;
+    --preview-color: hsl(var(--preview-hue), 80%, 55%);
   }
 
   html {
@@ -369,6 +372,10 @@
     pointer-events: none;
   }
 
+  .editing-mode .task-item.editing {
+    background: var(--preview-color);
+  }
+
   #task-name {
     font-size: 16px;
     flex: 1;      
@@ -577,6 +584,7 @@
   .menu-item.delete {
     color: #e74c3c;
   }
+
 
 
 
