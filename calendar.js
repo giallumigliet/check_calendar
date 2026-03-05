@@ -140,13 +140,12 @@ export function listenEditTask(editTaskBtn, taskNameInput, taskHueInput, huePrev
       return;
     }
     
-    
+    exitEditMode(taskList);
+    taskForm.classList.add("hidden-task-buttons");
+    taskManager.classList.remove("hidden-task-buttons");
     taskNameInput.value = "";
     taskHueInput.value = 162;
     huePreview.style.backgroundColor = `hsl(162, 80%, 55%)`;
-    taskForm.classList.add("hidden-task-buttons");
-    taskManager.classList.remove("hidden-task-buttons");
-    exitEditMode(taskList);
     
     if (calendarTitle.textContent !== "CHECK CALENDAR") {
       calendarTitle.textContent = name;
@@ -451,6 +450,7 @@ export function listenHue(huePreview, hueContainer, taskHueInput, taskList) {
 
     taskHueInput.addEventListener("input", () => {
       huePreview.style.backgroundColor = `hsl(${taskHueInput.value}, 80%, 55%)`;
+      document.documentElement.style.setProperty("--preview-hue", taskHueInput.value);
     });
 }
 
@@ -472,6 +472,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
