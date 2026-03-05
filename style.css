@@ -363,6 +363,9 @@
   .editing-mode .task-item:not(.editing) {
     opacity: 0.25;
     transform: scale(0.95);
+  }
+
+  .editing-mode .task-item {
     pointer-events: none;
   }
 
@@ -574,6 +577,7 @@
   .menu-item.delete {
     color: #e74c3c;
   }
+
 
 
 
