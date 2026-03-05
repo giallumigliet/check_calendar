@@ -115,7 +115,7 @@ export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePrev
 
 
 
-export function listenEditTask(editTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, taskList) {
+export function listenEditTask(editTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, taskList, calendarTitle) {
   editTaskBtn.addEventListener("click", async () => {
     const name = taskNameInput.value.trim();
     const hue = taskHueInput.value;
@@ -147,6 +147,8 @@ export function listenEditTask(editTaskBtn, taskNameInput, taskHueInput, huePrev
     taskForm.classList.add("hidden-task-buttons");
     taskManager.classList.remove("hidden-task-buttons");
     exitEditMode(taskList);
+    calendarTitle.textContent = name;
+    document.documentElement.style.setProperty("--main-hue", hue);
   });
 }
 
@@ -467,6 +469,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
