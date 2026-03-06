@@ -23,6 +23,7 @@ const dayActions = document.getElementById("day-actions");
 const addBtn = document.getElementById("add-btn");
 const cancelBtn = document.getElementById("cancel-btn");
 const taskBtn = document.getElementById("task-btn");
+const statsBtn = document.getElementById("stats-btn");
 
 const progressBar = document.getElementById("progressBar");
 const progressText = document.getElementById("progressText");
@@ -31,8 +32,10 @@ const prevMonthBtn = document.getElementById("prevMonth");
 const nextMonthBtn = document.getElementById("nextMonth");
 
 const panel = document.getElementById("floating-panel");
+const statsPanel = document.getElementById("stats-floating-panel");
 const overlay = document.getElementById("overlay");
 const closePanel = document.getElementById("close-panel");
+const closeStatsPanel = document.getElementById("close-stats-panel");
 
 const addTaskBtn = document.getElementById("addTask-btn");
 const editTaskBtn = document.getElementById("edit-task");
@@ -127,39 +130,11 @@ onAuthStateChanged(auth, user => {
 })();
 listenClickCalendar(addBtn, cancelBtn, dayActions, calendarDays, progressBar, progressText, currentTask, date);
 listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn, nextMonthBtn, progressBar, progressText, currentTask);
-listenTaskButtons(taskBtn, closePanel, panel, overlay, calendarWrapper, buttonFooter, taskManager, taskForm, taskList, taskNameInput, taskHueInput, huePreview);
+listenTaskButtons(taskBtn, statsBtn, closePanel, closeStatsPanel, panel, statsPanel, overlay, calendarWrapper, buttonFooter, taskManager, taskForm, taskList, taskNameInput, taskHueInput, huePreview);
 listenPanelButtons(addTaskBtn, goBackBtn, taskManager, taskForm, taskList, hueContainer, editTaskBtn, saveTaskBtn, taskNameInput, taskHueInput, huePreview);
 listenHue(huePreview, hueContainer, taskHueInput, taskList);
 listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks, taskList, currentTask, calendarDays, date);
 listenEditTask(editTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, taskList, calendarTitle);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
