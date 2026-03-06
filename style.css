@@ -191,7 +191,7 @@
 
   .today {
       font-weight: bold;
-      font-size: 20px;
+      font-size: 22px;
   }
 
 
@@ -588,17 +588,50 @@
 
 
 
+  #stats-floating-panel {
+    position: fixed;
+
+    left: 40px;
+    right: 40px;
+    top: 100px;
+
+    background: white;
+    border-radius: 57px;
+    border: 3px solid #e8e8e8;
+    box-shadow: 0 -5px 5px rgba(0,0,0,0.05);
+
+    display: flex;
+    flex-direction: column;
+
+    transform: translateY(1200%);
+    transition: transform 0.4s ease;
+
+    z-index: 1001;
+  }
+
+  #stats-floating-panel.active {
+    transform: translateY(0);
+  }
+
+  #stats-panel-content{
+    align-items: center;
+  }
+
+
+  .bar-chart{
+    width: 90%;
+    height: 350px; 
+    background: white;
+    border-radius: 57px;
+    border: 3px solid #e8e8e8;
+    box-shadow: 0 -5px 5px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
 
 
 
 
-
-
-
-
-
-
-
+  }
 
 
 
