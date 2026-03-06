@@ -377,7 +377,7 @@ export function updateProgress(calendarDays, progressBar, progressText) {
 }
 
 // -------- PANEL LISTENERS --------
-export function listenTaskButtons(taskBtn, closePanel, panel, overlay, calendarWrapper, buttonFooter, taskManager, taskForm, taskList, taskNameInput, taskHueInput, huePreview) {
+export function listenTaskButtons(taskBtn, statsBtn, closePanel, closeStatsPanel, panel, statsPanel, overlay, calendarWrapper, buttonFooter, taskManager, taskForm, taskList, taskNameInput, taskHueInput, huePreview) {
   taskBtn.addEventListener("click", () => {
         calendarWrapper.classList.add("hidden-day-buttons");
         buttonFooter.classList.add("hidden-day-buttons");
@@ -387,6 +387,14 @@ export function listenTaskButtons(taskBtn, closePanel, panel, overlay, calendarW
         taskManager.classList.remove("hidden-task-buttons");
         taskForm.classList.add("hidden-task-buttons");
     });
+
+    statsBtn.addEventListener("click", () => {
+        calendarWrapper.classList.add("hidden-day-buttons");
+        buttonFooter.classList.add("hidden-day-buttons");
+        statsPanel.classList.add("active");
+        overlay.classList.add("active");
+    });
+
 
     closePanel.addEventListener("click", () => {
         calendarWrapper.classList.remove("hidden-day-buttons");
@@ -405,10 +413,27 @@ export function listenTaskButtons(taskBtn, closePanel, panel, overlay, calendarW
 
     });
 
+
+    closeStatsPanel.addEventListener("click", () => {
+        calendarWrapper.classList.remove("hidden-day-buttons");
+        buttonFooter.classList.remove("hidden-day-buttons");
+        statsPanel.classList.remove("active");
+        overlay.classList.remove("active");
+        
+        requestAnimationFrame(() => {
+          document.documentElement.style.backgroundColor = "#ffffff";
+        })
+    });
+
+
+
+
+
     overlay.addEventListener("click", () => {
         calendarWrapper.classList.remove("hidden-day-buttons");
         buttonFooter.classList.remove("hidden-day-buttons");
         panel.classList.remove("active");
+        statsPanel.classList.remove("active");
         overlay.classList.remove("active");
 
         requestAnimationFrame(() => {
