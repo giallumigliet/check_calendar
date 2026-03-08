@@ -529,10 +529,6 @@
     color: white;
     pointer-events: auto;
   }
-
-  .task-item.menu-open {
-  
-  }
   
   .task-actions {
     position: relative;
@@ -561,7 +557,7 @@
   /* MENU */
   .task-menu {
     position: absolute;
-    top: 35px;
+    top: 30px;
     right: 0;
     width: auto;
     background: #fff;
@@ -584,6 +580,12 @@
     opacity: 1;
     z-index: 2000;
     pointer-events: auto;
+  }
+
+  .task-menu.above {
+    top: auto;
+    bottom: 30px;
+    transform-origin: bottom right;
   }
   
   .menu-item {
@@ -669,6 +671,7 @@
     background-color: var(--main-color-dark);
     transform: scale(1.1);
 }
+
 
 
 
