@@ -225,13 +225,6 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
       });
     
       menu.classList.toggle("show");
-    
-      if (menu.classList.contains("show")) {
-        const rect = moreBtn.getBoundingClientRect();
-        menu.style.position = "fixed";
-        menu.style.top = rect.bottom + "px";
-        menu.style.left = rect.right - menu.offsetWidth + "px";  
-      }
     });
     
     document.addEventListener("click", (e) => {
@@ -505,6 +498,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
