@@ -113,8 +113,6 @@ onAuthStateChanged(auth, user => {
       if(currentTask.value){
         markOccurrences(currentTask.value, calendarDays, date);
         updateProgress(calendarDays, progressBar, progressText);
-      } else {
-        panel.classList.remove("hidden-task-buttons");
       }
     });
 
@@ -144,6 +142,7 @@ listenPanelButtons(addTaskBtn, goBackBtn, taskManager, taskForm, taskList, hueCo
 listenHue(huePreview, hueContainer, taskHueInput, taskList);
 listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks, taskList, currentTask, calendarDays, date);
 listenEditTask(editTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, taskList, calendarTitle);
+
 
 
 
