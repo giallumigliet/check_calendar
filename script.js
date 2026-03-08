@@ -115,7 +115,7 @@ onAuthStateChanged(auth, user => {
     const tasksRef = collection(db, "users", user.uid, "tasks");
     onSnapshot(tasksRef, snapshot => {
       tasks = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      createTaskList(taskList, tasks, currentTask, calendarDays, calendarTitle, date, progressBar, progressText, calendarWrapper, buttonFooter, panel, overlay, taskForm, taskManager, hueContainer, huePreview, editTaskBtn, saveTaskBtn, taskHueInput, taskNameInput, chartContainer);
+      createTaskList(taskList, tasks, currentTask, calendarDays, calendarTitle, date, progressBar, progressText, calendarWrapper, buttonFooter, panel, overlay, taskForm, taskManager, hueContainer, huePreview, editTaskBtn, saveTaskBtn, taskHueInput, taskNameInput);
       if(currentTask.value){
         markOccurrences(currentTask.value, calendarDays, date);
         updateProgress(calendarDays, progressBar, progressText);
@@ -144,11 +144,12 @@ onAuthStateChanged(auth, user => {
 })();
 listenClickCalendar(addBtn, cancelBtn, dayActions, calendarDays, progressBar, progressText, currentTask, date);
 listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn, nextMonthBtn, progressBar, progressText, currentTask);
-listenTaskButtons(taskBtn, statsBtn, closePanel, closeStatsPanel, panel, statsPanel, overlay, calendarWrapper, buttonFooter, taskManager, taskForm, taskList, taskNameInput, taskHueInput, huePreview);
+listenTaskButtons(taskBtn, statsBtn, closePanel, closeStatsPanel, panel, statsPanel, overlay, calendarWrapper, buttonFooter, taskManager, taskForm, taskList, taskNameInput, taskHueInput, huePreview, currentTask, chartContainer);
 listenPanelButtons(addTaskBtn, goBackBtn, taskManager, taskForm, taskList, hueContainer, editTaskBtn, saveTaskBtn, taskNameInput, taskHueInput, huePreview);
 listenHue(huePreview, hueContainer, taskHueInput, taskList);
 listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks, taskList, currentTask, calendarDays, date);
 listenEditTask(editTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, taskList, calendarTitle);
+
 
 
 
