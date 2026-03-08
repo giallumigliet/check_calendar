@@ -225,15 +225,15 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    margin: 20px 0;
+    margin: 15px 0;
     margin-bottom: 10px;
   }
 
   .progress-container {
     flex: 1;
-    height: 14px;
+    height: 16px;
     background-color: #e8e8e8;
-    border-radius: 20px;
+    border-radius: 16px;
     overflow: hidden;
   }
 
@@ -241,7 +241,7 @@
     height: 100%;
     width: 0%;
     background-color: var(--main-color);
-    border-radius: 20px;
+    border-radius: 16px;
     transition: width 0.4s ease;
   }
 
@@ -635,6 +635,7 @@
     flex-direction: column;
 
   }
+
 
 
 
