@@ -299,6 +299,7 @@
     text-align: right;
     padding-right: 30px;
     font-weight: normal;
+    font-size: 16px;
     cursor: pointer;
     border-top-left-radius: 57px;
     border-top-right-radius: 57px;
@@ -666,6 +667,7 @@
     background-color: var(--main-color-dark);
     transform: scale(1.1);
 }
+
 
 
 
