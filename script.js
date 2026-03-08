@@ -13,8 +13,6 @@ import {
   updateProgress, enterEditMode, exitEditMode
 } from "./calendar.js";
 
-import { updateTaskBarChart } from "./stats.js";
-
 
 // ---- ELEMENTS ----
 const calendarWrapper = document.getElementById("calendar-wrapper");
@@ -119,7 +117,6 @@ onAuthStateChanged(auth, user => {
       if(currentTask.value){
         markOccurrences(currentTask.value, calendarDays, date);
         updateProgress(calendarDays, progressBar, progressText);
-        updateTaskBarChart(chartContainer, currentTask.value);
       }
     });
 
@@ -149,6 +146,7 @@ listenPanelButtons(addTaskBtn, goBackBtn, taskManager, taskForm, taskList, hueCo
 listenHue(huePreview, hueContainer, taskHueInput, taskList);
 listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks, taskList, currentTask, calendarDays, date);
 listenEditTask(editTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, taskList, calendarTitle);
+
 
 
 
