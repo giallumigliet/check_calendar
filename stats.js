@@ -71,7 +71,7 @@ export function drawCurrentTaskBarChart(container, data) {
     barWrapper.style.margin = "0";
 
     const bar = document.createElement("div");
-    bar.style.height = `${(d.count / maxCount) * containerHeight}px`;
+    bar.style.height = `${(d.count / maxCount) * (containerHeight-50}px`;
     bar.style.width = "100%";
     bar.style.backgroundColor = "var(--main-color)";
     bar.title = `${d.label}: ${d.count}`;
@@ -80,12 +80,12 @@ export function drawCurrentTaskBarChart(container, data) {
     bar.style.justifyContent = "center";
     bar.style.color = "white";
     bar.style.fontWeight = "bold";
-    bar.style.fontSize = "12px";
+    bar.style.fontSize = "10px";
 
     bar.textContent = d.count;
 
     const label = document.createElement("span");
-    label.style.fontSize = "12px";
+    label.style.fontSize = "10px";
     label.style.marginTop = "4px";
     label.style.textAlign = "center";
     label.textContent = d.label;
