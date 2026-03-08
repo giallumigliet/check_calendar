@@ -313,7 +313,7 @@
 
 
   .panel-content {
-    padding: 20px;
+    padding: 0px 20px;
     display: flex;
     flex-direction: column;
     overflow-y: auto;
@@ -366,6 +366,7 @@
   #task-list {
     display: flex;
     flex-direction: column;
+    padding: 20px 0px;
     gap: 5px;
     flex: 1;       
     overflow-y: auto; 
@@ -638,6 +639,7 @@
     flex-direction: column;
 
   }
+
 
 
 
