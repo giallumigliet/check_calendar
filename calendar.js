@@ -373,7 +373,7 @@ export function updateProgress(calendarDays, progressBar, progressText) {
   if (!total) return;
   const pct = (done / total) * 100;
   progressBar.style.width = pct + "%";
-  progressText.textContent = done;
+  progressText.textContent = done + "/" + total;
 }
 
 // -------- PANEL LISTENERS --------
@@ -499,6 +499,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
