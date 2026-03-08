@@ -226,6 +226,18 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
       });
     
       menu.classList.toggle("show");
+
+      requestAnimationFrame(() => {
+        const editRect = editItem.getBoundingClientRect();
+        const footerRect = document.querySelector(".panel-footer").getBoundingClientRect();
+        const spaceBelow = footerRect.top - (editRect.bottom + 30);
+        
+        menu.classList.remove("above");
+        if (spaceBelow < menu.offsetHeight) {
+          menu.classList.add("above");
+        }
+      });
+        
     });
 
     // click su delete
@@ -276,15 +288,6 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
       requestAnimationFrame(() => {
         taskNameInput.value = newTask.querySelector(".task-name").textContent;
         taskNameInput.focus();
-
-        const editRect = editItem.getBoundingClientRect();
-        const footerRect = document.querySelector(".panel-footer").getBoundingClientRect();
-        const spaceBelow = footerRect.top - (editRect.bottom + 30);
-        
-        menu.classList.remove("above");
-        if (spaceBelow < menu.offsetHeight) {
-          menu.classList.add("above");
-        }
       });
       
       exitEditMode(taskList);
@@ -511,6 +514,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
