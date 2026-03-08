@@ -282,8 +282,8 @@
 
     transform: translateY(150%);
     transition: transform 0.4s ease;
-    height: 70vh;            
-    max-height: 70vh;
+    height: 80vh;            
+    max-height: 80vh;
 
     z-index: 1001;
   }
@@ -639,6 +639,7 @@
     flex-direction: column;
 
   }
+
 
 
 
