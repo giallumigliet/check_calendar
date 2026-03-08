@@ -321,6 +321,10 @@
     box-shadow: insert 0 6px 8px -6px rgba(0,0,0,0.2;)
   }
 
+  .panel-footer {
+    border-top: 2px solid #eee;
+  }
+
   #overlay.active {
     opacity: 1;
     visibility: visible;
@@ -640,6 +644,7 @@
     flex-direction: column;
 
   }
+
 
 
 
