@@ -71,7 +71,7 @@ export function drawCurrentTaskBarChart(container, data) {
     barWrapper.style.margin = "0";
 
     const bar = document.createElement("div");
-    bar.style.height = `${(d.count / maxCount) * (containerHeight-50}px`;
+    bar.style.height = `${(d.count / maxCount) * (containerHeight-50)}px`;
     bar.style.width = "100%";
     bar.style.backgroundColor = "var(--main-color)";
     bar.title = `${d.label}: ${d.count}`;
