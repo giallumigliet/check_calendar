@@ -50,7 +50,7 @@ export function drawCurrentTaskBarChart(container, data) {
 
   if (!data.length) return;
 
-  const maxCount = Math.max(...data.map(d => d.count), 1);
+  const maxCount = 31;
   const containerHeight = container.clientHeight;
 
   // Imposta il container scrollabile orizzontalmente
