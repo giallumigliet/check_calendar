@@ -562,12 +562,12 @@
     position: absolute;
     top: 35px;
     right: 0;
+    width: auto;
     background: #fff;
     border-radius: 12px;
     box-shadow: 0 8px 20px rgba(0,0,0,0.15);
     overflow: hidden;
   
-    transform: scale(0.7);
     opacity: 0;
     transform-origin: top right;
     transition: all 0.2s ease;
@@ -644,6 +644,7 @@
     flex-direction: column;
 
   }
+
 
 
 
