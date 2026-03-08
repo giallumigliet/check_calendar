@@ -218,23 +218,26 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
     ////
 
     moreBtn.addEventListener("click", (e) => {
-      e.stopPropagation();
-    
-      const rect = moreBtn.getBoundingClientRect();
-    
+      e.stopPropagation(); 
+      
       document.querySelectorAll(".task-menu").forEach(m => {
-        m.classList.remove("show");
+        if (m !== menu) m.classList.remove("show");
       });
     
-      if (!document.body.contains(menu)) {
-          document.body.appendChild(menu);
-      }
+      menu.classList.toggle("show");
     
+      const rect = moreBtn.getBoundingClientRect();
       menu.style.position = "fixed";
       menu.style.top = rect.bottom + "px";
-      menu.style.left = (rect.right - menu.offsetWidth - 46.8) + "px";
+      menu.style.left = rect.right - menu.offsetWidth + "px"; 
+    });
     
-      menu.classList.add("show");
+    document.addEventListener("click", (e) => {
+      document.querySelectorAll(".task-menu").forEach(m => {
+        if (!m.contains(e.target)) {
+          m.classList.remove("show");
+        }
+      });
     });
     
 
@@ -508,6 +511,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
