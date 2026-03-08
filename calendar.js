@@ -232,7 +232,7 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
     
       menu.style.position = "fixed";
       menu.style.top = rect.bottom + "px";
-      menu.style.left = (rect.right - menu.offsetWidth) + "px";
+      menu.style.left = (rect.right - menu.offsetWidth - 46.8) + "px";
     
       menu.classList.add("show");
     });
@@ -508,6 +508,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
