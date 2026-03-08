@@ -645,8 +645,9 @@
     border: 3px solid #e8e8e8;
     box-shadow: 0 -5px 5px rgba(0,0,0,0.05);
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: flex-end;
+    justify-content: space-around;
     
     gap: 10px;
     padding: 10px;
@@ -667,6 +668,7 @@
     background-color: var(--main-color-dark);
     transform: scale(1.1);
 }
+
 
 
 
