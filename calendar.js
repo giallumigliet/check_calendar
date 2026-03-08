@@ -218,18 +218,20 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
     ////
 
     moreBtn.addEventListener("click", (e) => {
-      e.stopPropagation(); 
-      
+      e.stopPropagation();
+    
       document.querySelectorAll(".task-menu").forEach(m => {
         if (m !== menu) m.classList.remove("show");
       });
     
       menu.classList.toggle("show");
     
-      const rect = moreBtn.getBoundingClientRect();
-      menu.style.position = "fixed";
-      menu.style.top = rect.bottom + "px";
-      menu.style.left = rect.right - menu.offsetWidth + "px"; 
+      if (menu.classList.contains("show")) {
+        const rect = moreBtn.getBoundingClientRect();
+        menu.style.position = "fixed";
+        menu.style.top = rect.bottom + "px";
+        menu.style.left = rect.right - menu.offsetWidth + "px";  
+      }
     });
     
     document.addEventListener("click", (e) => {
@@ -241,16 +243,8 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
     });
     
 
-    document.addEventListener("click", () => {
-      document.querySelectorAll(".task-menu").forEach(m => {
-        m.classList.remove("show");
-      });
-    });
-
 
     // click su delete
-
-
     deleteItem.addEventListener("click", async (e) => {
       e.stopPropagation();
       menu.classList.remove("show");
@@ -511,6 +505,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
