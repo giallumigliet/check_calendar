@@ -316,9 +316,10 @@
     padding: 0px 20px;
     display: flex;
     flex-direction: column;
+    flex: 1; 
     overflow-y: auto;
     gap: 15px;
-    box-shadow: inset 0 6px 8px -6px rgba(0,0,0,0.2);
+    box-shadow: inset 0 6px 8px -6px rgba(0,0,0,0.2);     
   }
 
   .panel-footer {
@@ -374,8 +375,6 @@
     flex-direction: column;
     padding: 5px 0px;
     gap: 5px;
-    flex: 1;       
-    overflow-y: auto; 
   }
 
   .editing-mode .task-item:not(.editing) {
@@ -645,6 +644,7 @@
     flex-direction: column;
 
   }
+
 
 
 
