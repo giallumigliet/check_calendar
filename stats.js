@@ -19,7 +19,7 @@ export async function getTaskMonthlyOccurrences(taskId) {
  
   const sortedMonths = Object.keys(monthCounts).sort((a,b) => new Date(a + "-01") - new Date(b + "-01"));
 
-  const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  const monthNames = ["01","02","03","04","05","06","07","08","09","10","11","12"];
   return sortedMonths.map(key => {
     const [year, month] = key.split("-");
     return {
