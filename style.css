@@ -612,7 +612,7 @@
 
     left: 10px;
     right: 10px;
-    top: 100px;
+    top: 75px;
 
     background: white;
     border-radius: 57px;
@@ -640,7 +640,7 @@
 
   .bar-chart{
     width: 95%;
-    height: 350px; 
+    height: 400px; 
     background: white;
     border-radius: 57px;
     border: 3px solid #e8e8e8;
@@ -670,6 +670,7 @@
     background-color: var(--main-color-dark);
     transform: scale(1.1);
 }
+
 
 
 
