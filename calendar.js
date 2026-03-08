@@ -226,7 +226,9 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
         m.classList.remove("show");
       });
     
-      document.body.appendChild(menu);
+      if (!document.body.contains(menu)) {
+          document.body.appendChild(menu);
+      }
     
       menu.style.position = "fixed";
       menu.style.top = rect.bottom + "px";
@@ -506,6 +508,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
