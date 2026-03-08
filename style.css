@@ -575,7 +575,7 @@
     transform: scale(0.8);
     transform-origin: top right;
     transition: all 0.2s ease;
-    z-index: 1; 
+    z-index:1001; 
     pointer-events: none;
   }
   
@@ -670,6 +670,7 @@
     background-color: var(--main-color-dark);
     transform: scale(1.1);
 }
+
 
 
 
