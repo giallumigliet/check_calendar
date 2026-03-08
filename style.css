@@ -366,6 +366,8 @@
     display: flex;
     flex-direction: column;
     gap: 5px;
+    flex: 1;       
+    overflow-y: auto; 
   }
 
   .editing-mode .task-item:not(.editing) {
@@ -635,6 +637,7 @@
     flex-direction: column;
 
   }
+
 
 
 
