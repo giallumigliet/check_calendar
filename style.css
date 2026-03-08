@@ -633,6 +633,7 @@
   }
 
   #stats-panel-content{
+    padding-top: 10px;
     align-items: center;
   }
 
@@ -668,6 +669,7 @@
     background-color: var(--main-color-dark);
     transform: scale(1.1);
 }
+
 
 
 
