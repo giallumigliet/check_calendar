@@ -1,7 +1,6 @@
 import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { auth, db } from "./firebase.js";
 
-// Ottieni le occorrenze mensili della currentTask
 export async function getTaskMonthlyOccurrences(taskId) {
   if (!auth.currentUser || !taskId) return [];
 
@@ -9,7 +8,7 @@ export async function getTaskMonthlyOccurrences(taskId) {
   const occRef = collection(db, "users", uid, "tasks", taskId, "occurrences");
   const occSnapshot = await getDocs(occRef);
 
-  const monthCounts = {}; // { "YYYY-MM": count }
+  const monthCounts = {};
 
   occSnapshot.docs.forEach(doc => {
     const [year, month] = doc.id.split("-");
@@ -17,10 +16,9 @@ export async function getTaskMonthlyOccurrences(taskId) {
     monthCounts[key] = (monthCounts[key] || 0) + doc.data().quantity;
   });
 
-  // Ordina i mesi
+ 
   const sortedMonths = Object.keys(monthCounts).sort((a,b) => new Date(a + "-01") - new Date(b + "-01"));
 
-  // Trasforma in array pronto per il grafico
   const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
   return sortedMonths.map(key => {
     const [year, month] = key.split("-");
@@ -31,7 +29,8 @@ export async function getTaskMonthlyOccurrences(taskId) {
   });
 }
 
-// Disegna bar chart della currentTask
+
+
 export function drawCurrentTaskBarChart(container, data) {
   container.innerHTML = "";
   const maxCount = Math.max(...data.map(d => d.count), 1);
@@ -59,7 +58,6 @@ export function drawCurrentTaskBarChart(container, data) {
   });
 }
 
-// Aggiorna il grafico in modo semplice
 export async function updateCurrentTaskChart(container, taskId) {
   const data = await getTaskMonthlyOccurrences(taskId);
   drawCurrentTaskBarChart(container, data);
