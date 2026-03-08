@@ -318,6 +318,7 @@
     flex-direction: column;
     overflow-y: auto;
     gap: 15px;
+    box-shadow: insert 0 6px 8px -6px rgba(0,0,0,0.2;)
   }
 
   #overlay.active {
@@ -639,6 +640,7 @@
     flex-direction: column;
 
   }
+
 
 
 
