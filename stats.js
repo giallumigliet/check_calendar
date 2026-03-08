@@ -85,7 +85,7 @@ export function drawCurrentTaskBarChart(container, data) {
     bar.textContent = d.count;
 
     const label = document.createElement("span");
-    label.style.fontSize = "10px";
+    label.style.fontSize = "12px";
     label.style.marginTop = "4px";
     label.style.textAlign = "center";
     label.textContent = d.label;
