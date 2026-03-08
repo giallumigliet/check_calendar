@@ -197,6 +197,7 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
     
     const menu = document.createElement("div");
     menu.classList.add("task-menu");
+    menu.dataset.task = taskId;
     
     const editItem = document.createElement("div");
     editItem.classList.add("menu-item", "edit");
@@ -219,12 +220,19 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
     moreBtn.addEventListener("click", (e) => {
       e.stopPropagation();
     
-      // chiudi altri menu aperti
+      const rect = moreBtn.getBoundingClientRect();
+    
       document.querySelectorAll(".task-menu").forEach(m => {
-        if (m !== menu) m.classList.remove("show");
+        m.classList.remove("show");
       });
     
-      menu.classList.toggle("show");
+      document.body.appendChild(menu);
+    
+      menu.style.position = "fixed";
+      menu.style.top = rect.bottom + "px";
+      menu.style.left = rect.right - 120 + "px";
+    
+      menu.classList.add("show");
     });
     
 
@@ -498,6 +506,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
