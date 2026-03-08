@@ -528,11 +528,10 @@
     font-weight: bold;
     color: white;
     pointer-events: auto;
-    z-index: 1000;
   }
 
   .task-item.menu-open {
-    z-index: 1500;
+  
   }
   
   .task-actions {
@@ -670,6 +669,7 @@
     background-color: var(--main-color-dark);
     transform: scale(1.1);
 }
+
 
 
 
