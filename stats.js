@@ -58,7 +58,7 @@ export function drawCurrentTaskBarChart(container, data) {
   });
 }
 
-export async function updateCurrentTaskChart(container, taskId) {
+export async function updateTaskBarChart(container, taskId) {
   const data = await getTaskMonthlyOccurrences(taskId);
   drawCurrentTaskBarChart(container, data);
 }
