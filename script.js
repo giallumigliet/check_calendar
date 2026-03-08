@@ -60,6 +60,9 @@ const userPhoto = document.getElementById("user-photo");
 const accountPanel = document.getElementById("account-floating-panel");
 const changeAccountBtn = document.getElementById("changeAccount-btn");
 
+const chartContainer = document.getElementById("time-bar-chart");
+
+
 // ---- STATE ----
 let tasks = [];
 let currentTask = { value: "" };
@@ -141,8 +144,9 @@ listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn, nextMonthBtn, p
 listenTaskButtons(taskBtn, statsBtn, closePanel, closeStatsPanel, panel, statsPanel, overlay, calendarWrapper, buttonFooter, taskManager, taskForm, taskList, taskNameInput, taskHueInput, huePreview);
 listenPanelButtons(addTaskBtn, goBackBtn, taskManager, taskForm, taskList, hueContainer, editTaskBtn, saveTaskBtn, taskNameInput, taskHueInput, huePreview);
 listenHue(huePreview, hueContainer, taskHueInput, taskList);
-listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks, taskList, currentTask, calendarDays, date);
+listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks, taskList, currentTask, calendarDays, date, chartContainer);
 listenEditTask(editTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, taskList, calendarTitle);
+
 
 
 
