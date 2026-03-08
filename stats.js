@@ -52,6 +52,14 @@ export function drawCurrentTaskBarChart(container, data) {
     bar.style.width = "30px";
     bar.style.backgroundColor = "var(--main-color)";
     bar.title = `${d.label}: ${d.count}`;
+    bar.style.display = "flex";
+    bar.style.alignItems = "flex-end";   
+    bar.style.justifyContent = "center"; 
+    bar.style.color = "white";      
+    bar.style.fontWeight = "bold";
+    bar.style.fontSize = "12px";
+
+bar.textContent = d.count; 
 
     const label = document.createElement("span");
     label.style.fontSize = "12px";
