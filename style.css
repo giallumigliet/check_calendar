@@ -366,7 +366,7 @@
   #task-list {
     display: flex;
     flex-direction: column;
-    padding: 20px 0px;
+    padding: 5px 0px;
     gap: 5px;
     flex: 1;       
     overflow-y: auto; 
@@ -639,6 +639,7 @@
     flex-direction: column;
 
   }
+
 
 
 
