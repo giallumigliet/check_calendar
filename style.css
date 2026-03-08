@@ -650,7 +650,7 @@
     justify-content: space-around;
     
     gap: 10px;
-    padding: 10px;
+    padding: 30px 10px;
   }
 
   .bar {
@@ -668,6 +668,7 @@
     background-color: var(--main-color-dark);
     transform: scale(1.1);
 }
+
 
 
 
