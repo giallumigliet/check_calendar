@@ -1,6 +1,6 @@
 import { db, auth } from "./firebase.js";
 import { doc, setDoc, deleteDoc, addDoc, updateDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import { renderBarChart } from "./chart.js";
+import { updateTaskBarChart } from "./chart.js";
 
 // -------- CALENDAR DRAW --------
 export async function createCalendar(date, monthYear, calendarDays, currentTask, progressBar, progressText) {
@@ -289,7 +289,7 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
       );
       await markOccurrences(taskId, calendarDays, date);
       updateProgress(calendarDays, progressBar, progressText);
-      updateCurrentTaskChart(chartContainer, currentTask.value);
+      updateTaskBarChart(chartContainer, currentTask.value);
       calendarWrapper.classList.remove("hidden-day-buttons");
       buttonFooter.classList.remove("hidden-day-buttons");
       panel.classList.remove("active");
@@ -499,6 +499,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
