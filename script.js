@@ -99,8 +99,11 @@ document.addEventListener("click", e => { if (!accountPanel.contains(e.target) &
 // ---- AUTH STATE ----
 onAuthStateChanged(auth, user => {
   if(user){
+    calendarWrapper.classList.remove("hidden-task-buttons");
     loginBtn.classList.add("hidden-task-buttons");
     profileBtn.classList.remove("hidden-task-buttons");
+    taskBtn.classList.remove("semi-transparent");
+    statsBtn.classList.remove("semi-transparent");
     userPhoto.src = user.photoURL;
 
     const tasksRef = collection(db, "users", user.uid, "tasks");
@@ -114,8 +117,12 @@ onAuthStateChanged(auth, user => {
     });
 
   } else {
+    calendarWrapper.classList.add("hidden-task-buttons");
     loginBtn.classList.remove("hidden-task-buttons");
     profileBtn.classList.add("hidden-task-buttons");
+    taskBtn.classList.add("semi-transparent");
+    statsBtn.classList.add("semi-transparent");
+    
     tasks = [];
     taskList.innerHTML = "";
     currentTask.value = "";
@@ -135,10 +142,5 @@ listenPanelButtons(addTaskBtn, goBackBtn, taskManager, taskForm, taskList, hueCo
 listenHue(huePreview, hueContainer, taskHueInput, taskList);
 listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks, taskList, currentTask, calendarDays, date);
 listenEditTask(editTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, taskList, calendarTitle);
-
-
-
-
-
 
 
