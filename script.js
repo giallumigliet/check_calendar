@@ -13,6 +13,7 @@ import {
   updateProgress, enterEditMode, exitEditMode
 } from "./calendar.js";
 
+
 // ---- ELEMENTS ----
 const calendarWrapper = document.getElementById("calendar-wrapper");
 const monthYear = document.getElementById("monthYear");
@@ -142,6 +143,7 @@ listenPanelButtons(addTaskBtn, goBackBtn, taskManager, taskForm, taskList, hueCo
 listenHue(huePreview, hueContainer, taskHueInput, taskList);
 listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks, taskList, currentTask, calendarDays, date);
 listenEditTask(editTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, taskList, calendarTitle);
+
 
 
 
