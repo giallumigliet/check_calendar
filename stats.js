@@ -33,7 +33,11 @@ export async function getTaskMonthlyOccurrences(taskId) {
 
 export function drawCurrentTaskBarChart(container, data) {
   container.innerHTML = "";
+
+  if (!data.length) return; 
+
   const maxCount = Math.max(...data.map(d => d.count), 1);
+  const containerHeight = container.clientHeight;
 
   data.forEach(d => {
     const barWrapper = document.createElement("div");
@@ -41,10 +45,12 @@ export function drawCurrentTaskBarChart(container, data) {
     barWrapper.style.flexDirection = "column";
     barWrapper.style.alignItems = "center";
     barWrapper.style.flex = "1";
+    barWrapper.style.margin = "0 5px";
 
     const bar = document.createElement("div");
-    bar.style.height = `${(d.count / maxCount) * 100}px`;
-    bar.style.width = "20px";
+    bar.style.height = `${(d.count / maxCount) * containerHeight}px`;
+    bar.style.width = "30px";
+    bar.style.backgroundColor = "var(--main-color)";
     bar.title = `${d.label}: ${d.count}`;
 
     const label = document.createElement("span");
