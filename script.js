@@ -9,7 +9,7 @@ import { collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12
 
 import {
   createCalendar, listenClickCalendar, listenMonthCalendar, listenTaskButtons,
-  listenHue, listenPanelButtons, listenSaveTask, listenEditTask, createTaskList, markOccurrences,
+  listenHue, listenPanelButtons, listenSaveTask, listenEditTask, createTaskList, markOccurrences, markAllTasks,
   updateProgress, enterEditMode, exitEditMode
 } from "./calendar.js";
 
@@ -116,6 +116,8 @@ onAuthStateChanged(auth, user => {
       createTaskList(taskList, tasks, currentTask, calendarDays, calendarTitle, date, progressBar, progressText, calendarWrapper, buttonFooter, panel, overlay, taskForm, taskManager, hueContainer, huePreview, editTaskBtn, saveTaskBtn, taskHueInput, taskNameInput);
       if(currentTask.value){
         markOccurrences(currentTask.value, calendarDays, date);
+      } else {
+        await markAllTasks(calendarDays, date, tasks);
       }
       updateProgress(calendarDays, progressBar, progressText);
     });
@@ -137,15 +139,16 @@ onAuthStateChanged(auth, user => {
 
 // ---- INIT UI ----
 (async () => {
-  await createCalendar(date, monthYear, calendarDays, currentTask, progressBar, progressText);
+  await createCalendar(date, monthYear, calendarDays, currentTask, progressBar, progressText, tasks);
 })();
 listenClickCalendar(addBtn, cancelBtn, dayActions, calendarDays, progressBar, progressText, currentTask, date);
-listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn, nextMonthBtn, progressBar, progressText, currentTask);
+listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn, nextMonthBtn, progressBar, progressText, currentTask, tasks);
 listenTaskButtons(taskBtn, statsBtn, closePanel, closeStatsPanel, panel, statsPanel, overlay, calendarWrapper, buttonFooter, taskManager, taskForm, taskList, taskNameInput, taskHueInput, huePreview, currentTask, chartContainer);
 listenPanelButtons(addTaskBtn, goBackBtn, taskManager, taskForm, taskList, hueContainer, editTaskBtn, saveTaskBtn, taskNameInput, taskHueInput, huePreview);
 listenHue(huePreview, hueContainer, taskHueInput, taskList);
 listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks, taskList, currentTask, calendarDays, date);
 listenEditTask(editTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, taskList, calendarTitle);
+
 
 
 
