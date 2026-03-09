@@ -225,7 +225,7 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
         if (m !== menu) m.classList.remove("show");
       });
     
-      menu.classList.toggle("show");
+      
 
       requestAnimationFrame(() => {
         const moreRect = moreBtn.getBoundingClientRect();
@@ -233,9 +233,10 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
         const spaceBelow = footerRect.top - (moreRect.bottom + 30);
         
         menu.classList.remove("above");
-        if (spaceBelow < menu.offsetHeight) {
+        if (spaceBelow < menu.scrollHeight + 5) {
           menu.classList.add("above");
         }
+        menu.classList.toggle("show");
       });
         
     });
@@ -514,6 +515,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
