@@ -3,7 +3,7 @@ import { doc, setDoc, deleteDoc, addDoc, updateDoc, collection, getDocs } from "
 import { updateTaskBarChart } from "./stats.js";
 
 // -------- CALENDAR DRAW --------
-export async function createCalendar(date, monthYear, calendarDays, currentTask, progressBar, progressText) {
+export async function createCalendar(date, monthYear, calendarDays, currentTask, progressBar, progressText, tasks) {
   const year = date.getFullYear();
   const month = date.getMonth();
   const today = new Date();
@@ -35,6 +35,8 @@ export async function createCalendar(date, monthYear, calendarDays, currentTask,
     );
     await markOccurrences(currentTask.value, calendarDays, date);
     updateProgress(calendarDays, progressBar, progressText);
+  } else {
+    await markAllTasks(calendarDays, date, tasks);
   }
 }
 
@@ -78,6 +80,69 @@ export async function markOccurrences(taskId, calendarDays, date) {
     console.error("Error marking occurrences:", err);
   }
 }
+
+
+
+export async function markAllTasks(calendarDays, date, tasks) {
+  if (!auth.currentUser) return;
+
+  const uid = auth.currentUser.uid;
+  const month = (date.getMonth() + 1).toString().padStart(2, "0");
+  const year = date.getFullYear();
+
+  const dayColors = {}; // { "2026-03-01": ["hsl(...)","hsl(...)"] }
+
+  for (const task of tasks) {
+    const occRef = collection(db, "users", uid, "tasks", task.id, "occurrences");
+    const snapshot = await getDocs(occRef);
+
+    snapshot.docs.forEach(docSnap => {
+      const key = docSnap.id;
+
+      if (!key.startsWith(`${year}-${month}`)) return;
+
+      if (!dayColors[key]) dayColors[key] = [];
+
+      dayColors[key].push(`hsl(${task.color},80%,55%)`);
+    });
+  }
+
+  calendarDays.querySelectorAll(".day").forEach(dayDiv => {
+    const d = dayDiv.textContent.padStart(2, "0");
+    const key = `${year}-${month}-${d}`;
+
+    const colors = dayColors[key] || [];
+
+    if (colors.length === 0) {
+      dayDiv.style.background = "";
+      return;
+    }
+
+    if (colors.length === 1) {
+      dayDiv.style.background = colors[0];
+      return;
+    }
+
+    const step = 100 / colors.length;
+    let gradient = "linear-gradient(90deg,";
+
+    colors.forEach((c, i) => {
+      const start = i * step;
+      const end = (i + 1) * step;
+      gradient += `${c} ${start}% ${end}%`;
+      if (i < colors.length - 1) gradient += ",";
+    });
+
+    gradient += ")";
+
+    dayDiv.style.background = gradient;
+  });
+}
+
+
+
+
+
 
 // -------- TASK UI --------
 export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks, taskList, currentTask, calendarDays, date) {
@@ -500,21 +565,22 @@ export function listenHue(huePreview, hueContainer, taskHueInput, taskList) {
 
 
 
-export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn, nextMonthBtn, progressBar, progressText, currentTask) {
+export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn, nextMonthBtn, progressBar, progressText, currentTask, tasks) {
     // left arrow
     prevMonthBtn.addEventListener("click", async () => {
         date.setMonth(date.getMonth() - 1);
-        await createCalendar(date, monthYear, calendarDays, currentTask, progressBar, progressText);
+        await createCalendar(date, monthYear, calendarDays, currentTask, progressBar, progressText, tasks);
         updateProgress(calendarDays, progressBar, progressText);
     });
 
     // right arrow
     nextMonthBtn.addEventListener("click", async () => {
         date.setMonth(date.getMonth() + 1);
-        await createCalendar(date, monthYear, calendarDays, currentTask, progressBar, progressText);
+        await createCalendar(date, monthYear, calendarDays, currentTask, progressBar, progressText, tasks);
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
