@@ -658,7 +658,8 @@
 
   .bar {
     width: 40px;
-    background-color: var(--main-color);
+    background-color: rgba(var(--main-color), 0.8);
+    border: 2px solid rgba(var(--main-color), 1);
     text-align: center;
     color: white;
     display: flex;
@@ -668,9 +669,11 @@
 }
 
 .bar:hover {
-    background-color: var(--main-color-dark);
+    background-color: rgba(var(--main-color-dark), 0.8);
+    border: 2px solid rgba(var(--main-color-dark), 1);
     transform: scale(1.1);
 }
+
 
 
 
