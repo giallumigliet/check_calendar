@@ -574,9 +574,6 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
     prevMonthBtn.addEventListener("click", async () => {
         date.setMonth(date.getMonth() - 1);
         await createCalendar(date, monthYear, calendarDays, currentTask, progressBar, progressText, tasks);
-        if (!currentTask.value) {
-          await markAllTasks(calendarDays, date, tasks);
-        }
         updateProgress(calendarDays, progressBar, progressText);
     });
 
@@ -584,12 +581,10 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
     nextMonthBtn.addEventListener("click", async () => {
         date.setMonth(date.getMonth() + 1);
         await createCalendar(date, monthYear, calendarDays, currentTask, progressBar, progressText, tasks);
-        if (!currentTask.value) {
-          await markAllTasks(calendarDays, date, tasks);
-        }
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
