@@ -1,5 +1,5 @@
 import { db, auth } from "./firebase.js";
-import { doc, setDoc, deleteDoc, addDoc, updateDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { doc, setDoc, deleteDoc, addDoc, updateDoc, collection, getDocs, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { updateTaskBarChart } from "./stats.js";
 
 // -------- CALENDAR DRAW --------
@@ -45,68 +45,106 @@ export async function saveOccurrence(taskId, dateStr, quantity = 1) {
   if (!auth.currentUser || !taskId) return;
   try {
     const uid = auth.currentUser.uid;
+    const dayRef = doc(db, "users", uid, "days", dateStr);
+
     if (quantity > 0) {
       await setDoc(
-        doc(db, "users", uid, "tasks", taskId, "occurrences", dateStr),
-        { quantity },
+        dayRef,
+        { taskIds: arrayUnion(taskId) },
         { merge: true }
       );
     } else {
-      // elimina occorrenza se quantity 0
-      await deleteDoc(doc(db, "users", uid, "tasks", taskId, "occurrences", dateStr));
+      await updateDoc(
+        dayRef,
+        { taskIds: arrayRemove(taskId) }
+      );
     }
-  } catch(err) {
+  } catch (err) {
     console.error("Error saving occurrence:", err);
   }
 }
 
+import { collection, getDocs } from "firebase/firestore";
+
 export async function markOccurrences(taskId, calendarDays, date) {
   if (!auth.currentUser || !taskId) return;
-  try {
-    const uid = auth.currentUser.uid;
-    const occRef = collection(db, "users", uid, "tasks", taskId, "occurrences");
-    const snapshot = await getDocs(occRef);
-    const completedDates = snapshot.docs.map(doc => doc.id);
+  const uid = auth.currentUser.uid;
 
-    const month = (date.getMonth() + 1).toString().padStart(2, "0");
-    const year = date.getFullYear();
-
-    calendarDays.querySelectorAll(".day").forEach(dayDiv => {
-      dayDiv.style.background = "";
-      const day = dayDiv.textContent.padStart(2, "0");
-      const dateKey = `${year}-${month}-${day}`;
-      dayDiv.classList.toggle("completed", completedDates.includes(dateKey));
-    });
-  } catch(err) {
-    console.error("Error marking occurrences:", err);
-  }
+  const snapshot = await getDocs(
+    collection(db, "users", uid, "days")
+  );
+  const completedDates = [];
+  snapshot.docs.forEach(docSnap => {
+    const data = docSnap.data();
+    const taskIds = data.taskIds || [];
+    if (taskIds.includes(taskId)) {
+      completedDates.push(docSnap.id);
+    }
+  });
+  const month = (date.getMonth() + 1).toString().padStart(2, "0");
+  const year = date.getFullYear();
+  calendarDays.querySelectorAll(".day").forEach(dayDiv => {
+    dayDiv.style.background = "";
+    const day = dayDiv.textContent.padStart(2, "0");
+    const dateKey = `${year}-${month}-${day}`;
+    dayDiv.classList.toggle("completed", completedDates.includes(dateKey));
+  });
 }
 
 
 
 export async function markAllTasks(calendarDays, date, tasks) {
-  if (!auth.currentUser) return;
 
+  if (!auth.currentUser) return;
   const uid = auth.currentUser.uid;
-  const month = (date.getMonth() + 1).toString().padStart(2, "0");
+  
+  const snapshot = await getDocs(
+    collection(db,"users",uid,"days")
+  );
+
+  const taskMap = {};
+  tasks.forEach(t => taskMap[t.id] = t.color);
+
+  const month = (date.getMonth() + 1).toString().padStart(2,"0");
   const year = date.getFullYear();
 
-  const dayColors = {}; // { "2026-03-01": ["hsl(...)","hsl(...)"] }
+  snapshot.docs.forEach(docSnap => {
+    const key = docSnap.id;
+    if(!key.startsWith(`${year}-${month}`)) return;
+    const data = docSnap.data();
+    const taskIds = data.taskIds || [];
 
-  for (const task of tasks) {
-    const occRef = collection(db, "users", uid, "tasks", task.id, "occurrences");
-    const snapshot = await getDocs(occRef);
+    const colors = taskIds
+      .map(id => taskMap[id])
+      .filter(Boolean)
+      .map(h => `hsl(${h},80%,55%)`);
 
-    snapshot.docs.forEach(docSnap => {
-      const key = docSnap.id;
+    if(colors.length === 0) return;
 
-      if (!key.startsWith(`${year}-${month}`)) return;
+    const day = parseInt(key.slice(-2));
+    const dayDiv = calendarDays.children[day-1];
 
-      if (!dayColors[key]) dayColors[key] = [];
+    if(!dayDiv) return;
 
-      dayColors[key].push(`hsl(${task.color},80%,55%)`);
+    if(colors.length === 1){
+      dayDiv.style.background = colors[0];
+      return;
+    }
+
+    const step = 100/colors.length;
+    let gradient = "linear-gradient(to bottom,";
+
+    colors.forEach((c,i)=>{
+      const start=i*step;
+      const end=(i+1)*step;
+      gradient+=`${c} ${start}% ${end}%`;
+      if(i<colors.length-1) gradient+=",";
     });
-  }
+
+    gradient+=")";
+    dayDiv.style.background = gradient;
+  });
+}
 
   calendarDays.querySelectorAll(".day").forEach(dayDiv => {
     const d = dayDiv.textContent.padStart(2, "0");
@@ -583,6 +621,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
