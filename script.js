@@ -105,18 +105,12 @@ changeAccountBtn.addEventListener("click", async () => {
   try { await signOut(auth); await signInWithPopup(auth, provider); } catch(err){ console.error(err); }
   accountPanel.classList.add("hidden-task-buttons");
   currentTask.value = "";
-  calendarTitle.textContent = "CHECK CALENDAR";
-  document.documentElement.style.setProperty("--main-hue", 150);
-  calendarDays.querySelectorAll(".day").forEach(day => day.classList.remove("completed"));
 });
 
 logoutBtn.addEventListener("click", async () => { 
   await signOut(auth); 
   accountPanel.classList.add("hidden-task-buttons"); 
   currentTask.value = "";
-  calendarTitle.textContent = "CHECK CALENDAR";
-  document.documentElement.style.setProperty("--main-hue", 150);
-  calendarDays.querySelectorAll(".day").forEach(day => day.classList.remove("completed"));
 });
 
 profileBtn.addEventListener("click", e => { e.stopPropagation(); accountPanel.classList.toggle("hidden-task-buttons"); });
@@ -141,8 +135,8 @@ onAuthStateChanged(auth, user => {
         markOccurrences(currentTask.value, calendarDays, date);
       } else {
         await markAllTasks(calendarDays, date, tasks);
+        updateProgress(calendarDays, progressBar, progressText);
       }
-      updateProgress(calendarDays, progressBar, progressText);
     });
 
   } else {
@@ -155,8 +149,6 @@ onAuthStateChanged(auth, user => {
     tasks = [];
     taskList.innerHTML = "";
     currentTask.value = "";
-    calendarDays.querySelectorAll(".day").forEach(day => day.classList.remove("completed"));
-    updateProgress(calendarDays, progressBar, progressText);
   }
 });
 
@@ -171,6 +163,7 @@ listenPanelButtons(addTaskBtn, goBackBtn, taskManager, taskForm, taskList, hueCo
 listenHue(huePreview, hueContainer, taskHueInput, taskList);
 listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks, taskList, currentTask, calendarDays, date);
 listenEditTask(editTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, taskList, calendarTitle);
+
 
 
 
