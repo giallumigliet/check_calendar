@@ -336,6 +336,7 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
         document.documentElement.style.setProperty("--main-hue", 150);
         calendarDays.querySelectorAll(".day").forEach(day => day.classList.remove("completed"));
         updateProgress(calendarDays, progressBar, progressText);
+        await markAllTasks(calendarDays, date, tasks);
       }
 
     });
@@ -589,6 +590,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
