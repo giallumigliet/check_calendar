@@ -121,11 +121,6 @@ onAuthStateChanged(auth, user => {
       snapshot.forEach(doc => { tasks.push({ id: doc.id, ...doc.data() });  });
       createTaskList(taskList, tasks, currentTask, calendarDays, calendarTitle, date, progressBar, progressText, calendarWrapper, buttonFooter, panel, overlay, taskForm, taskManager, hueContainer, huePreview, editTaskBtn, saveTaskBtn, taskHueInput, taskNameInput);
       await createCalendar(date, monthYear, calendarDays, currentTask, progressBar, progressText, tasks);
-      if(currentTask.value){
-        markOccurrences(currentTask.value, calendarDays, date);
-      } else {
-        await markAllTasks(calendarDays, date, tasks);
-      }
       updateProgress(calendarDays, progressBar, progressText);
     });
 
@@ -155,6 +150,7 @@ listenPanelButtons(addTaskBtn, goBackBtn, taskManager, taskForm, taskList, hueCo
 listenHue(huePreview, hueContainer, taskHueInput, taskList);
 listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks, taskList, currentTask, calendarDays, date);
 listenEditTask(editTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, taskList, calendarTitle);
+
 
 
 
