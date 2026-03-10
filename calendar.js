@@ -333,7 +333,7 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
       if (currentTask.value === taskId) {
         currentTask.value = "";
         calendarTitle.textContent = "CHECK CALENDAR";
-        document.body.classList.add("grey-mode");
+        document.body.classList.remove("color-mode");
         calendarDays.querySelectorAll(".day").forEach(day => day.classList.remove("completed"));
         updateProgress(calendarDays, progressBar, progressText);
         await markAllTasks(calendarDays, date, tasks);
@@ -369,7 +369,7 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
 
     newTask.addEventListener("click", async () => {
       currentTask.value = taskId;
-      document.body.classList.remove("grey-mode");
+      document.body.classList.add("color-mode");
       document.documentElement.style.setProperty("--main-hue", hue); 
       calendarTitle.textContent = name; 
       calendarDays.querySelectorAll(".day").forEach(day => day.classList.remove("completed") ); 
@@ -585,6 +585,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
