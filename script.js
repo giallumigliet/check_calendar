@@ -65,8 +65,26 @@ const chartContainer = document.getElementById("time-bar-chart");
 
 // ---- STATE ----
 let tasks = [];
-let currentTask = { value: "" };
 const date = new Date();
+
+const currentTask = {
+  _value: "", 
+  get value() {
+    return this._value;
+  },
+  set value(newValue) {
+    this._value = newValue;
+    if (!newValue) {
+      calendarTitle.textContent = "CHECK CALENDAR";
+      document.documentElement.style.setProperty("--main-hue", 150);
+      calendarDays.querySelectorAll(".day").forEach(day => day.classList.remove("completed"));
+      updateProgress(calendarDays, progressBar, progressText);
+    }
+  }
+};
+
+
+
 
 // ---- FIREBASE AUTH ----
 const provider = new GoogleAuthProvider();
@@ -149,6 +167,7 @@ listenPanelButtons(addTaskBtn, goBackBtn, taskManager, taskForm, taskList, hueCo
 listenHue(huePreview, hueContainer, taskHueInput, taskList);
 listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks, taskList, currentTask, calendarDays, date);
 listenEditTask(editTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, taskList, calendarTitle);
+
 
 
 
