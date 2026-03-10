@@ -88,7 +88,7 @@ changeAccountBtn.addEventListener("click", async () => {
   accountPanel.classList.add("hidden-task-buttons");
   currentTask.value = "";
   calendarTitle.textContent = "CHECK CALENDAR";
-  document.documentElement.style.setProperty("--main-hue", 150);
+  document.body.classList.add("grey-mode");
   calendarDays.querySelectorAll(".day").forEach(day => day.classList.remove("completed"));
 });
 
@@ -97,7 +97,7 @@ logoutBtn.addEventListener("click", async () => {
   accountPanel.classList.add("hidden-task-buttons"); 
   currentTask.value = "";
   calendarTitle.textContent = "CHECK CALENDAR";
-  document.documentElement.style.setProperty("--main-hue", 150);
+  document.body.classList.add("grey-mode");
   calendarDays.querySelectorAll(".day").forEach(day => day.classList.remove("completed"));
 });
 
@@ -153,5 +153,6 @@ listenPanelButtons(addTaskBtn, goBackBtn, taskManager, taskForm, taskList, hueCo
 listenHue(huePreview, hueContainer, taskHueInput, taskList);
 listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks, taskList, currentTask, calendarDays, date);
 listenEditTask(editTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, taskList, calendarTitle);
+
 
 
