@@ -39,6 +39,8 @@ export async function createCalendar(date, monthYear, calendarDays, currentTask,
     await markOccurrences(currentTask.value, calendarDays, date);
     updateProgress(calendarDays, progressBar, progressText);
   } else {
+    console.log("tasks:", tasks);
+    console.log("month:", month, "year:", year);
     await markAllTasks(calendarDays, date, tasks);
   }
 }
@@ -578,6 +580,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
