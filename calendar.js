@@ -68,9 +68,11 @@ export async function markOccurrences(taskId, calendarDays, date) {
   if (!auth.currentUser || !taskId) return;
   const uid = auth.currentUser.uid;
 
-  const snapshot = await getDocs(
-    collection(db, "users", uid, "days")
-  );
+  const snapshot = await query(
+   collection(db,"users",uid,"days"),
+   where(documentId(), ">=", `${year}-${month}-01`),
+   where(documentId(), "<=", `${year}-${month}-31`)
+  )
   const completedDates = [];
   snapshot.docs.forEach(docSnap => {
     const data = docSnap.data();
@@ -94,8 +96,9 @@ export async function markOccurrences(taskId, calendarDays, date) {
 export async function markAllTasks(calendarDays, date, tasks) {
 
   if (!auth.currentUser) return;
+
   const uid = auth.currentUser.uid;
-  
+
   const snapshot = await getDocs(
     collection(db,"users",uid,"days")
   );
@@ -107,8 +110,11 @@ export async function markAllTasks(calendarDays, date, tasks) {
   const year = date.getFullYear();
 
   snapshot.docs.forEach(docSnap => {
+
     const key = docSnap.id;
+
     if(!key.startsWith(`${year}-${month}`)) return;
+
     const data = docSnap.data();
     const taskIds = data.taskIds || [];
 
@@ -140,46 +146,11 @@ export async function markAllTasks(calendarDays, date, tasks) {
     });
 
     gradient+=")";
-    dayDiv.style.background = gradient;
-  });
-}
-
-  calendarDays.querySelectorAll(".day").forEach(dayDiv => {
-    const d = dayDiv.textContent.padStart(2, "0");
-    const key = `${year}-${month}-${d}`;
-
-    const colors = dayColors[key] || [];
-
-    if (colors.length === 0) {
-      dayDiv.style.background = "";
-      dayDiv.classList.remove("completed");
-      return;
-    }
-
-    if (colors.length === 1) {
-      dayDiv.style.background = colors[0];
-      dayDiv.classList.add("completed");
-      return;
-    }
-
-    const step = 100 / colors.length;
-    let gradient = "linear-gradient(to bottom,";
-
-    colors.forEach((c, i) => {
-      const start = i * step;
-      const end = (i + 1) * step;
-      gradient += `${c} ${start}% ${end}%`;
-      if (i < colors.length - 1) gradient += ",";
-    });
-
-    gradient += ")";
 
     dayDiv.style.background = gradient;
+
   });
 }
-
-
-
 
 
 
@@ -346,33 +317,43 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
     });
 
     // click su delete
-    deleteItem.addEventListener("click", async (e) => {
-      e.stopPropagation();
-      menu.classList.remove("show");
-    
-      if (!confirm("Press OK to delete this task.")) return;
-      try {
-        const uid = auth.currentUser.uid;
-        const occRef = collection(db, "users", uid, "tasks", taskId, "occurrences");
-        const snapshot = await getDocs(occRef);
-        for (const occDoc of snapshot.docs) {
-          await deleteDoc(doc(db, "users", uid, "tasks", taskId, "occurrences", occDoc.id));
-        }
-        await deleteDoc(doc(db, "users", uid, "tasks", taskId));
-      } catch(err) { console.error(err); }
-      newTask.remove();
+   deleteItem.addEventListener("click", async (e) => {
+    e.stopPropagation();
+    menu.classList.remove("show");
+  
+    if (!confirm("Press OK to delete this task.")) return;
+    try {
+      const uid = auth.currentUser.uid;
 
-      const idx = tasks.findIndex(t => t.id === taskId);
-      if (idx > -1) tasks.splice(idx, 1);
-      if (currentTask.value === taskId) {
-        currentTask.value = "";
-        calendarTitle.textContent = "CHECK CALENDAR";
-        document.documentElement.style.setProperty("--main-hue", 150);
-        calendarDays.querySelectorAll(".day").forEach(day => day.classList.remove("completed"));
-        updateProgress(calendarDays, progressBar, progressText);
+      await deleteDoc(doc(db, "users", uid, "tasks", taskId));
+
+      const daysRef = collection(db, "users", uid, "days");
+      const snapshot = await getDocs(daysRef);
+      for (const docSnap of snapshot.docs) {
+        const data = docSnap.data();
+        if (data.taskIds && data.taskIds.includes(taskId)) {
+          await updateDoc(doc(db, "users", uid, "days", docSnap.id), {
+            taskIds: arrayRemove(taskId)
+          });
+        }
       }
-    
-    });
+  
+    } catch (err) {
+      console.error("Error deleting task:", err);
+    }
+  
+    newTask.remove();
+    const idx = tasks.findIndex(t => t.id === taskId);
+    if (idx > -1) tasks.splice(idx, 1);
+  
+    if (currentTask.value === taskId) {
+      currentTask.value = "";
+      calendarTitle.textContent = "CHECK CALENDAR";
+      document.documentElement.style.setProperty("--main-hue", 150);
+      calendarDays.querySelectorAll(".day").forEach(day => day.classList.remove("completed"));
+      updateProgress(calendarDays, progressBar, progressText);
+    }
+  });;
 
 
     editItem.addEventListener("click", (e) => {
@@ -619,6 +600,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
