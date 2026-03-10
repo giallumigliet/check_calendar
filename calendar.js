@@ -64,8 +64,6 @@ export async function saveOccurrence(taskId, dateStr, quantity = 1) {
   }
 }
 
-import { collection, getDocs } from "firebase/firestore";
-
 export async function markOccurrences(taskId, calendarDays, date) {
   if (!auth.currentUser || !taskId) return;
   const uid = auth.currentUser.uid;
@@ -621,6 +619,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
