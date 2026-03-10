@@ -1,7 +1,7 @@
   :root {
-    --main-color: hsl(210, 35%, 60%);
-    --main-color-dark: hsl(210, 25%, 55%);
-    --main-color-light: hsl(210, 25%, 75%);
+    --main-color: hsl(210, 35%, 70%);
+    --main-color-dark: hsl(210, 25%, 60%);
+    --main-color-light: hsl(210, 25%, 80%);
     
     --preview-hue: 150;
     --preview-color: hsl(var(--preview-hue), 70%, 55%);
@@ -678,6 +678,7 @@
     border: 2px solid rgba(var(--main-color-dark), 1);
     transform: scale(1.1);
 }
+
 
 
 
