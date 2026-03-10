@@ -111,9 +111,10 @@ onAuthStateChanged(auth, user => {
     userPhoto.src = user.photoURL;
 
     const tasksRef = collection(db, "users", user.uid, "tasks");
-    onSnapshot(tasksRef, snapshot => {
+    onSnapshot(tasksRef, async snapshot => {
       tasks = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       createTaskList(taskList, tasks, currentTask, calendarDays, calendarTitle, date, progressBar, progressText, calendarWrapper, buttonFooter, panel, overlay, taskForm, taskManager, hueContainer, huePreview, editTaskBtn, saveTaskBtn, taskHueInput, taskNameInput);
+      await createCalendar(date, monthYear, calendarDays, currentTask, progressBar, progressText, tasks);
       if(currentTask.value){
         markOccurrences(currentTask.value, calendarDays, date);
       } else {
@@ -148,6 +149,7 @@ listenPanelButtons(addTaskBtn, goBackBtn, taskManager, taskForm, taskList, hueCo
 listenHue(huePreview, hueContainer, taskHueInput, taskList);
 listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks, taskList, currentTask, calendarDays, date);
 listenEditTask(editTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, taskList, calendarTitle);
+
 
 
 
