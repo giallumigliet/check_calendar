@@ -29,10 +29,13 @@ export async function createCalendar(date, monthYear, calendarDays, currentTask,
     calendarDays.appendChild(dayDiv);
   }
 
+  calendarDays.querySelectorAll(".day").forEach(day => {
+    day.classList.remove("completed");
+    day.style.background = "";
+    day.style.color = "";
+  });
+  
   if (currentTask.value) {
-    calendarDays.querySelectorAll(".day").forEach(day =>
-      day.classList.remove("completed")
-    );
     await markOccurrences(currentTask.value, calendarDays, date);
     updateProgress(calendarDays, progressBar, progressText);
   } else {
@@ -575,6 +578,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
