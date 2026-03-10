@@ -72,6 +72,7 @@ export async function markOccurrences(taskId, calendarDays, date) {
     const year = date.getFullYear();
 
     calendarDays.querySelectorAll(".day").forEach(dayDiv => {
+      dayDiv.style.background = "";
       const day = dayDiv.textContent.padStart(2, "0");
       const dateKey = `${year}-${month}-${day}`;
       dayDiv.classList.toggle("completed", completedDates.includes(dateKey));
@@ -582,6 +583,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
