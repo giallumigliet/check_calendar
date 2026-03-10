@@ -1,6 +1,6 @@
   :root {
-    --main-color: hsl(210, 25%, 55%);
-    --main-color-dark: hsl(210, 25%, 40%);
+    --main-color: hsl(210, 35%, 60%);
+    --main-color-dark: hsl(210, 25%, 55%);
     --main-color-light: hsl(210, 25%, 75%);
     
     --preview-hue: 150;
@@ -678,6 +678,7 @@
     border: 2px solid rgba(var(--main-color-dark), 1);
     transform: scale(1.1);
 }
+
 
 
 
