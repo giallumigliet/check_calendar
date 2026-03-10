@@ -104,7 +104,7 @@ export async function markAllTasks(calendarDays, date, tasks) {
 
       if (!dayColors[key]) dayColors[key] = [];
 
-      dayColors[key].push(`hsl(${task.color},80%,55%)`);
+      dayColors[key].push(`hsl(${task.color},70%,55%)`);
     });
   }
 
@@ -584,6 +584,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
