@@ -368,13 +368,6 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
 
     newTask.addEventListener("click", async () => {
       currentTask.value = taskId;
-      document.documentElement.style.setProperty("--main-hue", hue);
-      calendarTitle.textContent = name;
-      calendarDays.querySelectorAll(".day").forEach(day =>
-        day.classList.remove("completed")
-      );
-      await markOccurrences(taskId, calendarDays, date);
-      updateProgress(calendarDays, progressBar, progressText);
       calendarWrapper.classList.remove("hidden-day-buttons");
       buttonFooter.classList.remove("hidden-day-buttons");
       panel.classList.remove("active");
@@ -591,4 +584,5 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
