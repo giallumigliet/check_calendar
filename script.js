@@ -26,6 +26,8 @@ const cancelBtn = document.getElementById("cancel-btn");
 const taskBtn = document.getElementById("task-btn");
 const statsBtn = document.getElementById("stats-btn");
 
+
+const progressWrapper = document.getElementById("progress-wrapper");
 const progressBar = document.getElementById("progressBar");
 const progressText = document.getElementById("progressText");
 
@@ -78,11 +80,9 @@ const currentTask = {
       calendarTitle.textContent = "CHECK CALENDAR";
       document.documentElement.style.setProperty("--main-hue", 150);
       calendarDays.querySelectorAll(".day").forEach(day => day.classList.remove("completed"));
-      progressBar.classList.add("hidden-task-buttons");
-      progressText.classList.add("hidden-task-buttons");
+      progressWrapper.classList.add("hidden-task-buttons");
     } else{
-      progressBar.classList.remove("hidden-task-buttons");
-      progressText.classList.remove("hidden-task-buttons");
+      progressWrapper.classList.remove("hidden-task-buttons");
     }
   }
 };
@@ -163,6 +163,7 @@ listenPanelButtons(addTaskBtn, goBackBtn, taskManager, taskForm, taskList, hueCo
 listenHue(huePreview, hueContainer, taskHueInput, taskList);
 listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks, taskList, currentTask, calendarDays, date);
 listenEditTask(editTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, taskList, calendarTitle);
+
 
 
 
