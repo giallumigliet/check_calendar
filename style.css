@@ -1,5 +1,5 @@
   :root {
-    --main-color: hsl(210, 35%, 70%);
+    --main-color: hsl(210, 35%, 75%);
     --main-color-dark: hsl(210, 25%, 60%);
     --main-color-light: hsl(210, 25%, 80%);
     
@@ -196,7 +196,7 @@
 
   .today {
       font-weight: bold;
-      font-size: 22px;
+      font-size: 24px;
   }
 
 
@@ -678,6 +678,7 @@
     border: 2px solid rgba(var(--main-color-dark), 1);
     transform: scale(1.1);
 }
+
 
 
 
