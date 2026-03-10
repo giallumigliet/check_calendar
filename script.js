@@ -26,6 +26,7 @@ const cancelBtn = document.getElementById("cancel-btn");
 const taskBtn = document.getElementById("task-btn");
 const statsBtn = document.getElementById("stats-btn");
 
+const progressContainer = document.getElementById("progress-container");
 const progressBar = document.getElementById("progressBar");
 const progressText = document.getElementById("progressText");
 
@@ -79,9 +80,11 @@ const currentTask = {
       document.documentElement.style.setProperty("--main-hue", 150);
       calendarDays.querySelectorAll(".day").forEach(day => day.classList.remove("completed"));
       updateProgress(calendarDays, progressBar, progressText);
+      progressContainer.classList.add("hidden-task-buttons");
       progressBar.classList.add("hidden-task-buttons");
       progressText.classList.add("hidden-task-buttons");
     } else{
+      progressContainer.classList.remove("hidden-task-buttons");
       progressBar.classList.remove("hidden-task-buttons");
       progressText.classList.remove("hidden-task-buttons");
     }
@@ -172,3 +175,4 @@ listenPanelButtons(addTaskBtn, goBackBtn, taskManager, taskForm, taskList, hueCo
 listenHue(huePreview, hueContainer, taskHueInput, taskList);
 listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks, taskList, currentTask, calendarDays, date);
 listenEditTask(editTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, taskList, calendarTitle);
+
