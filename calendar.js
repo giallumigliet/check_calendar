@@ -172,7 +172,7 @@ export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePrev
       return; 
     }
 
-    
+
 
     taskNameInput.value = "";
     taskHueInput.value = 162;
@@ -188,7 +188,7 @@ export function listenEditTask(editTaskBtn, taskNameInput, taskHueInput, huePrev
   editTaskBtn.addEventListener("click", async () => {
     const name = taskNameInput.value.trim();
     const hue = taskHueInput.value;
-    
+
     if (!name) {
       alert("Insert a name to save the task!");
       taskNameInput.focus();
@@ -208,14 +208,14 @@ export function listenEditTask(editTaskBtn, taskNameInput, taskHueInput, huePrev
       console.error(err);
       return;
     }
-    
+
     exitEditMode(taskList);
     taskForm.classList.add("hidden-task-buttons");
     taskManager.classList.remove("hidden-task-buttons");
     taskNameInput.value = "";
     taskHueInput.value = 162;
     huePreview.style.backgroundColor = `hsl(162, 80%, 55%)`;
-    
+
     if (calendarTitle.textContent !== "CHECK CALENDAR") {
       calendarTitle.textContent = name;
       document.documentElement.style.setProperty("--main-hue", hue);
@@ -252,35 +252,35 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
     newTask.dataset.id = taskId;
     newTask.classList.add("task-item");
     newTask.style.backgroundColor = `hsl(${hue}, 80%, 55%)`;
-    
+
     const taskName = document.createElement("span");
     taskName.classList.add("task-name");
     taskName.textContent = name;
-    
+
     const actions = document.createElement("div");
     actions.classList.add("task-actions");
-    
+
     const moreBtn = document.createElement("div");
     moreBtn.classList.add("task-more");
     moreBtn.textContent = "⋮";
-    
+
     const menu = document.createElement("div");
     menu.classList.add("task-menu");
     menu.dataset.task = taskId;
-    
+
     const editItem = document.createElement("div");
     editItem.classList.add("menu-item", "edit");
     editItem.textContent = "Edit";
-    
+
     const deleteItem = document.createElement("div");
     deleteItem.classList.add("menu-item", "delete");
     deleteItem.textContent = "Delete";
-    
+
     menu.appendChild(editItem);
     menu.appendChild(deleteItem);
     actions.appendChild(moreBtn);
     actions.appendChild(menu);
-    
+
     newTask.appendChild(taskName);
     newTask.appendChild(actions);
     taskList.appendChild(newTask);
@@ -288,32 +288,32 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
 
     moreBtn.addEventListener("click", (e) => {
       e.stopPropagation();
-    
+
       document.querySelectorAll(".task-menu").forEach(m => {
         if (m !== menu) m.classList.remove("show");
       });
-    
-      
+
+
 
       requestAnimationFrame(() => {
         const moreRect = moreBtn.getBoundingClientRect();
         const footerRect = document.querySelector(".panel-footer").getBoundingClientRect();
         const spaceBelow = footerRect.top - (moreRect.bottom + 30);
-        
+
         menu.classList.remove("above");
         if (spaceBelow < menu.scrollHeight + 5) {
           menu.classList.add("above");
         }
         menu.classList.toggle("show");
       });
-        
+
     });
 
     // click su delete
     deleteItem.addEventListener("click", async (e) => {
       e.stopPropagation();
       menu.classList.remove("show");
-    
+
       if (!confirm("Press OK to delete this task.")) return;
       try {
         const uid = auth.currentUser.uid;
@@ -330,8 +330,12 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
       if (idx > -1) tasks.splice(idx, 1);
       if (currentTask.value === taskId) {
         currentTask.value = "";
+        calendarTitle.textContent = "CHECK CALENDAR";
+        document.documentElement.style.setProperty("--main-hue", 150);
+        calendarDays.querySelectorAll(".day").forEach(day => day.classList.remove("completed"));
+        updateProgress(calendarDays, progressBar, progressText);
       }
-    
+
     });
 
 
@@ -341,7 +345,7 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
       taskForm.classList.remove("hidden-task-buttons");
       taskManager.classList.add("hidden-task-buttons");
       hueContainer.classList.remove("hidden-task-buttons");
-      
+
       saveTaskBtn.classList.add("hidden-task-buttons");
       editTaskBtn.classList.remove("hidden-task-buttons");
 
@@ -349,16 +353,16 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
       document.documentElement.style.setProperty("--preview-hue", hue);
       huePreview.style.backgroundColor = `hsl(${taskHueInput.value}, 80%, 55%)`;
 
-      
+
       requestAnimationFrame(() => {
         taskNameInput.value = newTask.querySelector(".task-name").textContent;
         taskNameInput.focus();
       });
-      
+
       exitEditMode(taskList);
       enterEditMode(taskList, newTask);
     });
-    
+
 
     newTask.addEventListener("click", async () => {
       currentTask.value = taskId;
@@ -373,7 +377,7 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
       buttonFooter.classList.remove("hidden-day-buttons");
       panel.classList.remove("active");
       overlay.classList.remove("active");
-      
+
       requestAnimationFrame(() => {
         document.documentElement.style.backgroundColor = "#ffffff";
       })
@@ -482,7 +486,7 @@ export function listenTaskButtons(taskBtn, statsBtn, closePanel, closeStatsPanel
         buttonFooter.classList.remove("hidden-day-buttons");
         panel.classList.remove("active");
         overlay.classList.remove("active");
-        
+
         requestAnimationFrame(() => {
           document.documentElement.style.backgroundColor = "#ffffff";
         })
@@ -500,7 +504,7 @@ export function listenTaskButtons(taskBtn, statsBtn, closePanel, closeStatsPanel
         buttonFooter.classList.remove("hidden-day-buttons");
         statsPanel.classList.remove("active");
         overlay.classList.remove("active");
-        
+
         requestAnimationFrame(() => {
           document.documentElement.style.backgroundColor = "#ffffff";
         })
@@ -537,7 +541,7 @@ export function listenPanelButtons(addTaskBtn, goBackBtn, taskManager, taskForm,
     editTaskBtn.classList.add("hidden-task-buttons");
     saveTaskBtn.classList.remove("hidden-task-buttons");
   });
-  
+
   goBackBtn.addEventListener("click", () => {
     taskForm.classList.add("hidden-task-buttons");
     taskManager.classList.remove("hidden-task-buttons");
@@ -585,15 +589,3 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
-
-
-
-
-
-
-
-
-
-
-
-
