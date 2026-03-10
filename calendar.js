@@ -127,7 +127,7 @@ export async function markAllTasks(calendarDays, date, tasks) {
     }
 
     const step = 100 / colors.length;
-    let gradient = "linear-gradient(90deg,";
+    let gradient = "linear-gradient(180deg,";
 
     colors.forEach((c, i) => {
       const start = i * step;
@@ -583,6 +583,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
