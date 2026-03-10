@@ -69,7 +69,7 @@ const chartContainer = document.getElementById("time-bar-chart");
 let tasks = [];
 const date = new Date();
 
-const currentTask = {
+export const currentTask = {
   _value: "", 
   get value() {
     return this._value;
@@ -163,6 +163,7 @@ listenPanelButtons(addTaskBtn, goBackBtn, taskManager, taskForm, taskList, hueCo
 listenHue(huePreview, hueContainer, taskHueInput, taskList);
 listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks, taskList, currentTask, calendarDays, date);
 listenEditTask(editTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, taskList, calendarTitle);
+
 
 
 
