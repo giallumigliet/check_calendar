@@ -128,19 +128,9 @@ export async function markAllTasks(calendarDays, date, tasks) {
       return;
     }
 
-    const step = 100 / colors.length;
-    let gradient = "linear-gradient(180deg,";
-
-    colors.forEach((c, i) => {
-      const start = i * step;
-      const end = (i + 1) * step;
-      gradient += `${c} ${start}% ${end}%`;
-      if (i < colors.length - 1) gradient += ",";
-    });
-
-    gradient += ")";
-
+    const gradient = `linear-gradient(180deg, ${colors.join(",")})`;
     dayDiv.style.background = gradient;
+    dayDiv.classList.add("completed");
   });
 }
 
@@ -585,6 +575,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
