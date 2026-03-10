@@ -1,8 +1,7 @@
   :root {
-    --main-hue: 150;
-    --main-color: hsl(var(--main-hue), 70%, 55%);
-    --main-color-dark: hsl(var(--main-hue), 70%, 40%);
-    --main-color-light: hsl(var(--main-hue), 70%, 75%);
+    --main-color: hsl(210, 25%, 55%);
+    --main-color-dark: hsl(210, 25%, 40%);
+    --main-color-light: hsl(210, 25%, 75%);
     
     --preview-hue: 150;
     --preview-color: hsl(var(--preview-hue), 70%, 55%);
@@ -20,10 +19,10 @@
       color: #000;
   }
 
-  .grey-mode {
-    --main-color: hsl(210, 25%, 55%);
-    --main-color-dark: hsl(210, 25%, 40%);
-    --main-color-light: hsl(210, 25%, 75%);
+  .color-mode {
+    --main-color: hsl(var(--main-hue), 70%, 55%);
+    --main-color-dark: hsl(var(--main-hue), 70%, 40%);
+    --main-color-light: hsl(var(--main-hue), 70%, 75%);
   }
 
   /* App Title */
@@ -679,6 +678,7 @@
     border: 2px solid rgba(var(--main-color-dark), 1);
     transform: scale(1.1);
 }
+
 
 
 
