@@ -20,6 +20,12 @@
       color: #000;
   }
 
+  .grey-mode {
+    --main-color: hsl(210, 25%, 55%);
+    --main-color-dark: hsl(210, 25%, 40%);
+    --main-color-light: hsl(210, 25%, 75%);
+  }
+
   /* App Title */
   h1 {
       font-size: 38px;
