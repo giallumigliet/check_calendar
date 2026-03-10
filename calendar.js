@@ -330,10 +330,6 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
       if (idx > -1) tasks.splice(idx, 1);
       if (currentTask.value === taskId) {
         currentTask.value = "";
-        calendarTitle.textContent = "CHECK CALENDAR";
-        document.documentElement.style.setProperty("--main-hue", 150);
-        calendarDays.querySelectorAll(".day").forEach(day => day.classList.remove("completed"));
-        updateProgress(calendarDays, progressBar, progressText);
       }
     
     });
@@ -589,6 +585,7 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
 
 
 
