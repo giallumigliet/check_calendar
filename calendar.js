@@ -117,12 +117,14 @@ export async function markAllTasks(calendarDays, date, tasks) {
     if (colors.length === 0) {
       dayDiv.style.background = "";
       dayDiv.classList.remove("completed");
+      dayDiv.style.color = "";
       return;
     }
 
     if (colors.length === 1) {
       dayDiv.style.background = colors[0];
       dayDiv.classList.add("completed");
+      dayDiv.style.color = "";
       return;
     }
 
@@ -589,3 +591,4 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
+
