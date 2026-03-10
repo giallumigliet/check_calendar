@@ -1,5 +1,5 @@
 import { db, auth } from "./firebase.js";
-import { doc, setDoc, deleteDoc, addDoc, updateDoc, collection, getDocs, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { doc, setDoc, deleteDoc, addDoc, updateDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { updateTaskBarChart } from "./stats.js";
 
 // -------- CALENDAR DRAW --------
@@ -45,112 +45,105 @@ export async function saveOccurrence(taskId, dateStr, quantity = 1) {
   if (!auth.currentUser || !taskId) return;
   try {
     const uid = auth.currentUser.uid;
-    const dayRef = doc(db, "users", uid, "days", dateStr);
-
     if (quantity > 0) {
       await setDoc(
-        dayRef,
-        { taskIds: arrayUnion(taskId) },
+        doc(db, "users", uid, "tasks", taskId, "occurrences", dateStr),
+        { quantity },
         { merge: true }
       );
     } else {
-      await updateDoc(
-        dayRef,
-        { taskIds: arrayRemove(taskId) }
-      );
+      // elimina occorrenza se quantity 0
+      await deleteDoc(doc(db, "users", uid, "tasks", taskId, "occurrences", dateStr));
     }
-  } catch (err) {
+  } catch(err) {
     console.error("Error saving occurrence:", err);
   }
 }
 
 export async function markOccurrences(taskId, calendarDays, date) {
   if (!auth.currentUser || !taskId) return;
-  const uid = auth.currentUser.uid;
+  try {
+    const uid = auth.currentUser.uid;
+    const occRef = collection(db, "users", uid, "tasks", taskId, "occurrences");
+    const snapshot = await getDocs(occRef);
+    const completedDates = snapshot.docs.map(doc => doc.id);
 
-  const snapshot = await query(
-   collection(db,"users",uid,"days"),
-   where(documentId(), ">=", `${year}-${month}-01`),
-   where(documentId(), "<=", `${year}-${month}-31`)
-  )
-  const completedDates = [];
-  snapshot.docs.forEach(docSnap => {
-    const data = docSnap.data();
-    const taskIds = data.taskIds || [];
-    if (taskIds.includes(taskId)) {
-      completedDates.push(docSnap.id);
-    }
-  });
-  const month = (date.getMonth() + 1).toString().padStart(2, "0");
-  const year = date.getFullYear();
-  calendarDays.querySelectorAll(".day").forEach(dayDiv => {
-    dayDiv.style.background = "";
-    const day = dayDiv.textContent.padStart(2, "0");
-    const dateKey = `${year}-${month}-${day}`;
-    dayDiv.classList.toggle("completed", completedDates.includes(dateKey));
-  });
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const year = date.getFullYear();
+
+    calendarDays.querySelectorAll(".day").forEach(dayDiv => {
+      dayDiv.style.background = "";
+      const day = dayDiv.textContent.padStart(2, "0");
+      const dateKey = `${year}-${month}-${day}`;
+      dayDiv.classList.toggle("completed", completedDates.includes(dateKey));
+    });
+  } catch(err) {
+    console.error("Error marking occurrences:", err);
+  }
 }
 
 
 
 export async function markAllTasks(calendarDays, date, tasks) {
-
   if (!auth.currentUser) return;
 
   const uid = auth.currentUser.uid;
-
-  const snapshot = await getDocs(
-    collection(db,"users",uid,"days")
-  );
-
-  const taskMap = {};
-  tasks.forEach(t => taskMap[t.id] = t.color);
-
-  const month = (date.getMonth() + 1).toString().padStart(2,"0");
+  const month = (date.getMonth() + 1).toString().padStart(2, "0");
   const year = date.getFullYear();
 
-  snapshot.docs.forEach(docSnap => {
+  const dayColors = {}; // { "2026-03-01": ["hsl(...)","hsl(...)"] }
 
-    const key = docSnap.id;
+  for (const task of tasks) {
+    const occRef = collection(db, "users", uid, "tasks", task.id, "occurrences");
+    const snapshot = await getDocs(occRef);
 
-    if(!key.startsWith(`${year}-${month}`)) return;
+    snapshot.docs.forEach(docSnap => {
+      const key = docSnap.id;
 
-    const data = docSnap.data();
-    const taskIds = data.taskIds || [];
+      if (!key.startsWith(`${year}-${month}`)) return;
 
-    const colors = taskIds
-      .map(id => taskMap[id])
-      .filter(Boolean)
-      .map(h => `hsl(${h},80%,55%)`);
+      if (!dayColors[key]) dayColors[key] = [];
 
-    if(colors.length === 0) return;
+      dayColors[key].push(`hsl(${task.color},80%,55%)`);
+    });
+  }
 
-    const day = parseInt(key.slice(-2));
-    const dayDiv = calendarDays.children[day-1];
+  calendarDays.querySelectorAll(".day").forEach(dayDiv => {
+    const d = dayDiv.textContent.padStart(2, "0");
+    const key = `${year}-${month}-${d}`;
 
-    if(!dayDiv) return;
+    const colors = dayColors[key] || [];
 
-    if(colors.length === 1){
-      dayDiv.style.background = colors[0];
+    if (colors.length === 0) {
+      dayDiv.style.background = "";
+      dayDiv.classList.remove("completed");
       return;
     }
 
-    const step = 100/colors.length;
-    let gradient = "linear-gradient(to bottom,";
+    if (colors.length === 1) {
+      dayDiv.style.background = colors[0];
+      dayDiv.classList.add("completed");
+      return;
+    }
 
-    colors.forEach((c,i)=>{
-      const start=i*step;
-      const end=(i+1)*step;
-      gradient+=`${c} ${start}% ${end}%`;
-      if(i<colors.length-1) gradient+=",";
+    const step = 100 / colors.length;
+    let gradient = "linear-gradient(90deg,";
+
+    colors.forEach((c, i) => {
+      const start = i * step;
+      const end = (i + 1) * step;
+      gradient += `${c} ${start}% ${end}%`;
+      if (i < colors.length - 1) gradient += ",";
     });
 
-    gradient+=")";
+    gradient += ")";
 
     dayDiv.style.background = gradient;
-
   });
 }
+
+
+
 
 
 
@@ -317,43 +310,33 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
     });
 
     // click su delete
-   deleteItem.addEventListener("click", async (e) => {
-    e.stopPropagation();
-    menu.classList.remove("show");
-  
-    if (!confirm("Press OK to delete this task.")) return;
-    try {
-      const uid = auth.currentUser.uid;
-
-      await deleteDoc(doc(db, "users", uid, "tasks", taskId));
-
-      const daysRef = collection(db, "users", uid, "days");
-      const snapshot = await getDocs(daysRef);
-      for (const docSnap of snapshot.docs) {
-        const data = docSnap.data();
-        if (data.taskIds && data.taskIds.includes(taskId)) {
-          await updateDoc(doc(db, "users", uid, "days", docSnap.id), {
-            taskIds: arrayRemove(taskId)
-          });
+    deleteItem.addEventListener("click", async (e) => {
+      e.stopPropagation();
+      menu.classList.remove("show");
+    
+      if (!confirm("Press OK to delete this task.")) return;
+      try {
+        const uid = auth.currentUser.uid;
+        const occRef = collection(db, "users", uid, "tasks", taskId, "occurrences");
+        const snapshot = await getDocs(occRef);
+        for (const occDoc of snapshot.docs) {
+          await deleteDoc(doc(db, "users", uid, "tasks", taskId, "occurrences", occDoc.id));
         }
+        await deleteDoc(doc(db, "users", uid, "tasks", taskId));
+      } catch(err) { console.error(err); }
+      newTask.remove();
+
+      const idx = tasks.findIndex(t => t.id === taskId);
+      if (idx > -1) tasks.splice(idx, 1);
+      if (currentTask.value === taskId) {
+        currentTask.value = "";
+        calendarTitle.textContent = "CHECK CALENDAR";
+        document.documentElement.style.setProperty("--main-hue", 150);
+        calendarDays.querySelectorAll(".day").forEach(day => day.classList.remove("completed"));
+        updateProgress(calendarDays, progressBar, progressText);
       }
-  
-    } catch (err) {
-      console.error("Error deleting task:", err);
-    }
-  
-    newTask.remove();
-    const idx = tasks.findIndex(t => t.id === taskId);
-    if (idx > -1) tasks.splice(idx, 1);
-  
-    if (currentTask.value === taskId) {
-      currentTask.value = "";
-      calendarTitle.textContent = "CHECK CALENDAR";
-      document.documentElement.style.setProperty("--main-hue", 150);
-      calendarDays.querySelectorAll(".day").forEach(day => day.classList.remove("completed"));
-      updateProgress(calendarDays, progressBar, progressText);
-    }
-  });;
+    
+    });
 
 
     editItem.addEventListener("click", (e) => {
@@ -600,84 +583,6 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
