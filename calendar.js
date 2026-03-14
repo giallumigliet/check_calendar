@@ -402,6 +402,7 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
 
       requestAnimationFrame(() => {
         document.body.style.backgroundColor = "#fff";
+        setThemeColor("#ffffff");
       })
     });
   });
@@ -511,6 +512,7 @@ export function listenTaskButtons(taskBtn, statsBtn, closePanel, closeStatsPanel
 
         requestAnimationFrame(() => {
           document.body.style.backgroundColor = "#fff";
+          setThemeColor("#ffffff");
         });
 
         exitEditMode(taskList);
@@ -529,6 +531,7 @@ export function listenTaskButtons(taskBtn, statsBtn, closePanel, closeStatsPanel
 
         requestAnimationFrame(() => {
           document.body.style.backgroundColor = "#fff";
+          setThemeColor("#ffffff");
         });
     });
 
@@ -545,6 +548,7 @@ export function listenTaskButtons(taskBtn, statsBtn, closePanel, closeStatsPanel
 
         requestAnimationFrame(() => {
           document.body.style.backgroundColor = "#fff";
+          setThemeColor("#ffffff");
         });
 
         exitEditMode(taskList);
