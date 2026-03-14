@@ -202,7 +202,7 @@
 
   /* Hide elements */
   .hidden-day-buttons {
-      display: none;
+      display: none !important;
   }
 
   .hidden-task-buttons {
@@ -263,7 +263,7 @@
     inset: 0;
     background: rgba(0,0,0,0.3);
     opacity: 0;
-    visibility: hidden;
+    visibility: ;
     pointer-events: none;
     transition: opacity 0.2s ease;
     z-index: 999;
@@ -495,7 +495,7 @@
   
     padding: 0;
     gap: 0;
-    overflow: hidden;
+    overflow: ;
   
     transition: all 0.35s ease;
     z-index: 1002;
@@ -568,7 +568,7 @@
     background: #fff;
     border-radius: 12px;
     box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-    overflow: hidden;
+    overflow: ;
     display: inline-block;
   
     opacity: 0;
