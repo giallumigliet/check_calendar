@@ -323,6 +323,10 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
       calendarDays.querySelectorAll(".day").forEach(day => day.classList.remove("completed"));
       updateProgress(calendarDays, progressBar, progressText);
       await markAllTasks(calendarDays, date, tasks);
+      calendarWrapper.classList.remove("hidden-day-buttons");
+      buttonFooter.classList.remove("hidden-day-buttons");
+      panel.classList.remove("active");
+      overlay.classList.remove("active");
     });
 
 
