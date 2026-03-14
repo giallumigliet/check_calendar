@@ -401,7 +401,7 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
       overlay.classList.remove("active");
 
       requestAnimationFrame(() => {
-        document.documentElement.style.backgroundColor = "#ffffff";
+        document.body.style.backgroundColor = "#fff";
       })
     });
   });
@@ -510,16 +510,13 @@ export function listenTaskButtons(taskBtn, statsBtn, closePanel, closeStatsPanel
         overlay.classList.remove("active");
 
         requestAnimationFrame(() => {
-  document.documentElement.style.backgroundColor = "#ffffff";
-
-  const themeMeta = document.querySelector("meta[name='theme-color']");
-  themeMeta.setAttribute("content", "#ffffff");
-});
+          document.body.style.backgroundColor = "#fff";
+        });
 
         exitEditMode(taskList);
-      taskNameInput.value = "";
-      taskHueInput.value = 162;
-      huePreview.style.backgroundColor = `hsl(162, 80%, 55%)`;
+        taskNameInput.value = "";
+        taskHueInput.value = 162;
+        huePreview.style.backgroundColor = `hsl(162, 80%, 55%)`;
 
     });
 
@@ -531,11 +528,8 @@ export function listenTaskButtons(taskBtn, statsBtn, closePanel, closeStatsPanel
         overlay.classList.remove("active");
 
         requestAnimationFrame(() => {
-  document.documentElement.style.backgroundColor = "#ffffff";
-
-  const themeMeta = document.querySelector("meta[name='theme-color']");
-  themeMeta.setAttribute("content", "#ffffff");
-});
+          document.body.style.backgroundColor = "#fff";
+        });
     });
 
 
@@ -550,11 +544,8 @@ export function listenTaskButtons(taskBtn, statsBtn, closePanel, closeStatsPanel
         overlay.classList.remove("active");
 
         requestAnimationFrame(() => {
-  document.documentElement.style.backgroundColor = "#ffffff";
-
-  const themeMeta = document.querySelector("meta[name='theme-color']");
-  themeMeta.setAttribute("content", "#ffffff");
-});
+          document.body.style.backgroundColor = "#fff";
+        });
 
         exitEditMode(taskList);
         taskNameInput.value = "";
