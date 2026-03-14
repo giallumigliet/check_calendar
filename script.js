@@ -26,7 +26,7 @@ const cancelBtn = document.getElementById("cancel-btn");
 const taskBtn = document.getElementById("task-btn");
 const statsBtn = document.getElementById("stats-btn");
 
-const progressWrapper = document.getElementById("progress-wrapper");
+const progressWrapper = document.getElementById("progressWrapper");
 const progressContainer = document.getElementById("progress-container");
 const progressBar = document.getElementById("progressBar");
 const progressText = document.getElementById("progressText");
