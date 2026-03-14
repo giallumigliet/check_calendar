@@ -491,7 +491,8 @@
   
     width: max-content;   
     min-width: 180px;       
-    max-width: 90vw;         
+    max-width: 90vw;    
+    overflow: hidden;
   
     padding: 0;
     gap: 0;
@@ -568,6 +569,7 @@
     border-radius: 12px;
     box-shadow: 0 8px 20px rgba(0,0,0,0.15);
     display: inline-block;
+    overflow: hidden;
   
     opacity: 0;
     transform: scale(0.8);
