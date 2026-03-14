@@ -69,17 +69,17 @@ export function drawCurrentTaskBarChart(container, data) {
     barWrapper.style.width = "40px"; 
     // larghezza barra + spazio 
     barWrapper.style.margin = "0"; 
-    const bar = document.createElement("div"); 
-    bar.style.height = ${(d.count / maxCount) * (containerHeight-50)}px; 
-    bar.style.width = "100%"; 
-    bar.style.backgroundColor = "var(--main-color)"; 
-    bar.title = ${d.label}: ${d.count}; 
-    bar.style.display = "flex"; 
-    bar.style.alignItems = "flex-end"; 
-    bar.style.justifyContent = "center"; 
+    const bar = document.createElement("div");
+    bar.style.height = `${(d.count / maxCount) * (containerHeight - 50)}px`;
+    bar.style.width = "100%";
+    bar.style.backgroundColor = "var(--main-color)";
+    bar.title = `${d.label}: ${d.count}`;
+    bar.style.display = "flex";
+    bar.style.alignItems = "flex-end";
+    bar.style.justifyContent = "center";
     bar.style.color = "white";
-    bar.style.fontWeight = "bold"; 
-    bar.style.fontSize = "10px"; 
+    bar.style.fontWeight = "bold";
+    bar.style.fontSize = "10px";
     bar.textContent = d.count; 
     
     const label = document.createElement("span"); 
