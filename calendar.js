@@ -510,8 +510,11 @@ export function listenTaskButtons(taskBtn, statsBtn, closePanel, closeStatsPanel
         overlay.classList.remove("active");
 
         requestAnimationFrame(() => {
-          document.documentElement.style.backgroundColor = "#ffffff";
-        })
+  document.documentElement.style.backgroundColor = "#ffffff";
+
+  const themeMeta = document.querySelector("meta[name='theme-color']");
+  themeMeta.setAttribute("content", "#ffffff");
+});
 
         exitEditMode(taskList);
       taskNameInput.value = "";
@@ -528,8 +531,11 @@ export function listenTaskButtons(taskBtn, statsBtn, closePanel, closeStatsPanel
         overlay.classList.remove("active");
 
         requestAnimationFrame(() => {
-          document.documentElement.style.backgroundColor = "#ffffff";
-        })
+  document.documentElement.style.backgroundColor = "#ffffff";
+
+  const themeMeta = document.querySelector("meta[name='theme-color']");
+  themeMeta.setAttribute("content", "#ffffff");
+});
     });
 
 
@@ -544,8 +550,11 @@ export function listenTaskButtons(taskBtn, statsBtn, closePanel, closeStatsPanel
         overlay.classList.remove("active");
 
         requestAnimationFrame(() => {
-          document.documentElement.style.backgroundColor = "#ffffff";
-        })
+  document.documentElement.style.backgroundColor = "#ffffff";
+
+  const themeMeta = document.querySelector("meta[name='theme-color']");
+  themeMeta.setAttribute("content", "#ffffff");
+});
 
         exitEditMode(taskList);
         taskNameInput.value = "";
