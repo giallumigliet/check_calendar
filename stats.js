@@ -45,101 +45,55 @@ export async function getTaskMonthlyOccurrences(taskId) {
 }
 
 
-export function drawCurrentTaskBarChart(container, data) {
-  container.innerHTML = "";
-
-  if (!data.length) return;
-
-  const maxCount = 31;
-  const gridStep = 5;
-  const containerHeight = container.clientHeight || 300;
-  const chartHeight = containerHeight - 50;
-
-  // container principale
-  container.style.position = "relative";
-  container.style.height = "100%";
-  container.style.width = "100%";
-  container.style.overflow = "hidden";
-
-  // ---------- GRID ----------
-  const grid = document.createElement("div");
-  grid.style.position = "absolute";
-  grid.style.left = "0";
-  grid.style.right = "0";
-  grid.style.top = "0";
-  grid.style.bottom = "30px";
-  grid.style.pointerEvents = "none";
-
-  for (let i = 0; i <= maxCount; i += gridStep) {
-    const line = document.createElement("div");
-
-    const y = (i / maxCount) * chartHeight;
-
-    line.style.position = "absolute";
-    line.style.bottom = `${y}px`;
-    line.style.left = "0";
-    line.style.right = "0";
-    line.style.height = "1px";
-    line.style.background = "rgba(0,0,0,0.15)";
-
-    grid.appendChild(line);
-  }
-
-  container.appendChild(grid);
-
-  // ---------- BARS CONTAINER ----------
-  const barsContainer = document.createElement("div");
-  barsContainer.style.position = "relative";
-  barsContainer.style.display = "flex";
-  barsContainer.style.flexDirection = "row";
-  barsContainer.style.alignItems = "flex-end";
-  barsContainer.style.overflowX = "auto";
-  barsContainer.style.gap = "10px";
-  barsContainer.style.padding = "10px";
-  barsContainer.style.height = "100%";
-
-  container.appendChild(barsContainer);
-
-  // ---------- BARS ----------
-  data.forEach(d => {
-
-    const barWrapper = document.createElement("div");
-    barWrapper.style.display = "flex";
-    barWrapper.style.flexDirection = "column";
-    barWrapper.style.alignItems = "center";
-    barWrapper.style.flex = "0 0 auto";
-    barWrapper.style.width = "40px";
-
-    const bar = document.createElement("div");
-    const height = (d.count / maxCount) * chartHeight;
-
-    bar.style.height = `${height}px`;
-    bar.style.width = "100%";
-    bar.style.backgroundColor = "var(--main-color)";
-    bar.style.display = "flex";
-    bar.style.alignItems = "flex-end";
-    bar.style.justifyContent = "center";
+export function drawCurrentTaskBarChart(container, data) { 
+  container.innerHTML = ""; 
+  if (!data.length) return; 
+  const maxCount = 31; 
+  const containerHeight = container.clientHeight; 
+  
+  // Imposta il container scrollabile orizzontalmente 
+  container.style.display = "flex"; 
+  //container.style.flexDirection = "row"; 
+  container.style.alignItems = "flex-end"; 
+  container.style.overflowX = "auto"; 
+  container.style.gap = "10px"; 
+  container.style.padding = "10px"; 
+  
+  data.forEach(d => { 
+    const barWrapper = document.createElement("div"); 
+    barWrapper.style.display = "flex"; 
+    barWrapper.style.flexDirection = "column"; 
+    barWrapper.style.alignItems = "center"; 
+    barWrapper.style.flex = "0 0 auto"; 
+    // larghezza fissa, non scalare 
+    barWrapper.style.width = "40px"; 
+    // larghezza barra + spazio 
+    barWrapper.style.margin = "0"; 
+    const bar = document.createElement("div"); 
+    bar.style.height = ${(d.count / maxCount) * (containerHeight-50)}px; 
+    bar.style.width = "100%"; 
+    bar.style.backgroundColor = "var(--main-color)"; 
+    bar.title = ${d.label}: ${d.count}; 
+    bar.style.display = "flex"; 
+    bar.style.alignItems = "flex-end"; 
+    bar.style.justifyContent = "center"; 
     bar.style.color = "white";
-    bar.style.fontWeight = "bold";
-    bar.style.fontSize = "10px";
-    bar.style.borderRadius = "4px 4px 0 0";
-
-    bar.title = `${d.label}: ${d.count}`;
-    bar.textContent = d.count;
-
-    const label = document.createElement("span");
-    label.style.fontSize = "12px";
-    label.style.marginTop = "4px";
-    label.style.textAlign = "center";
-    label.textContent = d.label;
-
-    barWrapper.appendChild(bar);
-    barWrapper.appendChild(label);
-
-    barsContainer.appendChild(barWrapper);
-
-  });
+    bar.style.fontWeight = "bold"; 
+    bar.style.fontSize = "10px"; 
+    bar.textContent = d.count; 
+    
+    const label = document.createElement("span"); 
+    label.style.fontSize = "12px"; 
+    label.style.marginTop = "4px"; 
+    label.style.textAlign = "center"; 
+    label.textContent = d.label; 
+    barWrapper.appendChild(bar); 
+    barWrapper.appendChild(label); 
+    container.appendChild(barWrapper); 
+  }); 
 }
+
+
 export async function updateTaskBarChart(container, taskId) {
   const data = await getTaskMonthlyOccurrences(taskId);
   drawCurrentTaskBarChart(container, data);
