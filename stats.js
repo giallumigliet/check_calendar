@@ -53,7 +53,7 @@ export function drawCurrentTaskBarChart(container, data) {
   
   // Imposta il container scrollabile orizzontalmente 
   container.style.display = "flex"; 
-  //container.style.flexDirection = "row"; 
+  container.style.flexDirection = "row"; 
   container.style.alignItems = "flex-end"; 
   container.style.overflowX = "auto"; 
   container.style.gap = "10px"; 
