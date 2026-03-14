@@ -248,6 +248,19 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
   allTasksBtn.textContent = "SEE ALL TASKS";
   taskList.appendChild(allTasksBtn);
 
+  allTasksBtn.addEventListener("click", async (e) => {
+    currentTask.value = "";
+    calendarTitle.textContent = "CHECK CALENDAR";
+    document.body.classList.remove("color-mode");
+    calendarDays.querySelectorAll(".day").forEach(day => day.classList.remove("completed"));
+    await markAllTasks(calendarDays, date, tasks);
+    calendarWrapper.classList.remove("hidden-day-buttons");
+    progressWrapper.classList.add("hidden-day-buttons");
+    buttonFooter.classList.remove("hidden-day-buttons");
+    panel.classList.remove("active");
+    overlay.classList.remove("active");
+  });
+
   
   tasks.forEach(task => {
     const { id: taskId, name, color: hue } = task;
@@ -314,25 +327,6 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
       });
 
     });
-
-
-
-
-    allTasksBtn.addEventListener("click", async (e) => {
-      currentTask.value = "";
-      calendarTitle.textContent = "CHECK CALENDAR";
-      document.body.classList.remove("color-mode");
-      calendarDays.querySelectorAll(".day").forEach(day => day.classList.remove("completed"));
-      await markAllTasks(calendarDays, date, tasks);
-      calendarWrapper.classList.remove("hidden-day-buttons");
-      progressWrapper.classList.add("hidden-day-buttons");
-      buttonFooter.classList.remove("hidden-day-buttons");
-      panel.classList.remove("active");
-      overlay.classList.remove("active");
-    });
-
-
-
 
 
     
