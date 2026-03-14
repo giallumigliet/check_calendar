@@ -263,7 +263,7 @@
     inset: 0;
     background: rgba(0,0,0,0.3);
     opacity: 0;
-    visibility: ;
+    visibility: hidden;
     pointer-events: none;
     transition: opacity 0.2s ease;
     z-index: 999;
