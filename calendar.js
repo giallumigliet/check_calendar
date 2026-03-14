@@ -240,6 +240,13 @@ export function exitEditMode(taskList) {
 
 export function createTaskList(taskList, tasks, currentTask, calendarDays, calendarTitle, date, progressBar, progressText, calendarWrapper, buttonFooter, panel, overlay, taskForm, taskManager, hueContainer, huePreview, editTaskBtn, saveTaskBtn, taskHueInput, taskNameInput) {
   taskList.innerHTML = "";
+
+
+  const allTasksBtn = document.createElement("neutral-button");
+  allTasksBtn.textContent = "ALL TASKS";
+  taskList.appendChild(allTasksBtn);
+
+  
   tasks.forEach(task => {
     const { id: taskId, name, color: hue } = task;
 
@@ -306,6 +313,23 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
 
     });
 
+
+
+
+    allTasksBtn.addEventListener("click", async (e) => {
+      currentTask.value = "";
+      calendarTitle.textContent = "CHECK CALENDAR";
+      document.body.classList.remove("color-mode");
+      calendarDays.querySelectorAll(".day").forEach(day => day.classList.remove("completed"));
+      updateProgress(calendarDays, progressBar, progressText);
+      await markAllTasks(calendarDays, date, tasks);
+    });
+
+
+
+
+
+    
     // click su delete
     deleteItem.addEventListener("click", async (e) => {
       e.stopPropagation();
