@@ -1,5 +1,5 @@
 import { db, auth } from "./firebase.js";
-import { doc, setDoc, deleteDoc, addDoc, updateDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { doc, setDoc, deleteDoc, addDoc, getDoc, updateDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { updateTaskBarChart } from "./stats.js";
 
 // -------- CALENDAR DRAW --------
@@ -450,7 +450,25 @@ export function listenClickCalendar(addBtn, cancelBtn, taskBtn, dayActions, cale
           }, 150);
         }, 150);
       } else { 
-        message.textContent = "";
+        const day = e.target.textContent.padStart(2, "0");
+        const month = (date.getMonth() + 1).toString().padStart(2, "0");
+        const year = date.getFullYear();
+        const key = `${year}-${month}-${day}`;
+
+        if (!auth.currentUser) return;
+        const uid = auth.currentUser.uid;
+      
+        let completedTasks = [];
+      
+        for (const task of tasks) {
+          const occRef = doc(db, "users", uid, "tasks", task.id, "occurrences", key);
+          const occSnap = await getDoc(occRef); 
+      
+          if (occSnap.exists()) {
+            completedTasks.push(task.name);
+          }
+        }
+        message.textContent = "Completed: " + completedTasks.join(", ");
       }
     }
   });
