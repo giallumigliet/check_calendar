@@ -427,7 +427,7 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
 
 
 // -------- CALENDAR CLICK --------
-export function listenClickCalendar(addBtn, cancelBtn, dayActions, calendarDays, progressBar, progressText, currentTask, date) {
+export function listenClickCalendar(addBtn, cancelBtn, dayActions, calendarDays, progressBar, progressText, currentTask, date, message) {
   let selectedDay = null;
 
   calendarDays.addEventListener("click", e => {
@@ -436,6 +436,7 @@ export function listenClickCalendar(addBtn, cancelBtn, dayActions, calendarDays,
     calendarDays.querySelectorAll(".day").forEach(d => d.classList.remove("selected"));
     selectedDay.classList.add("selected");
     if (currentTask.value) dayActions.classList.remove("hidden-day-buttons");
+    else message.textContent = "Before select a task!";
   });
 
   document.addEventListener("click", e => {
@@ -443,6 +444,7 @@ export function listenClickCalendar(addBtn, cancelBtn, dayActions, calendarDays,
       calendarDays.querySelectorAll(".day").forEach(d => d.classList.remove("selected"));
       selectedDay = null;
       dayActions.classList.add("hidden-day-buttons");
+      message.textContent = "";
     }
   });
 
