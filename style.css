@@ -178,7 +178,7 @@
   }
 
   .days div:hover {
-      filter: brightness(0.8);
+      filter: brightness(0.9);
   }
 
 
@@ -539,7 +539,7 @@
   }
 
   .task-item:hover {
-    filter: brightness(0.8);
+    filter: brightness(0.9);
   }
   
   .task-actions {
