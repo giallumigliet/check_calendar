@@ -554,9 +554,6 @@
     pointer-events: auto;
   }
 
-  .task-item:hover {
-    filter: brightness(0.9);
-  }
   
   .task-actions {
     position: relative;
