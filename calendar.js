@@ -427,7 +427,7 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
 
 
 // -------- CALENDAR CLICK --------
-export function listenClickCalendar(addBtn, cancelBtn, taskBtn, dayActions, calendarDays, progressBar, progressText, currentTask, date, message) {
+export function listenClickCalendar(addBtn, cancelBtn, taskBtn, dayActions, calendarDays, progressBar, progressText, currentTask, date, message, tasks) {
   let selectedDay = null;
 
   calendarDays.addEventListener("click", e => {
