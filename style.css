@@ -192,6 +192,7 @@
       background-color: var(--main-color-light);
       color: white;
       font-weight: bold;
+      border: 3px solid #a2a1a1;
   }
 
 
