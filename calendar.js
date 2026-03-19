@@ -436,7 +436,7 @@ export function listenClickCalendar(addBtn, cancelBtn, taskBtn, dayActions, cale
     calendarDays.querySelectorAll(".day").forEach(d => d.classList.remove("selected"));
     selectedDay.classList.add("selected");
     if (currentTask.value) dayActions.classList.remove("hidden-day-buttons");
-    else { 
+    elseif (!currentTask.value && !e.target.classList.contains("completed")) { 
       message.textContent = "Before select a task!";
       taskBtn.classList.add("warning");
       setTimeout(() => {
