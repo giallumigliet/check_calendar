@@ -174,10 +174,11 @@
       align-items: center;
       justify-content: center;
       aspect-ratio: 1 / 1;
+      transition: filter 0.3s ease;
   }
 
   .days div:hover {
-      background-color: #e8e8e8;
+      filter: brightness(0.8);
   }
 
 
@@ -529,10 +530,16 @@
     padding: 12px 12px;
     border: 3px solid #e8e8e8;
     padding-left: 20px;
+    transition: filter 0.3s ease;
+
     
     font-weight: bold;
     color: white;
     pointer-events: auto;
+  }
+
+  .task-item:hover {
+    filter: brightness(0.8);
   }
   
   .task-actions {
