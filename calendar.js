@@ -468,7 +468,11 @@ export function listenClickCalendar(addBtn, cancelBtn, taskBtn, dayActions, cale
             completedTasks.push(task.name);
           }
         }
-        message.textContent = "Completed: " + completedTasks.join(", ");
+        message.innerHTML = `
+          <ul>
+            ${completedTasks.map(t => `<li>✓ ${t}</li>`).join("")}
+          </ul>
+        `;
       }
     }
   });
