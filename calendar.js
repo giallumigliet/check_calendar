@@ -436,7 +436,19 @@ export function listenClickCalendar(addBtn, cancelBtn, dayActions, calendarDays,
     calendarDays.querySelectorAll(".day").forEach(d => d.classList.remove("selected"));
     selectedDay.classList.add("selected");
     if (currentTask.value) dayActions.classList.remove("hidden-day-buttons");
-    else message.textContent = "Before select a task!";
+    else { 
+      message.textContent = "Before select a task!";
+      taskBtn.classList.add("warning");
+      setTimeout(() => {
+        taskBtn.classList.remove("warning");
+        setTimeout(() => {
+          taskBtn.classList.add("warning");
+          setTimeout(() => {
+            taskBtn.classList.remove("warning");
+          }, 150);
+        }, 150);
+      }, 150);
+    }
   });
 
   document.addEventListener("click", e => {
