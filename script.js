@@ -20,6 +20,8 @@ const monthYear = document.getElementById("monthYear");
 const calendarDays = document.getElementById("calendarDays");
 const calendarTitle = document.getElementById("calendar-title");
 
+const message = document.getElementById("message");
+
 const dayActions = document.getElementById("day-actions");
 const addBtn = document.getElementById("add-btn");
 const cancelBtn = document.getElementById("cancel-btn");
