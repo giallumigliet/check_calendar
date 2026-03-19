@@ -267,10 +267,10 @@
 
 
   #message {
-    font-weight: normal;
-    color: var(--main-color);
+    font-weight: bold;
+    color: var(--main-color-dark);
     text-align: left;
-    padding: 20px 0px;
+    padding: 40px 0px;
   }
 
   /* Grey overlay when floating panel opens */
