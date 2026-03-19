@@ -7,8 +7,14 @@ export async function createCalendar(date, monthYear, calendarDays, currentTask,
   const year = date.getFullYear();
   const month = date.getMonth();
   const today = new Date();
+  
   const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
   monthYear.textContent = `${months[month]} ${year}`;
+  if (month === today.getMonth() && year === today.getFullYear()) {
+    monthYear.style.fontWeight = "bolder";
+  }
+
+  
   calendarDays.innerHTML = "";
 
   const firstDay = new Date(year, month, 1).getDay();
