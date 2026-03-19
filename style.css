@@ -259,6 +259,14 @@
     text-align: right;
   }
 
+
+  #message {
+    font-weight: normal;
+    color: var(--main-color);
+    min-width: 40px;
+    text-align: left;
+  }
+
   /* Grey overlay when floating panel opens */
   #overlay {
     position: fixed;
