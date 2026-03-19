@@ -427,7 +427,7 @@ export function listenClickCalendar(addBtn, cancelBtn, dayActions, calendarDays,
     selectedDay = e.target;
     calendarDays.querySelectorAll(".day").forEach(d => d.classList.remove("selected"));
     selectedDay.classList.add("selected");
-    dayActions.classList.remove("hidden-day-buttons");
+    if (currentTask.value) dayActions.classList.remove("hidden-day-buttons");
   });
 
   document.addEventListener("click", e => {
