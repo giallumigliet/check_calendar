@@ -12,6 +12,8 @@ export async function createCalendar(date, monthYear, calendarDays, currentTask,
   monthYear.textContent = `${months[month]} ${year}`;
   if (month === today.getMonth() && year === today.getFullYear()) {
     monthYear.style.fontWeight = "bolder";
+  } else {
+    monthYear.style.fontWeight = "bold";
   }
 
   
