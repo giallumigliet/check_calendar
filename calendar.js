@@ -430,7 +430,7 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
 export function listenClickCalendar(addBtn, cancelBtn, taskBtn, dayActions, calendarDays, progressBar, progressText, currentTask, date, message, tasks) {
   let selectedDay = null;
 
-  calendarDays.addEventListener("click", e => {
+  calendarDays.addEventListener("click", async e => {
     if (!e.target.classList.contains("day")) return;
     selectedDay = e.target;
     calendarDays.querySelectorAll(".day").forEach(d => d.classList.remove("selected"));
