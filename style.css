@@ -226,6 +226,13 @@
       background-color: #ff6663;
   }
 
+  #task-btn.warning {
+      background-color: var(--main-color-dark);
+      transform: scale(0.9);
+  }
+
+
+
   /* Progress bar */
   .progress-wrapper {
     width: 350px;
