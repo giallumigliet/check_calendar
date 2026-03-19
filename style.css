@@ -228,7 +228,7 @@
 
   #task-btn.warning {
       background-color: var(--main-color-dark);
-      transform: scale(0.9);
+      transform: scale(0.95);
   }
 
 
