@@ -270,8 +270,8 @@
   #message {
     font-weight: normal;
     color: var(--main-color);
-    min-width: 40px;
     text-align: left;
+    padding: 20px 0px;
   }
 
   /* Grey overlay when floating panel opens */
