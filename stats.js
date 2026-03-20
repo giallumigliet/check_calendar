@@ -48,6 +48,8 @@ export async function getTaskMonthlyOccurrences(taskId) {
 export function drawCurrentTaskBarChart(container, data) { 
   container.innerHTML = ""; 
   if (!data.length) return; 
+
+  requestAnimationFrame(() => {
   const maxCount = 31; 
   const containerHeight = container.clientHeight; 
   
@@ -110,6 +112,7 @@ export function drawCurrentTaskBarChart(container, data) {
     barWrapper.appendChild(barContainer); 
     barWrapper.appendChild(label); 
     container.appendChild(barWrapper); 
+    });
   }); 
 }
 
