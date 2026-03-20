@@ -69,25 +69,46 @@ export function drawCurrentTaskBarChart(container, data) {
     barWrapper.style.width = "40px"; 
     // larghezza barra + spazio 
     barWrapper.style.margin = "0"; 
+    const barContainer = document.createElement("div");
+    barContainer.style.position = "relative";
+    barContainer.style.width = "100%";
+    barContainer.style.height = `${containerHeight - 50}px`;
+    
+    // 🔹 Barra "totale mese" (sfondo)
+    const barBg = document.createElement("div");
+    barBg.style.position = "absolute";
+    barBg.style.bottom = "0";
+    barBg.style.width = "100%";
+    barBg.style.height = "100%";
+    barBg.style.backgroundColor = "var(--main-color)";
+    barBg.style.opacity = "0.2";
+    
+    // 🔹 Barra "completamenti"
     const bar = document.createElement("div");
-    bar.style.height = `${(d.count / maxCount) * (containerHeight - 50)}px`;
+    bar.style.position = "absolute";
+    bar.style.bottom = "0";
     bar.style.width = "100%";
+    bar.style.height = `${(d.count / maxCount) * (containerHeight - 50)}px`;
     bar.style.backgroundColor = "var(--main-color)";
-    bar.title = `${d.label}: ${d.count}`;
+    bar.style.opacity = "1";
+    
     bar.style.display = "flex";
     bar.style.alignItems = "flex-end";
     bar.style.justifyContent = "center";
     bar.style.color = "white";
     bar.style.fontWeight = "bold";
     bar.style.fontSize = "10px";
-    bar.textContent = d.count; 
+    bar.textContent = d.count;
+
+    barContainer.appendChild(barBg);
+    barContainer.appendChild(bar);
     
     const label = document.createElement("span"); 
     label.style.fontSize = "12px"; 
     label.style.marginTop = "4px"; 
     label.style.textAlign = "center"; 
     label.textContent = d.label; 
-    barWrapper.appendChild(bar); 
+    barWrapper.appendChild(barContainer); 
     barWrapper.appendChild(label); 
     container.appendChild(barWrapper); 
   }); 
