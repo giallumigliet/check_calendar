@@ -465,7 +465,10 @@ export function listenClickCalendar(addBtn, cancelBtn, taskBtn, dayActions, cale
           const occSnap = await getDoc(occRef); 
       
           if (occSnap.exists()) {
-            completedTasks.push(task.name);
+            completedTasks.push({
+              name: task.name,
+              color: task.color
+            });
           }
         }
         message.innerHTML = completedTasks
