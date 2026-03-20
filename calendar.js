@@ -469,7 +469,11 @@ export function listenClickCalendar(addBtn, cancelBtn, taskBtn, dayActions, cale
           }
         }
         message.innerHTML = completedTasks
-          .map(t => `<div>✓ ${t}</div>`)
+          .map(t => `
+            <div>
+              <span style="color:hsl(${t.color},70%,50%)">✓</span> ${t.name}
+            </div>
+          `)
           .join("");
       }
     }
