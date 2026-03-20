@@ -473,7 +473,7 @@ export function listenClickCalendar(addBtn, cancelBtn, taskBtn, dayActions, cale
         }
         message.innerHTML = completedTasks
           .map(t => `
-            <div style="color: hsl(${t.color},70%,35%)">
+            <div style="color: hsl(${t.color},70%,45%)">
               ✓ ${t.name}
             </div>
           `)
