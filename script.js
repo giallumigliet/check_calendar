@@ -67,6 +67,12 @@ const changeAccountBtn = document.getElementById("changeAccount-btn");
 const chartContainer = document.getElementById("time-bar-chart");
 
 
+
+const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+document.body.classList.add(prefersDark ? 'dark' : 'light');
+
+
+
 // ---- STATE ----
 let tasks = [];
 const date = new Date();
