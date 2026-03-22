@@ -131,7 +131,7 @@
       display: flex;
       justify-content: center;
       border-radius: 57px;
-      border: 3px solid #e8e8e8;
+      border: 3px solid var(--border-color);
       box-shadow: 0 -5px 5px rgba(0,0,0,0.05);
       z-index: 998;
   }
@@ -343,7 +343,7 @@
     border-top-left-radius: 57px;
     border-top-right-radius: 57px;
     transition: opacity 0.2s ease;
-    border-bottom: 2px solid #eee;
+    border-bottom: 2px solid var(--border-color);
   }
 
   .panel-header:hover {
@@ -364,7 +364,7 @@
 
   .panel-footer {
     padding: 10px 20px;
-    border-top: 2px solid #eee;
+    border-top: 2px solid --border-color;
   }
 
   #overlay.active {
