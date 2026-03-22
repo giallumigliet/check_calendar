@@ -364,7 +364,7 @@
 
   .panel-footer {
     padding: 10px 20px;
-    border-top: 2px solid --border-color;
+    border-top: 2px solid var(--border-color);
   }
 
   #overlay.active {
