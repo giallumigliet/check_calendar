@@ -409,8 +409,8 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
       overlay.classList.remove("active");
 
       requestAnimationFrame(() => {
-        document.body.style.backgroundColor = "#fff";
-        setThemeColor("#ffffff");
+        document.body.style.backgroundColor = "var(--bg-color)";
+        setThemeColor("var(--bg-color)");
       })
     });
   });
@@ -564,8 +564,8 @@ export function listenTaskButtons(taskBtn, statsBtn, closePanel, closeStatsPanel
         overlay.classList.remove("active");
 
         requestAnimationFrame(() => {
-          document.body.style.backgroundColor = "#fff";
-          setThemeColor("#ffffff");
+          document.body.style.backgroundColor = "var(--bg-color)";
+          setThemeColor("var(--bg-color)");
         });
 
         exitEditMode(taskList);
@@ -583,8 +583,8 @@ export function listenTaskButtons(taskBtn, statsBtn, closePanel, closeStatsPanel
         overlay.classList.remove("active");
 
         requestAnimationFrame(() => {
-          document.body.style.backgroundColor = "#fff";
-          setThemeColor("#ffffff");
+          document.body.style.backgroundColor = "var(--bg-color)";
+          setThemeColor("var(--bg-color)");
         });
     });
 
@@ -600,8 +600,8 @@ export function listenTaskButtons(taskBtn, statsBtn, closePanel, closeStatsPanel
         overlay.classList.remove("active");
 
         requestAnimationFrame(() => {
-          document.body.style.backgroundColor = "#fff";
-          setThemeColor("#ffffff");
+          document.body.style.backgroundColor = "var(--bg-color)";
+          setThemeColor("var(--bg-color)");
         });
 
         exitEditMode(taskList);
