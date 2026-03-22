@@ -9,12 +9,14 @@
 
   body.light {
     --bg-color: #ffffff;
+    --bg-hover-color: #e8e8e8;
     --text-color: #1f1f1f;
     --border-color: #e8e8e8;
   }
   
   body.dark {
     --bg-color: #1f1f1f;
+    --bg-hover-color: #1a1a1a;
     --text-color: #f5f5f5;
     --border-color: #363636;
   }
@@ -84,7 +86,7 @@
   }
 
   neutral-button:hover {
-      background-color:  #e8e8e8;
+      background-color:  var(--bg-hover-color);
       border: 3px solid var(--main-color-dark);
       color: var(--main-color-dark);
   }
@@ -260,7 +262,7 @@
   .progress-container {
     flex: 1;
     height: 16px;
-    background-color: #e8e8e8;
+    background-color: var(--bg-hover-color);
     border-radius: 16px;
     overflow: hidden;
   }
@@ -345,7 +347,7 @@
   }
 
   .panel-header:hover {
-    background-color:  #ddd;
+    background-color:  var(--bg-hover-color);
     color: #666;
   }
 
