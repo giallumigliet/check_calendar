@@ -68,8 +68,15 @@ const chartContainer = document.getElementById("time-bar-chart");
 
 
 
+
 const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 document.body.classList.add(prefersDark ? 'dark' : 'light');
+const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+mediaQuery.addEventListener('change', e => {
+  document.body.classList.toggle('dark', e.matches);
+  document.body.classList.toggle('light', !e.matches);
+});
+
 
 
 
