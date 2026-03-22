@@ -4,7 +4,7 @@
     --main-color-light: hsl(210, 25%, 80%);
     
     --preview-hue: 150;
-    --preview-color: hsl(var(--preview-hue), 70%, 55%);
+    --preview-color: hsl(var(--preview-hue), 70%, 75%);
   }
 
   body.light {
