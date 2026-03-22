@@ -69,7 +69,7 @@
 
 
   neutral-button {
-      background-color:  #fff;
+      background-color:  var(--bg-color);
       border: 3px solid var(--main-color-dark);
       color: var(--main-color-dark);
       padding: 12px 20px;
