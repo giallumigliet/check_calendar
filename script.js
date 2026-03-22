@@ -81,6 +81,7 @@ const lightDarkButton = document.getElementById('lightDark-btn');
 
 lightDarkButton.addEventListener('click', () => {
   document.body.classList.toggle('dark');
+  document.body.classList.toggle('light');
 });
 
 
