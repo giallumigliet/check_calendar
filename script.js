@@ -77,6 +77,12 @@ mediaQuery.addEventListener('change', e => {
   document.body.classList.toggle('light', !e.matches);
 });
 
+const lightDarkButton = document.getElementById('lightDark-btn');
+
+lightDarkButton.addEventListener('click', () => {
+  document.body.classList.toggle('dark');
+});
+
 
 
 
