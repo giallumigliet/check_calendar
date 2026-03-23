@@ -71,14 +71,20 @@ export function drawCurrentTaskBarChart(container, data) {
     const barContainer = document.createElement("div");
     barContainer.style.position = "relative";
     barContainer.style.width = "100%";
-    barContainer.style.height = `100%`;;
+    barContainer.style.height = `100%`;
+
+    const [monthLabel, yearLabel] = d.label.split(" ");
+    const monthIndex = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"].indexOf(monthLabel);
+    const year = parseInt(yearLabel);
+    const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
+
     
     // 🔹 Barra "totale mese" (sfondo)
     const barBg = document.createElement("div");
     barBg.style.position = "absolute";
     barBg.style.bottom = "0";
     barBg.style.width = "100%";
-    barBg.style.height = "100%";
+    barBg.style.height = `${(daysInMonth / 31) * 100}%`;
     barBg.style.backgroundColor = "var(--main-color)";
     barBg.style.opacity = "0.2";
     
