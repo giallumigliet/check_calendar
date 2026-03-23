@@ -72,14 +72,14 @@ export function drawCurrentTaskBarChart(container, data) {
     const barContainer = document.createElement("div");
     barContainer.style.position = "relative";
     barContainer.style.width = "100%";
-    barContainer.style.height = `${(maxDays / maxCount) * 95}%`;;
+    barContainer.style.height = `95%`;;
     
     // 🔹 Barra "totale mese" (sfondo)
     const barBg = document.createElement("div");
     barBg.style.position = "absolute";
     barBg.style.bottom = "0";
     barBg.style.width = "100%";
-    barBg.style.height = "100%";
+    barBg.style.height = `${(maxDays / maxCount) * 100}%`;
     barBg.style.backgroundColor = "var(--main-color)";
     barBg.style.opacity = "0.2";
     
@@ -88,7 +88,7 @@ export function drawCurrentTaskBarChart(container, data) {
     bar.style.position = "absolute";
     bar.style.bottom = "0";
     bar.style.width = "100%";
-    bar.style.height = `100%`;
+    bar.style.height = `${(d.count / maxCount) * 100}%`;
     bar.style.backgroundColor = "var(--main-color)";
     bar.style.opacity = "1";
     
