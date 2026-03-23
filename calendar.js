@@ -171,7 +171,6 @@ export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePrev
         { name: name, color: hue }
       );
       const taskId = docRef.id;
-      currentTask.value = taskId;
     } catch(err) { 
       console.error(err); 
       return; 
