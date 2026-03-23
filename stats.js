@@ -50,6 +50,7 @@ export function drawCurrentTaskBarChart(container, data) {
   if (!data.length) return; 
 
   const maxCount = 31; 
+  const maxHeight = 400;
   
   container.style.display = "flex"; 
   container.style.flexDirection = "row"; 
@@ -57,7 +58,6 @@ export function drawCurrentTaskBarChart(container, data) {
   container.style.overflowX = "auto"; 
   container.style.gap = "10px"; 
   container.style.padding = "10px"; 
-  container.style.height = "400px";
   
   data.forEach(d => { 
     const barWrapper = document.createElement("div"); 
@@ -72,7 +72,7 @@ export function drawCurrentTaskBarChart(container, data) {
     const barContainer = document.createElement("div");
     barContainer.style.position = "relative";
     barContainer.style.width = "100%";
-    barContainer.style.height = `100%`;
+    barContainer.style.height = `${maxHeight}px`;
 
     const [monthLabel, yearLabel] = d.label.split(" ");
     const monthIndex = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"].indexOf(monthLabel);
@@ -85,7 +85,7 @@ export function drawCurrentTaskBarChart(container, data) {
     barBg.style.position = "absolute";
     barBg.style.bottom = "0";
     barBg.style.width = "100%";
-    barBg.style.height = `${(daysInMonth / 31) * 100}%`;
+    barBg.style.height = `${(daysInMonth / 31) * maxHeight}px`;
     barBg.style.backgroundColor = "var(--main-color)";
     barBg.style.opacity = "0.2";
     
@@ -94,7 +94,7 @@ export function drawCurrentTaskBarChart(container, data) {
     bar.style.position = "absolute";
     bar.style.bottom = "0";
     bar.style.width = "100%";
-    bar.style.height = `${(d.count / maxCount) * 100}%`;
+    bar.style.height = `${(d.count / maxCount) * maxHeight}px`;
     bar.style.backgroundColor = "var(--main-color)";
     bar.style.opacity = "1";
     
