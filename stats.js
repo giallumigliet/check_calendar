@@ -57,6 +57,7 @@ export function drawCurrentTaskBarChart(container, data) {
   container.style.overflowX = "auto"; 
   container.style.gap = "10px"; 
   container.style.padding = "10px"; 
+  container.style.height = "400px";
   
   data.forEach(d => { 
     const barWrapper = document.createElement("div"); 
