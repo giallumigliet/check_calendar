@@ -50,7 +50,7 @@ export function drawCurrentTaskBarChart(container, data) {
   if (!data.length) return; 
 
   const maxCount = 31; 
-  const containerHeight = container.getBoundingClientRect().height;
+  const maxDays = Math.max(...data.map(d => d.count), 1);
   
   container.style.display = "flex"; 
   container.style.flexDirection = "row"; 
@@ -72,7 +72,7 @@ export function drawCurrentTaskBarChart(container, data) {
     const barContainer = document.createElement("div");
     barContainer.style.position = "relative";
     barContainer.style.width = "100%";
-    barContainer.style.height = `${containerHeight - 50}px`;
+    bar.style.height = `${(maxDays / maxCount) * 95}%`;;
     
     // 🔹 Barra "totale mese" (sfondo)
     const barBg = document.createElement("div");
@@ -88,7 +88,7 @@ export function drawCurrentTaskBarChart(container, data) {
     bar.style.position = "absolute";
     bar.style.bottom = "0";
     bar.style.width = "100%";
-    bar.style.height = `${(d.count / maxCount) * (containerHeight - 50)}px`;
+    bar.style.height = `${(d.count / maxCount) * 95}%`;
     bar.style.backgroundColor = "var(--main-color)";
     bar.style.opacity = "1";
     
