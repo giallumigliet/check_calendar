@@ -684,7 +684,7 @@
 
   .bar-chart{
     width: 95%;
-    height: 400px; 
+    height: 440px; 
     background: var(--bg-color);
     border-radius: 57px;
     border: 3px solid var(--border-color);
