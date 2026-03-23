@@ -554,6 +554,12 @@ export function listenTaskButtons(taskBtn, statsBtn, closePanel, closeStatsPanel
         buttonFooter.classList.add("hidden-day-buttons");
         statsPanel.classList.add("active");
         overlay.classList.add("active");
+      
+        requestAnimationFrame(() => {
+          setTimeout(() => {
+            updateTaskBarChart(chartContainer, currentTask.id);
+          }, 50); 
+        });
     });
 
 
