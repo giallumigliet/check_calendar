@@ -50,7 +50,7 @@ export function drawCurrentTaskBarChart(container, data) {
   if (!data.length) return; 
 
   const maxCount = 31; 
-  const containerHeight = 400;
+  const containerHeight = 440;
   
   container.style.display = "flex"; 
   container.style.flexDirection = "row"; 
