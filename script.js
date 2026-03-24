@@ -136,7 +136,7 @@ logoutBtn.addEventListener("click", async () => {
 resetDataBtn.addEventListener("click", async () => {
   if (!auth.currentUser) return;
 
-  const confirmDelete = confirm("This will delete your account and ALL data permanently. Continue?");
+  const confirmDelete = confirm("Your account and all associated data will be deleted permanently. Continue?");
   if (!confirmDelete) return;
 
   try {
