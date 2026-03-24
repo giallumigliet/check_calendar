@@ -234,7 +234,7 @@ export function drawAllTasksLineChart(container, months, data, tasks) {
     const path = document.createElementNS(svgNS, "path");
     path.setAttribute("d", pathStr);
     path.setAttribute("stroke", `hsl(${t.color}, 70%, 55%)`);
-    path.setAttribute("stroke-width", 2);
+    path.setAttribute("stroke-width", 4);
     path.setAttribute("fill", "none");
     path.setAttribute("pointer-events", "stroke");
 
