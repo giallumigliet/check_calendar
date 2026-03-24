@@ -256,26 +256,26 @@ export function exitEditMode(taskList) {
 export function createTaskList(taskList, tasks, currentTask, calendarDays, calendarTitle, date, progressWrapper, progressBar, progressText, calendarWrapper, buttonFooter, panel, overlay, taskForm, taskManager, hueContainer, huePreview, editTaskBtn, saveTaskBtn, taskHueInput, taskNameInput) {
   taskList.innerHTML = "";
 
-
-  const allTasksBtn = document.createElement("neutral-button");
-  allTasksBtn.style.textAlign = "center";
-  allTasksBtn.style.margin = "0";
-  allTasksBtn.textContent = "SEE ALL TASKS";
-  taskList.appendChild(allTasksBtn);
-
-  allTasksBtn.addEventListener("click", async (e) => {
-    currentTask.value = "";
-    calendarTitle.textContent = "CHECK CALENDAR";
-    document.body.classList.remove("color-mode");
-    calendarDays.querySelectorAll(".day").forEach(day => day.classList.remove("completed"));
-    await markAllTasks(calendarDays, date, tasks);
-    calendarWrapper.classList.remove("hidden-day-buttons");
-    progressWrapper.classList.add("hidden-day-buttons");
-    buttonFooter.classList.remove("hidden-day-buttons");
-    panel.classList.remove("active");
-    overlay.classList.remove("active");
-  });
-
+  if (tasks.length > 0) {
+    const allTasksBtn = document.createElement("neutral-button");
+    allTasksBtn.style.textAlign = "center";
+    allTasksBtn.style.margin = "0";
+    allTasksBtn.textContent = "SEE ALL TASKS";
+    taskList.appendChild(allTasksBtn);
+  
+    allTasksBtn.addEventListener("click", async (e) => {
+      currentTask.value = "";
+      calendarTitle.textContent = "CHECK CALENDAR";
+      document.body.classList.remove("color-mode");
+      calendarDays.querySelectorAll(".day").forEach(day => day.classList.remove("completed"));
+      await markAllTasks(calendarDays, date, tasks);
+      calendarWrapper.classList.remove("hidden-day-buttons");
+      progressWrapper.classList.add("hidden-day-buttons");
+      buttonFooter.classList.remove("hidden-day-buttons");
+      panel.classList.remove("active");
+      overlay.classList.remove("active");
+    });
+  }
   
   tasks.forEach(task => {
     const { id: taskId, name, color: hue } = task;
