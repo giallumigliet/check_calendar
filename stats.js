@@ -236,6 +236,7 @@ export function drawAllTasksLineChart(container, months, data, tasks) {
     path.setAttribute("stroke", `hsl(${t.color}, 70%, 55%)`);
     path.setAttribute("stroke-width", 2);
     path.setAttribute("fill", "none");
+    path.setAttribute("pointer-events", "stroke");
 
     path.addEventListener("mousemove", (e) => {
         tooltip.style.left = e.pageX + 10 + "px";
