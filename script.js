@@ -82,6 +82,12 @@ const lightDarkButton = document.getElementById('lightDark-btn');
 lightDarkButton.addEventListener('click', () => {
   document.body.classList.toggle('dark');
   document.body.classList.toggle('light');
+  
+  const metaTheme = document.querySelector("#theme-color-meta");
+  const bgColor = getComputedStyle(document.body)
+    .getPropertyValue("--bg-color")
+    .trim();
+  metaTheme.setAttribute("content", bgColor);
 });
 
 
