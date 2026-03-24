@@ -3,9 +3,9 @@ import { auth, db } from "./firebase.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import {
   GoogleAuthProvider, signInWithPopup, setPersistence,
-  browserLocalPersistence, onAuthStateChanged, signOut
+  browserLocalPersistence, onAuthStateChanged, signOut, deleteUser 
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getDocs, deleteDoc, doc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 import {
   createCalendar, listenClickCalendar, listenMonthCalendar, listenTaskButtons,
@@ -59,6 +59,8 @@ const hueContainer = document.getElementById("hue-container");
 
 const loginBtn = document.getElementById("login-btn");
 const logoutBtn = document.getElementById("logout-btn");
+const resetDataBtn = document.getElementById("resetData-btn");
+
 const profileBtn = document.getElementById("profile-btn");
 const userPhoto = document.getElementById("user-photo");
 const accountPanel = document.getElementById("account-floating-panel");
@@ -129,6 +131,51 @@ logoutBtn.addEventListener("click", async () => {
   document.body.classList.remove("color-mode");
   calendarDays.querySelectorAll(".day").forEach(day => day.classList.remove("completed"));
 });
+
+
+resetDataBtn.addEventListener("click", async () => {
+  if (!auth.currentUser) return;
+
+  const confirmDelete = confirm("This will delete your account and ALL data permanently. Continue?");
+  if (!confirmDelete) return;
+
+  try {
+    const uid = auth.currentUser.uid;
+    const tasksRef = collection(db, "users", uid, "tasks");
+    const tasksSnap = await getDocs(tasksRef);
+
+    for (const taskDoc of tasksSnap.docs) {
+      const taskId = taskDoc.id;
+
+      // delete occurrences
+      const occRef = collection(db, "users", uid, "tasks", taskId, "occurrences");
+      const occSnap = await getDocs(occRef);
+
+      for (const occDoc of occSnap.docs) {
+        await deleteDoc(doc(db, "users", uid, "tasks", taskId, "occurrences", occDoc.id));
+      }
+
+      // delete tasks
+      await deleteDoc(doc(db, "users", uid, "tasks", taskId));
+    }
+    await deleteUser(auth.currentUser);
+
+    // reset UI
+    accountPanel.classList.add("hidden-task-buttons");
+    currentTask.value = "";
+    calendarTitle.textContent = "CHECK CALENDAR";
+    document.body.classList.remove("color-mode");
+
+  } catch (err) {
+    console.error("Error deleting account:", err);
+
+    // important case
+    if (err.code === "auth/requires-recent-login") {
+      alert("Please log in again before deleting your account.");
+    }
+  }
+});
+
 
 profileBtn.addEventListener("click", e => { e.stopPropagation(); accountPanel.classList.toggle("hidden-task-buttons"); });
 document.addEventListener("click", e => { if (!accountPanel.contains(e.target) && !profileBtn.contains(e.target)) accountPanel.classList.add("hidden-task-buttons"); });
