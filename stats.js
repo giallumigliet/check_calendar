@@ -185,6 +185,20 @@ export function drawAllTasksLineChart(container, months, data, tasks) {
   container.innerHTML = "";
   if (!data.length) return;
 
+  let tooltip = document.createElement("div");
+  tooltip.style.position = "absolute";
+  tooltip.style.pointerEvents = "none";
+  tooltip.style.padding = "4px 8px";
+  tooltip.style.backgroundColor = "var(--bg-hover-color)";
+  tooltip.style.color = "var(--text-color)";
+  tooltip.style.border = "1px solid var(--border-color)";
+  tooltip.style.borderRadius = "4px";
+  tooltip.style.fontSize = "12px";
+  tooltip.style.display = "none";
+  document.body.appendChild(tooltip);
+
+
+  
   const width = container.clientWidth || 800;
   const height = 400;
   const padding = 50;
@@ -222,6 +236,18 @@ export function drawAllTasksLineChart(container, months, data, tasks) {
     path.setAttribute("stroke", `hsl(${t.color}, 70%, 55%)`);
     path.setAttribute("stroke-width", 2);
     path.setAttribute("fill", "none");
+
+    path.addEventListener("mousemove", (e) => {
+        tooltip.style.left = e.pageX + 10 + "px";
+        tooltip.style.top = e.pageY + 10 + "px";
+        tooltip.textContent = t.name; 
+        tooltip.style.display = "block";
+    });
+    
+    path.addEventListener("mouseleave", () => {
+        tooltip.style.display = "none";
+    });
+    
     svg.appendChild(path);
   });
 
@@ -233,6 +259,7 @@ export function drawAllTasksLineChart(container, months, data, tasks) {
     label.setAttribute("y", height-padding+20);
     label.setAttribute("text-anchor", "middle");
     label.setAttribute("font-size", "12px");
+    label.setAttribute("fill", getComputedStyle(document.body).getPropertyValue("--text-color"));
     label.textContent = m;
     svg.appendChild(label);
   });
@@ -246,6 +273,7 @@ export function drawAllTasksLineChart(container, months, data, tasks) {
     label.setAttribute("y", y+5);
     label.setAttribute("text-anchor", "end");
     label.setAttribute("font-size", "12px");
+    label.setAttribute("fill", getComputedStyle(document.body).getPropertyValue("--text-color"));
     label.textContent = yVal;
     svg.appendChild(label);
   }
