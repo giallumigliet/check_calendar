@@ -153,7 +153,7 @@ export async function markAllTasks(calendarDays, date, tasks) {
 
 
 // -------- TASK UI --------
-export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks, taskList, currentTask, calendarDays, date) {
+export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks, taskList, currentTask, calendarDays, date, progressBar, progressText) {
   saveTaskBtn.addEventListener("click", async () => {
     const name = taskNameInput.value.trim();
     const hue = taskHueInput.value;
@@ -171,6 +171,14 @@ export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePrev
         { name: name, color: hue }
       );
       const taskId = docRef.id;
+      currentTask.value = taskId;
+      document.body.classList.add("color-mode");
+      document.documentElement.style.setProperty("--main-hue", hue); 
+      calendarTitle.textContent = name; 
+      calendarDays.querySelectorAll(".day").forEach(day => day.classList.remove("completed") ); 
+      await markOccurrences(taskId, calendarDays, date); 
+      updateProgress(calendarDays, progressBar, progressText);
+      
     } catch(err) { 
       console.error(err); 
       return; 
