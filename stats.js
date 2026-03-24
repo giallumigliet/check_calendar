@@ -45,6 +45,64 @@ export async function getTaskMonthlyOccurrences(taskId) {
 }
 
 
+export async function getAllTasksMonthlyOccurrences(tasks) {
+  if (!auth.currentUser) return [];
+
+  const uid = auth.currentUser.uid;
+  const monthCountsPerTask = {};
+
+  // Crea oggetto vuoto per ogni task
+  tasks.forEach(t => monthCountsPerTask[t.id] = { name: t.name, color: t.color, counts: {} });
+
+  for (const task of tasks) {
+    const occRef = collection(db, "users", uid, "tasks", task.id, "occurrences");
+    const snapshot = await getDocs(occRef);
+
+    snapshot.docs.forEach(docSnap => {
+      const [year, month] = docSnap.id.split("-");
+      const key = `${year}-${month}`;
+      monthCountsPerTask[task.id].counts[key] = (monthCountsPerTask[task.id].counts[key] || 0) + docSnap.data().quantity;
+    });
+  }
+
+  // Trova il range globale di mesi tra tutte le task
+  const allKeys = [];
+  Object.values(monthCountsPerTask).forEach(task => allKeys.push(...Object.keys(task.counts)));
+  const allDates = allKeys.map(k => new Date(k + "-01"));
+  if (!allDates.length) return [];
+
+  const minDate = new Date(Math.min(...allDates));
+  const maxDate = new Date(Math.max(...allDates));
+
+  // Genera tutti i mesi nel range
+  const sortedMonths = [];
+  let iterDate = new Date(minDate.getFullYear(), minDate.getMonth(), 1);
+  while (iterDate <= maxDate) {
+    const key = `${iterDate.getFullYear()}-${String(iterDate.getMonth()+1).padStart(2,"0")}`;
+    sortedMonths.push(key);
+    iterDate.setMonth(iterDate.getMonth()+1);
+  }
+
+  const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+  // Costruisci array finale
+  const result = sortedMonths.map(key => {
+    const [year, month] = key.split("-");
+    const monthLabel = `${monthNames[parseInt(month)-1]} ${year}`;
+    const values = {};
+    Object.entries(monthCountsPerTask).forEach(([taskId, t]) => {
+      values[taskId] = t.counts[key] || 0;
+    });
+    return { label: monthLabel, values };
+  });
+
+  return { months: sortedMonths.map(k => {
+    const [year, month] = k.split("-");
+    return `${monthNames[parseInt(month)-1]} ${year}`;
+  }), data: result, tasks: monthCountsPerTask };
+}
+
+
 export function drawCurrentTaskBarChart(container, data) { 
   container.innerHTML = ""; 
   if (!data.length) return; 
@@ -122,7 +180,86 @@ export function drawCurrentTaskBarChart(container, data) {
 }
 
 
+
+export function drawAllTasksLineChart(container, months, data, tasks) {
+  container.innerHTML = "";
+  if (!data.length) return;
+
+  const width = container.clientWidth || 800;
+  const height = 400;
+  const padding = 50;
+
+  // Trova il massimo Y
+  let maxY = 0;
+  data.forEach(d => {
+    Object.values(d.values).forEach(v => maxY = Math.max(maxY, v));
+  });
+
+  // Crea SVG
+  const svgNS = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(svgNS, "svg");
+  svg.setAttribute("width", width);
+  svg.setAttribute("height", height);
+  container.appendChild(svg);
+
+  const chartWidth = width - padding*2;
+  const chartHeight = height - padding*2;
+  const xStep = chartWidth / (months.length-1);
+
+  // Funzione per trasformare Y in pixel
+  const yScale = y => chartHeight - (y / maxY * chartHeight) + padding;
+
+  // Disegna linee per ogni task
+  Object.entries(tasks).forEach(([taskId, t]) => {
+    let pathStr = "";
+    data.forEach((d,i) => {
+      const x = padding + i * xStep;
+      const y = yScale(d.values[taskId] || 0);
+      pathStr += (i===0 ? `M ${x} ${y}` : ` L ${x} ${y}`);
+    });
+    const path = document.createElementNS(svgNS, "path");
+    path.setAttribute("d", pathStr);
+    path.setAttribute("stroke", `hsl(${t.color}, 70%, 55%)`);
+    path.setAttribute("stroke-width", 2);
+    path.setAttribute("fill", "none");
+    svg.appendChild(path);
+  });
+
+  // Asse X
+  months.forEach((m,i) => {
+    const x = padding + i * xStep;
+    const label = document.createElementNS(svgNS, "text");
+    label.setAttribute("x", x);
+    label.setAttribute("y", height-padding+20);
+    label.setAttribute("text-anchor", "middle");
+    label.setAttribute("font-size", "12px");
+    label.textContent = m;
+    svg.appendChild(label);
+  });
+
+  // Asse Y
+  const stepY = Math.ceil(maxY/5);
+  for (let yVal = 0; yVal <= maxY; yVal += stepY) {
+    const y = yScale(yVal);
+    const label = document.createElementNS(svgNS, "text");
+    label.setAttribute("x", padding-10);
+    label.setAttribute("y", y+5);
+    label.setAttribute("text-anchor", "end");
+    label.setAttribute("font-size", "12px");
+    label.textContent = yVal;
+    svg.appendChild(label);
+  }
+}
+
+
+
 export async function updateTaskBarChart(container, taskId) {
   const data = await getTaskMonthlyOccurrences(taskId);
   drawCurrentTaskBarChart(container, data);
+}
+
+
+export async function updateAllTasksLineChart(container, tasks) {
+  const { months, data, tasks: taskInfo } = await getAllTasksMonthlyOccurrences(tasks);
+  drawAllTasksLineChart(container, months, data, taskInfo);
 }
