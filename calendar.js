@@ -549,8 +549,6 @@ export function listenTaskButtons(taskBtn, statsBtn, closePanel, closeStatsPanel
         buttonFooter.classList.add("hidden-day-buttons");
         panel.classList.add("active");
         overlay.classList.add("active");
-        document.body.style.overflow = 'hidden';
-        document.body.style.position = 'fixed';
 
         taskManager.classList.remove("hidden-task-buttons");
         taskForm.classList.add("hidden-task-buttons");
@@ -562,8 +560,6 @@ export function listenTaskButtons(taskBtn, statsBtn, closePanel, closeStatsPanel
         buttonFooter.classList.add("hidden-day-buttons");
         statsPanel.classList.add("active");
         overlay.classList.add("active");
-        document.body.style.overflow = 'hidden';
-        document.body.style.position = 'fixed';
       
         requestAnimationFrame(() => {
           setTimeout(() => {
@@ -578,8 +574,6 @@ export function listenTaskButtons(taskBtn, statsBtn, closePanel, closeStatsPanel
         buttonFooter.classList.remove("hidden-day-buttons");
         panel.classList.remove("active");
         overlay.classList.remove("active");
-        document.body.style.overflow = '';
-        document.body.style.position = '';
 
         requestAnimationFrame(() => {
           document.body.style.backgroundColor = "var(--bg-color)";
@@ -598,8 +592,6 @@ export function listenTaskButtons(taskBtn, statsBtn, closePanel, closeStatsPanel
         buttonFooter.classList.remove("hidden-day-buttons");
         statsPanel.classList.remove("active");
         overlay.classList.remove("active");
-        document.body.style.overflow = '';
-        document.body.style.position = '';
 
         requestAnimationFrame(() => {
           document.body.style.backgroundColor = "var(--bg-color)";
@@ -616,8 +608,6 @@ export function listenTaskButtons(taskBtn, statsBtn, closePanel, closeStatsPanel
         panel.classList.remove("active");
         statsPanel.classList.remove("active");
         overlay.classList.remove("active");
-        document.body.style.overflow = '';
-        document.body.style.position = '';
 
         requestAnimationFrame(() => {
           document.body.style.backgroundColor = "var(--bg-color)";
