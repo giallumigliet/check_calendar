@@ -555,7 +555,7 @@ export function listenTaskButtons(taskBtn, statsBtn, closePanel, closeStatsPanel
     });
 
     statsBtn.addEventListener("click", () => {
-        updateAllTasksLineChart(container, tasks)
+        updateAllTasksLineChart(chartContainer, tasks)
         updateTaskBarChart(chartContainer, currentTask.value);
         calendarWrapper.classList.add("hidden-day-buttons");
         buttonFooter.classList.add("hidden-day-buttons");
