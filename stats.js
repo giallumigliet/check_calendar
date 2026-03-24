@@ -199,10 +199,14 @@ export function drawAllTasksLineChart(container, months, data, tasks) {
 
 
   
-  const width = container.clientWidth || 800;
+  const monthWidth = 80;
+  const width = months.length * monthWidth;
   const height = 400;
   const padding = 50;
 
+  container.style.overflowX = "auto";
+  container.style.display = "block";
+  
   // Trova il massimo Y
   let maxY = 0;
   data.forEach(d => {
@@ -218,7 +222,7 @@ export function drawAllTasksLineChart(container, months, data, tasks) {
 
   const chartWidth = width - padding*2;
   const chartHeight = height - padding*2;
-  const xStep = chartWidth / (months.length-1);
+  const xStep = monthWidth;
 
   // Funzione per trasformare Y in pixel
   const yScale = y => chartHeight - (y / maxY * chartHeight) + padding;
@@ -227,7 +231,7 @@ export function drawAllTasksLineChart(container, months, data, tasks) {
   Object.entries(tasks).forEach(([taskId, t]) => {
     let pathStr = "";
     data.forEach((d,i) => {
-      const x = padding + i * xStep;
+      const x = padding + i * monthWidth;
       const y = yScale(d.values[taskId] || 0);
       pathStr += (i===0 ? `M ${x} ${y}` : ` L ${x} ${y}`);
     });
