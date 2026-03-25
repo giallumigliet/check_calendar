@@ -444,7 +444,7 @@ export function listenClickCalendar(addBtn, cancelBtn, taskBtn, dayActions, cale
     if (currentTask.value) {
       dayActions.classList.remove("hidden-day-buttons");
       if (!e.target.classList.contains("completed")) cancelBtn.classList.add("hidden-day-buttons");
-      else cancelBtn.classList.add("hidden-day-buttons");
+      else cancelBtn.classList.remove("hidden-day-buttons");
  
     } else {
       if (!e.target.classList.contains("completed")) { 
