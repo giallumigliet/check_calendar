@@ -210,6 +210,10 @@ export function drawAllTasksLineChart(container, months, data, tasks) {
   container.appendChild(yAxis);
   container.appendChild(scroll);
 
+  requestAnimationFrame(() => {
+    scroll.scrollLeft = scroll.scrollWidth;
+  });
+
   const chartHeight = height - padding * 2;
 
   let maxY = 0;
