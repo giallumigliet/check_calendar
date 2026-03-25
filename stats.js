@@ -185,64 +185,60 @@ export function drawAllTasksLineChart(container, months, data, tasks) {
   container.innerHTML = "";
   if (!data.length) return;
 
-  let tooltip = document.createElement("div");
-  tooltip.style.position = "absolute";
-  tooltip.style.pointerEvents = "none";
-  tooltip.style.padding = "4px 8px";
-  tooltip.style.backgroundColor = "var(--bg-hover-color)";
-  tooltip.style.color = "var(--text-color)";
-  tooltip.style.border = "1px solid var(--border-color)";
-  tooltip.style.borderRadius = "4px";
-  tooltip.style.fontSize = "12px";
-  tooltip.style.display = "none";
-  document.body.appendChild(tooltip);
-
   const svgNS = "http://www.w3.org/2000/svg";
 
   const monthWidth = 80;
   const height = 400;
-  const padding = 50;
+  const padding = 40;
+  const axisWidth = 50;
 
   const width = months.length * monthWidth;
 
-  const wrapper = document.createElement("div");
-  wrapper.style.display = "flex";
-  wrapper.style.position = "relative";
-
   const yAxis = document.createElementNS(svgNS, "svg");
-  yAxis.setAttribute("width", padding);
+  yAxis.classList.add("y-axis-fixed");
+  yAxis.setAttribute("width", axisWidth);
   yAxis.setAttribute("height", height);
-  
-  const scrollArea = document.createElement("div");
-  scrollArea.style.overflowX = "auto";
-  scrollArea.style.overflowY = "hidden";
+
+  const scroll = document.createElement("div");
+  scroll.classList.add("chart-scroll");
 
   const svg = document.createElementNS(svgNS, "svg");
   svg.setAttribute("width", width);
   svg.setAttribute("height", height);
 
-  scrollArea.appendChild(svg);
-  wrapper.appendChild(yAxis);
-  wrapper.appendChild(scrollArea);
-  container.appendChild(wrapper);
+  scroll.appendChild(svg);
+  container.appendChild(yAxis);
+  container.appendChild(scroll);
 
   const chartHeight = height - padding * 2;
-
 
   let maxY = 0;
   data.forEach(d => {
     Object.values(d.values).forEach(v => maxY = Math.max(maxY, v));
   });
 
-
   const yScale = y => chartHeight - (y / maxY * chartHeight) + padding;
 
+  const stepY = Math.ceil(maxY / 5);
+  for (let yVal = 0; yVal <= maxY; yVal += stepY) {
+    const y = yScale(yVal);
+
+    const line = document.createElementNS(svgNS, "line");
+    line.setAttribute("x1", 0);
+    line.setAttribute("x2", width);
+    line.setAttribute("y1", y);
+    line.setAttribute("y2", y);
+    line.setAttribute("stroke", "var(--border-color)");
+    line.setAttribute("opacity", "0.3");
+
+    svg.appendChild(line);
+  }
 
   Object.entries(tasks).forEach(([taskId, t]) => {
     let pathStr = "";
 
     data.forEach((d, i) => {
-      const x = i * monthWidth; // 👈 niente padding!
+      const x = i * monthWidth;
       const y = yScale(d.values[taskId] || 0);
       pathStr += (i === 0 ? `M ${x} ${y}` : ` L ${x} ${y}`);
     });
@@ -252,23 +248,9 @@ export function drawAllTasksLineChart(container, months, data, tasks) {
     path.setAttribute("stroke", `hsl(${t.color}, 70%, 55%)`);
     path.setAttribute("stroke-width", 4);
     path.setAttribute("fill", "none");
-    path.setAttribute("pointer-events", "stroke");
-
-    // Tooltip
-    path.addEventListener("mousemove", (e) => {
-      tooltip.style.left = e.pageX + 10 + "px";
-      tooltip.style.top = e.pageY + 10 + "px";
-      tooltip.textContent = t.name;
-      tooltip.style.display = "block";
-    });
-
-    path.addEventListener("mouseleave", () => {
-      tooltip.style.display = "none";
-    });
 
     svg.appendChild(path);
   });
-
 
   months.forEach((m, i) => {
     const x = i * monthWidth;
@@ -278,30 +260,34 @@ export function drawAllTasksLineChart(container, months, data, tasks) {
     label.setAttribute("y", height - padding + 20);
     label.setAttribute("text-anchor", "middle");
     label.setAttribute("font-size", "12px");
-    label.setAttribute("fill", getComputedStyle(document.body).getPropertyValue("--text-color"));
+    label.setAttribute("fill", "var(--text-color)");
     label.textContent = m;
 
     svg.appendChild(label);
   });
 
- 
-  const stepY = Math.ceil(maxY / 5);
-
   for (let yVal = 0; yVal <= maxY; yVal += stepY) {
     const y = yScale(yVal);
 
     const label = document.createElementNS(svgNS, "text");
-    label.setAttribute("x", padding - 10);
-    label.setAttribute("y", y + 5);
+    label.setAttribute("x", axisWidth - 8);
+    label.setAttribute("y", y + 4);
     label.setAttribute("text-anchor", "end");
     label.setAttribute("font-size", "12px");
-    label.setAttribute("fill", getComputedStyle(document.body).getPropertyValue("--text-color"));
+    label.setAttribute("fill", "var(--text-color)");
     label.textContent = yVal;
 
     yAxis.appendChild(label);
   }
-}
 
+  const axisLine = document.createElementNS(svgNS, "line");
+  axisLine.setAttribute("x1", axisWidth - 1);
+  axisLine.setAttribute("x2", axisWidth - 1);
+  axisLine.setAttribute("y1", padding);
+  axisLine.setAttribute("y2", height - padding);
+  axisLine.setAttribute("stroke", "var(--border-color)");
+  yAxis.appendChild(axisLine);
+}
 
 
 export async function updateTaskBarChart(container, taskId) {
