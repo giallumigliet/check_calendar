@@ -189,34 +189,22 @@ export function drawAllTasksLineChart(container, months, data, tasks) {
   container.innerHTML = "";
   if (!data.length) return;
 
-  const svgNS = "http://www.w3.org/2000/svg";
-
-  const monthWidth = 80;
   const height = 400;
   const padding = 40;
-  const axisWidth = 50;
+  const monthWidth = 80;
 
   const width = months.length * monthWidth;
 
-  const yAxis = document.createElementNS(svgNS, "svg");
-  yAxis.classList.add("y-axis-fixed");
-  yAxis.setAttribute("width", axisWidth);
-  yAxis.setAttribute("height", height);
+  container.style.position = "relative";
+  container.style.overflowX = "auto";
+  container.style.overflowY = "hidden";
 
-  const scroll = document.createElement("div");
-  scroll.classList.add("chart-scroll");
+  const inner = document.createElement("div");
+  inner.style.position = "relative";
+  inner.style.width = width + "px";
+  inner.style.height = height + "px";
 
-  const svg = document.createElementNS(svgNS, "svg");
-  svg.setAttribute("width", width);
-  svg.setAttribute("height", height);
-
-  scroll.appendChild(svg);
-  container.appendChild(yAxis);
-  container.appendChild(scroll);
-
-  requestAnimationFrame(() => {
-    scroll.scrollLeft = scroll.scrollWidth;
-  });
+  container.appendChild(inner);
 
   const chartHeight = height - padding * 2;
 
@@ -228,75 +216,97 @@ export function drawAllTasksLineChart(container, months, data, tasks) {
   const yScale = y => chartHeight - (y / maxY * chartHeight) + padding;
 
   const stepY = Math.ceil(maxY / 5);
+
   for (let yVal = 0; yVal <= maxY; yVal += stepY) {
     const y = yScale(yVal);
 
-    const line = document.createElementNS(svgNS, "line");
-    line.setAttribute("x1", 0);
-    line.setAttribute("x2", width);
-    line.setAttribute("y1", y);
-    line.setAttribute("y2", y);
-    line.setAttribute("stroke", "var(--border-color)");
-    line.setAttribute("opacity", "0.3");
+    const line = document.createElement("div");
+    line.style.position = "absolute";
+    line.style.left = "0";
+    line.style.width = "100%";
+    line.style.height = "1px";
+    line.style.top = y + "px";
+    line.style.background = "var(--border-color)";
+    line.style.opacity = "0.3";
 
-    svg.appendChild(line);
+    inner.appendChild(line);
+
+    const label = document.createElement("div");
+    label.style.position = "absolute";
+    label.style.left = "0";
+    label.style.top = (y - 8) + "px";
+    label.style.fontSize = "12px";
+    label.style.color = "var(--text-color)";
+    label.textContent = yVal;
+
+    container.appendChild(label);
   }
 
   Object.entries(tasks).forEach(([taskId, t]) => {
-    let pathStr = "";
+
+    for (let i = 0; i < data.length - 1; i++) {
+      const x1 = i * monthWidth;
+      const y1 = yScale(data[i].values[taskId] || 0);
+
+      const x2 = (i + 1) * monthWidth;
+      const y2 = yScale(data[i + 1].values[taskId] || 0);
+
+      const dx = x2 - x1;
+      const dy = y2 - y1;
+
+      const length = Math.sqrt(dx * dx + dy * dy);
+      const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+
+      const line = document.createElement("div");
+      line.style.position = "absolute";
+      line.style.left = x1 + "px";
+      line.style.top = y1 + "px";
+      line.style.width = length + "px";
+      line.style.height = "3px";
+      line.style.background = `hsl(${t.color}, 70%, 55%)`;
+      line.style.transformOrigin = "0 0";
+      line.style.transform = `rotate(${angle}deg)`;
+
+      inner.appendChild(line);
+    }
 
     data.forEach((d, i) => {
       const x = i * monthWidth;
       const y = yScale(d.values[taskId] || 0);
-      pathStr += (i === 0 ? `M ${x} ${y}` : ` L ${x} ${y}`);
+
+      const dot = document.createElement("div");
+      dot.style.position = "absolute";
+      dot.style.left = (x - 4) + "px";
+      dot.style.top = (y - 4) + "px";
+      dot.style.width = "8px";
+      dot.style.height = "8px";
+      dot.style.borderRadius = "50%";
+      dot.style.background = `hsl(${t.color}, 70%, 55%)`;
+
+      inner.appendChild(dot);
     });
-
-    const path = document.createElementNS(svgNS, "path");
-    path.setAttribute("d", pathStr);
-    path.setAttribute("stroke", `hsl(${t.color}, 70%, 55%)`);
-    path.setAttribute("stroke-width", 4);
-    path.setAttribute("fill", "none");
-
-    svg.appendChild(path);
   });
 
   months.forEach((m, i) => {
     const x = i * monthWidth;
 
-    const label = document.createElementNS(svgNS, "text");
-    label.setAttribute("x", x);
-    label.setAttribute("y", height - padding + 20);
-    label.setAttribute("text-anchor", "middle");
-    label.setAttribute("font-size", "12px");
-    label.setAttribute("fill", "var(--text-color)");
+    const label = document.createElement("div");
+    label.style.position = "absolute";
+    label.style.left = (x - 20) + "px";
+    label.style.top = (height - padding + 10) + "px";
+    label.style.fontSize = "12px";
+    label.style.color = "var(--text-color)";
+    label.style.width = "60px";
+    label.style.textAlign = "center";
     label.textContent = m;
 
-    svg.appendChild(label);
+    inner.appendChild(label);
   });
 
-  for (let yVal = 0; yVal <= maxY; yVal += stepY) {
-    const y = yScale(yVal);
-
-    const label = document.createElementNS(svgNS, "text");
-    label.setAttribute("x", axisWidth - 8);
-    label.setAttribute("y", y + 4);
-    label.setAttribute("text-anchor", "end");
-    label.setAttribute("font-size", "12px");
-    label.setAttribute("fill", "var(--text-color)");
-    label.textContent = yVal;
-
-    yAxis.appendChild(label);
-  }
-
-  const axisLine = document.createElementNS(svgNS, "line");
-  axisLine.setAttribute("x1", axisWidth - 1);
-  axisLine.setAttribute("x2", axisWidth - 1);
-  axisLine.setAttribute("y1", padding);
-  axisLine.setAttribute("y2", height - padding);
-  axisLine.setAttribute("stroke", "var(--border-color)");
-  yAxis.appendChild(axisLine);
+  requestAnimationFrame(() => {
+    container.scrollLeft = container.scrollWidth;
+  });
 }
-
 
 export async function updateTaskBarChart(container, taskId) {
   const data = await getTaskMonthlyOccurrences(taskId);
