@@ -726,59 +726,9 @@
   box-shadow: 0 -5px 5px rgba(0,0,0,0.05);
 
   position: relative;
-  overflow: hidden; 
-}
-
-
-.y-axis-fixed {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 50px;
-  height: 100%;
-  z-index: 2;
-  background: var(--bg-color);
-}
-
-.chart-scroll {
-  position: absolute;
-  left: 50px;
-  right: 0;
-  top: 0;
-  bottom: 0;
   overflow-x: auto;
   overflow-y: hidden;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
