@@ -177,6 +177,10 @@ export function drawCurrentTaskBarChart(container, data) {
     barWrapper.appendChild(label); 
     container.appendChild(barWrapper); 
   }); 
+
+  requestAnimationFrame(() => {
+    container.scrollLeft = container.scrollWidth;
+  });
 }
 
 
