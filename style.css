@@ -717,19 +717,6 @@
     transform: scale(1.1);
 }
 
-.trend-chart {
-  width: 95%;
-  height: 400px;
-  background: var(--bg-color);
-  border-radius: 57px;
-  border: 3px solid var(--border-color);
-  box-shadow: 0 -5px 5px rgba(0,0,0,0.05);
-
-  position: relative;
-  overflow-x: auto;
-  overflow-y: hidden;
-}
-
 
 
 
