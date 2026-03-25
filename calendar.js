@@ -441,8 +441,12 @@ export function listenClickCalendar(addBtn, cancelBtn, taskBtn, dayActions, cale
     selectedDay = e.target;
     calendarDays.querySelectorAll(".day").forEach(d => d.classList.remove("selected"));
     selectedDay.classList.add("selected");
-    if (currentTask.value) dayActions.classList.remove("hidden-day-buttons");
-    else {
+    if (currentTask.value) {
+      dayActions.classList.remove("hidden-day-buttons");
+      if (!e.target.classList.contains("completed")) cancelBtn.classList.add("hidden-day-buttons");
+      else cancelBtn.classList.add("hidden-day-buttons");
+ 
+    } else {
       if (!e.target.classList.contains("completed")) { 
         message.textContent = "";
         taskBtn.classList.add("warning");
