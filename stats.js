@@ -184,6 +184,90 @@ export function drawCurrentTaskBarChart(container, data) {
 }
 
 
+export function drawAllTasksMultiBarChart(container, months, data, tasks) {
+  container.innerHTML = "";
+  if (!data.length) return;
+
+  const maxCount = 31;
+  const containerHeight = 400;
+
+  container.style.display = "flex";
+  container.style.flexDirection = "row";
+  container.style.alignItems = "flex-end";
+  container.style.overflowX = "auto";
+  container.style.gap = "20px";
+  container.style.padding = "10px";
+
+  data.forEach(d => {
+
+    // 🔹 Wrapper del mese
+    const monthWrapper = document.createElement("div");
+    monthWrapper.style.display = "flex";
+    monthWrapper.style.flexDirection = "column";
+    monthWrapper.style.alignItems = "center";
+    monthWrapper.style.flex = "0 0 auto";
+
+    // 🔹 Contenitore barre del mese (AFFIANCATE)
+    const barsRow = document.createElement("div");
+    barsRow.style.display = "flex";
+    barsRow.style.flexDirection = "row";
+    barsRow.style.alignItems = "flex-end";
+    barsRow.style.height = `${containerHeight}px`;
+    barsRow.style.gap = "4px";
+
+    Object.entries(tasks).forEach(([taskId, t]) => {
+      const value = d.values[taskId] || 0;
+
+      const barWrapper = document.createElement("div");
+      barWrapper.style.display = "flex";
+      barWrapper.style.flexDirection = "column";
+      barWrapper.style.alignItems = "center";
+      barWrapper.style.width = "20px";
+
+      const barContainer = document.createElement("div");
+      barContainer.style.position = "relative";
+      barContainer.style.width = "100%";
+      barContainer.style.height = "100%";
+
+      // 🔹 Barra
+      const bar = document.createElement("div");
+      bar.style.position = "absolute";
+      bar.style.bottom = "0";
+      bar.style.width = "100%";
+      bar.style.height = `${(value / maxCount) * (containerHeight - 50)}px`;
+      bar.style.backgroundColor = `hsl(${t.color}, 70%, 55%)`;
+
+      bar.style.display = "flex";
+      bar.style.alignItems = "flex-end";
+      bar.style.justifyContent = "center";
+      bar.style.color = "white";
+      bar.style.fontSize = "9px";
+      bar.textContent = value > 0 ? value : "";
+
+      barContainer.appendChild(bar);
+      barWrapper.appendChild(barContainer);
+      barsRow.appendChild(barWrapper);
+    });
+
+    // 🔹 Label mese
+    const label = document.createElement("span");
+    label.style.fontSize = "12px";
+    label.style.marginTop = "6px";
+    label.style.textAlign = "center";
+    label.textContent = d.label;
+
+    monthWrapper.appendChild(barsRow);
+    monthWrapper.appendChild(label);
+
+    container.appendChild(monthWrapper);
+  });
+
+  requestAnimationFrame(() => {
+    container.scrollLeft = container.scrollWidth;
+  });
+}
+
+
 
 export function drawAllTasksLineChart(container, months, data, tasks) {
   container.innerHTML = "";
@@ -311,6 +395,12 @@ export function drawAllTasksLineChart(container, months, data, tasks) {
 export async function updateTaskBarChart(container, taskId) {
   const data = await getTaskMonthlyOccurrences(taskId);
   drawCurrentTaskBarChart(container, data);
+}
+
+
+export async function updateAllTasksMultiBarChart(container, tasks) {
+  const { months, data, tasks: taskInfo } = await getAllTasksMonthlyOccurrences(tasks);
+  drawAllTasksMultiBarChart(container, months, data, taskInfo);
 }
 
 
