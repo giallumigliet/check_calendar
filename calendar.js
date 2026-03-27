@@ -1,6 +1,6 @@
 import { db, auth } from "./firebase.js";
 import { doc, setDoc, deleteDoc, addDoc, getDoc, updateDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import { updateTaskBarChart, updateAllTasksLineChart } from "./stats.js";
+import { updateTaskBarChart, updateAllTasksMultiBarChart, updateAllTasksLineChart } from "./stats.js";
 
 // -------- CALENDAR DRAW --------
 export async function createCalendar(date, monthYear, calendarDays, currentTask, progressBar, progressText, tasks) {
