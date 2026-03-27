@@ -198,22 +198,30 @@ export function drawAllTasksMultiBarChart(container, months, data, tasks) {
   container.style.gap = "20px";
   container.style.padding = "10px";
 
+  const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
   data.forEach(d => {
 
-    // 🔹 Wrapper del mese
+    // 🔹 Wrapper mese
     const monthWrapper = document.createElement("div");
     monthWrapper.style.display = "flex";
     monthWrapper.style.flexDirection = "column";
     monthWrapper.style.alignItems = "center";
     monthWrapper.style.flex = "0 0 auto";
 
-    // 🔹 Contenitore barre del mese (AFFIANCATE)
+    // 🔹 Riga barre
     const barsRow = document.createElement("div");
     barsRow.style.display = "flex";
     barsRow.style.flexDirection = "row";
     barsRow.style.alignItems = "flex-end";
     barsRow.style.height = `${containerHeight}px`;
     barsRow.style.gap = "4px";
+
+    // 🔹 Calcolo giorni del mese (per ghost bar)
+    const [monthLabel, yearLabel] = d.label.split(" ");
+    const monthIndex = monthNames.indexOf(monthLabel);
+    const year = parseInt(yearLabel);
+    const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
 
     Object.entries(tasks).forEach(([taskId, t]) => {
       const value = d.values[taskId] || 0;
@@ -229,7 +237,16 @@ export function drawAllTasksMultiBarChart(container, months, data, tasks) {
       barContainer.style.width = "100%";
       barContainer.style.height = "100%";
 
-      // 🔹 Barra
+      // 🔹 Ghost bar (giorni del mese)
+      const barBg = document.createElement("div");
+      barBg.style.position = "absolute";
+      barBg.style.bottom = "0";
+      barBg.style.width = "100%";
+      barBg.style.height = `${(daysInMonth / maxCount) * (containerHeight - 50)}px`;
+      barBg.style.backgroundColor = `hsl(${t.color}, 70%, 55%)`;
+      barBg.style.opacity = "0.2";
+
+      // 🔹 Barra valore
       const bar = document.createElement("div");
       bar.style.position = "absolute";
       bar.style.bottom = "0";
@@ -244,6 +261,7 @@ export function drawAllTasksMultiBarChart(container, months, data, tasks) {
       bar.style.fontSize = "9px";
       bar.textContent = value > 0 ? value : "";
 
+      barContainer.appendChild(barBg);
       barContainer.appendChild(bar);
       barWrapper.appendChild(barContainer);
       barsRow.appendChild(barWrapper);
@@ -258,7 +276,6 @@ export function drawAllTasksMultiBarChart(container, months, data, tasks) {
 
     monthWrapper.appendChild(barsRow);
     monthWrapper.appendChild(label);
-
     container.appendChild(monthWrapper);
   });
 
@@ -266,7 +283,6 @@ export function drawAllTasksMultiBarChart(container, months, data, tasks) {
     container.scrollLeft = container.scrollWidth;
   });
 }
-
 
 
 export function drawAllTasksLineChart(container, months, data, tasks) {
