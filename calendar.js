@@ -44,10 +44,11 @@ export async function createCalendar(date, monthYear, calendarDays, currentTask,
   });
   
   if (currentTask.value) {
+    console.log("drawing task:", currentTask.value);
     await markOccurrences(currentTask.value, calendarDays, date);
     updateProgress(calendarDays, progressBar, progressText);
   } else {
-    console.log("tasks:", tasks);
+    console.log("drawing tasks:", tasks);
     console.log("month:", month, "year:", year);
     await markAllTasks(calendarDays, date, tasks);
   }
