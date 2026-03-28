@@ -175,7 +175,11 @@ export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePrev
       document.body.classList.add("color-mode");
       document.documentElement.style.setProperty("--main-hue", hue); 
       calendarTitle.textContent = name; 
-      calendarDays.querySelectorAll(".day").forEach(day => day.classList.remove("completed") ); 
+      calendarDays.querySelectorAll(".day").forEach(day => {
+        day.classList.remove("completed");
+        day.style.background = "";
+        day.style.color = "";
+      }); 
       await markOccurrences(taskId, calendarDays, date); 
       updateProgress(calendarDays, progressBar, progressText);
       
