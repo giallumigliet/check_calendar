@@ -172,6 +172,11 @@ export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePrev
         { name: name, color: hue }
       );
       const taskId = docRef.id;
+      tasks.push({
+        id: taskId,
+        name: name,
+        color: hue
+      });
       currentTask.value = taskId;
       console.log("current saved task:", currentTask.value);
       document.body.classList.add("color-mode");
