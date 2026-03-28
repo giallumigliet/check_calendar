@@ -172,6 +172,7 @@ export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePrev
       );
       const taskId = docRef.id;
       currentTask.value = taskId;
+      console.log("current saved task:", currentTask.value);
       document.body.classList.add("color-mode");
       document.documentElement.style.setProperty("--main-hue", hue); 
       calendarTitle.textContent = name; 
