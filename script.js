@@ -194,6 +194,7 @@ onAuthStateChanged(auth, user => {
     onSnapshot(tasksRef, async snapshot => {
       tasks.length = 0;
       snapshot.forEach(doc => { tasks.push({ id: doc.id, ...doc.data() });  });
+      console.log("SNAPSHOT currentTask:", currentTask.value);
       createTaskList(taskList, tasks, currentTask, calendarDays, calendarTitle, date, progressWrapper, progressBar, progressText, calendarWrapper, buttonFooter, panel, overlay, taskForm, taskManager, hueContainer, huePreview, editTaskBtn, saveTaskBtn, taskHueInput, taskNameInput);
       await createCalendar(date, monthYear, calendarDays, currentTask, progressBar, progressText, tasks);
       updateProgress(calendarDays, progressBar, progressText);
