@@ -167,17 +167,17 @@ export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePrev
 
     try {
       const uid = auth.currentUser.uid;
-      const docRef = await addDoc(
+      
+      currentTask.value = (await addDoc(
         collection(db, "users", uid, "tasks"),
         { name: name, color: hue }
-      );
-      const taskId = docRef.id;
+      )).id;
+      
       tasks.push({
-        id: taskId,
+        id: currentTask.value,
         name: name,
         color: hue
       });
-      currentTask.value = taskId;
       console.log("current saved task:", currentTask.value);
       document.body.classList.add("color-mode");
       document.documentElement.style.setProperty("--main-hue", hue); 
