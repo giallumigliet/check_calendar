@@ -566,7 +566,7 @@ export function listenTaskButtons(taskBtn, statsBtn, closePanel, closeStatsPanel
       
         requestAnimationFrame(() => {
           setTimeout(() => {
-            updateTaskBarChart(chartContainer, currentTask.id);
+            updateTaskBarChart(chartContainer, currentTask.value);
           }, 50); 
         });
     });
