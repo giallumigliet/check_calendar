@@ -182,7 +182,6 @@ export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePrev
       document.body.classList.add("color-mode");
       document.documentElement.style.setProperty("--main-hue", hue); 
       calendarTitle.textContent = name; 
-      await createCalendar(date, monthYear, calendarDays, currentTask, progressBar, progressText, tasks);;
       
     } catch(err) { 
       console.error(err); 
