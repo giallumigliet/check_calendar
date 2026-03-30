@@ -167,21 +167,25 @@ export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePrev
 
     try {
       const uid = auth.currentUser.uid;
-      
-      currentTask.value = (await addDoc(
+      const docRef = await addDoc(
         collection(db, "users", uid, "tasks"),
         { name: name, color: hue }
-      )).id;
+      );
+      const taskId = docRef.id;
+      currentTask.value = taskId;
       
       tasks.push({
-        id: currentTask.value,
+        id: taskId,
         name: name,
         color: hue
       });
-      console.log("current saved task:", currentTask.value);
+      console.log("current saved task:", taskId);
       document.body.classList.add("color-mode");
       document.documentElement.style.setProperty("--main-hue", hue); 
       calendarTitle.textContent = name; 
+      calendarDays.querySelectorAll(".day").forEach(day => day.classList.remove("completed") ); 
+      await markOccurrences(taskId, calendarDays, date); 
+      updateProgress(calendarDays, progressBar, progressText);
       
     } catch(err) { 
       console.error(err); 
