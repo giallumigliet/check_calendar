@@ -192,8 +192,6 @@ onAuthStateChanged(auth, async user => {
     userPhoto.src = user.photoURL;
   
     await createCalendar(date, monthYear, calendarDays, currentTask, progressBar, progressText, tasks);
-    updateProgress(calendarDays, progressBar, progressText);
-    
 
     const tasksRef = collection(db, "users", user.uid, "tasks");
     onSnapshot(tasksRef, async snapshot => {
