@@ -183,21 +183,23 @@ document.addEventListener("click", e => { if (!accountPanel.contains(e.target) &
 // ---- AUTH STATE ----
 onAuthStateChanged(auth, user => {
   if(user){
+    console.log("user logged: ", user.uid);
     calendarWrapper.classList.remove("hidden-task-buttons");
     loginBtn.classList.add("hidden-task-buttons");
     profileBtn.classList.remove("hidden-task-buttons");
     taskBtn.classList.remove("semi-transparent");
     statsBtn.classList.remove("semi-transparent");
     userPhoto.src = user.photoURL;
+  
+    await createCalendar(date, monthYear, calendarDays, currentTask, progressBar, progressText, tasks);
+    updateProgress(calendarDays, progressBar, progressText);
+    
 
     const tasksRef = collection(db, "users", user.uid, "tasks");
     onSnapshot(tasksRef, async snapshot => {
       tasks.length = 0;
       snapshot.forEach(doc => { tasks.push({ id: doc.id, ...doc.data() });  });
-      //console.log("SNAPSHOT currentTask:", currentTask.value);
       createTaskList(taskList, tasks, currentTask, calendarDays, calendarTitle, date, progressWrapper, progressBar, progressText, calendarWrapper, buttonFooter, panel, overlay, taskForm, taskManager, hueContainer, huePreview, editTaskBtn, saveTaskBtn, taskHueInput, taskNameInput);
-      //await createCalendar(date, monthYear, calendarDays, currentTask, progressBar, progressText, tasks);
-      //updateProgress(calendarDays, progressBar, progressText);
     });
 
   } else {
