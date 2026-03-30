@@ -193,7 +193,7 @@ onAuthStateChanged(auth, async user => {
     let first = true;
     
     const tasksRef = collection(db, "users", user.uid, "tasks");
-    onSnapshot(tasksRef, snapshot => {
+    onSnapshot(tasksRef, async snapshot => {
       tasks.length = 0;
       snapshot.forEach(doc => { tasks.push({ id: doc.id, ...doc.data() });  });
       createTaskList(taskList, tasks, currentTask, calendarDays, calendarTitle, date, progressWrapper, progressBar, progressText, calendarWrapper, buttonFooter, panel, overlay, taskForm, taskManager, hueContainer, huePreview, editTaskBtn, saveTaskBtn, taskHueInput, taskNameInput);
