@@ -204,7 +204,7 @@ export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePrev
 
 
 
-export function listenEditTask(editTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, taskList, calendarTitle) {
+export function listenEditTask(editTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, taskList, calendarTitle, calendarDays, date, tasks) {
   editTaskBtn.addEventListener("click", async () => {
     const name = taskNameInput.value.trim();
     const hue = taskHueInput.value;
@@ -239,6 +239,8 @@ export function listenEditTask(editTaskBtn, taskNameInput, taskHueInput, huePrev
     if (calendarTitle.textContent !== "CHECK CALENDAR") {
       calendarTitle.textContent = name;
       document.documentElement.style.setProperty("--main-hue", hue);
+    } else {
+      await markAllTasks(calendarDays, date, tasks);
     }
   });
 }
