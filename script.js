@@ -181,7 +181,7 @@ profileBtn.addEventListener("click", e => { e.stopPropagation(); accountPanel.cl
 document.addEventListener("click", e => { if (!accountPanel.contains(e.target) && !profileBtn.contains(e.target)) accountPanel.classList.add("hidden-task-buttons"); });
 
 // ---- AUTH STATE ----
-onAuthStateChanged(auth, user => {
+onAuthStateChanged(auth, async user => {
   if(user){
     console.log("user logged: ", user.uid);
     calendarWrapper.classList.remove("hidden-task-buttons");
