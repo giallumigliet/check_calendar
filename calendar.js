@@ -154,12 +154,43 @@ export async function markAllTasks(calendarDays, date, tasks) {
 
 
 // -------- TASK UI --------
-export function listenNotifications(notificationsPanel, confirmNotificationBtn) {
+export function (notificationsPanel, confirmNotificationBtn, mondayFlag, tuesdayFlag, wednesdayFlag, thursdayFlag, fridayFlag, saturdayFlag, sundayFlag) {
   confirmNotificationBtn.addEventListener("click", async () => {
     
     notificationsPanel.classList.remove("active");
 
   });
+
+  mondayFlag.addEventListener("click", async () => {
+    mondayFlag.classList.toggle("checked");
+
+  });
+  tuesdayFlag.addEventListener("click", async () => {
+    tuesdayFlag.classList.toggle("checked");
+
+  });
+  wednesdayFlag.addEventListener("click", async () => {
+    wednesdayFlag.classList.toggle("checked");
+
+  });
+  thursdayFlag.addEventListener("click", async () => {
+    thursdayFlag.classList.toggle("checked");
+
+  });
+  fridayFlag.addEventListener("click", async () => {
+    fridayFlag.classList.toggle("checked");
+
+  });
+  saturdayFlag.addEventListener("click", async () => {
+    saturdayFlag.classList.toggle("checked");
+
+  });
+  sundayFlag.addEventListener("click", async () => {
+    sundayFlag.classList.toggle("checked");
+
+  });
+
+  
 }
 
 
