@@ -162,31 +162,31 @@ export function (notificationsPanel, confirmNotificationBtn, mondayFlag, tuesday
   });
 
   mondayFlag.addEventListener("click", async () => {
-    mondayFlag.classList.toggle("checked");
+    mondayFlag.classList.toggle("clicked");
 
   });
   tuesdayFlag.addEventListener("click", async () => {
-    tuesdayFlag.classList.toggle("checked");
+    tuesdayFlag.classList.toggle("clicked");
 
   });
   wednesdayFlag.addEventListener("click", async () => {
-    wednesdayFlag.classList.toggle("checked");
+    wednesdayFlag.classList.toggle("clicked");
 
   });
   thursdayFlag.addEventListener("click", async () => {
-    thursdayFlag.classList.toggle("checked");
+    thursdayFlag.classList.toggle("clicked");
 
   });
   fridayFlag.addEventListener("click", async () => {
-    fridayFlag.classList.toggle("checked");
+    fridayFlag.classList.toggle("clicked");
 
   });
   saturdayFlag.addEventListener("click", async () => {
-    saturdayFlag.classList.toggle("checked");
+    saturdayFlag.classList.toggle("clicked");
 
   });
   sundayFlag.addEventListener("click", async () => {
-    sundayFlag.classList.toggle("checked");
+    sundayFlag.classList.toggle("clicked");
 
   });
 
