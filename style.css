@@ -764,6 +764,8 @@
     border-radius: 5px;
     height: 25px;
     width: 25px;
+    padding: 0px;
+    margin: 0px;
   }
 
   flag.clicked {
