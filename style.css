@@ -751,6 +751,7 @@
     place-items: center;
     display: flex;
     flex-direction: column;  
+    gap: 20px;
     align-items: center;     
     text-align: center;  
   }
@@ -766,6 +767,8 @@
     background: var(--bg-color);
     color: var(--text-color); 
     text-align: center;
+    font-weight: bold;
+    font-size: 18px;
     place-items: center;
     display: flex;
     justify-content: center;
