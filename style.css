@@ -365,8 +365,6 @@
   .panel-footer {
     padding: 10px 20px;
     border-top: 2px solid var(--border-color);
-    display: flex;
-    justify-content: flex-end;
   }
 
   #overlay.active {
@@ -417,6 +415,11 @@
     flex-direction: column;
     padding: 5px 0px;
     gap: 5px;
+  }
+
+  #task-editor {
+    display: flex;
+    justify-content: flex-end;
   }
 
   .editing-mode .task-item:not(.editing) {
