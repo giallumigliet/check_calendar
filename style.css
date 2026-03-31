@@ -758,10 +758,11 @@
  flag {
     background: var(--bg-color);
     color: var(--text-color); 
+    text-align: center;
     border: 1px solid var(--border-color);
     border-radius: 5px;
-    height: 20px;
-    width: 20px;
+    height: 25px;
+    width: 25px;
   }
 
   flag.clicked {
