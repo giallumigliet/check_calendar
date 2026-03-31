@@ -195,7 +195,7 @@ export function listenNotifications(notificationsPanel, overlay, confirmNotifica
 
 
 
-export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks, taskList, currentTask, calendarTitle, calendarDays, date, monthYear, progressBar, progressText, notificationsPanel, overlay) {
+export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks, taskList, currentTask, calendarTitle, calendarDays, date, monthYear, progressBar, progressText, panel, notificationsPanel, overlay) {
   saveTaskBtn.addEventListener("click", async () => {
     const name = taskNameInput.value.trim();
     const hue = taskHueInput.value;
@@ -235,14 +235,15 @@ export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePrev
       return; 
     }
 
-
-
+    
     taskNameInput.value = "";
     taskHueInput.value = 162;
     huePreview.style.backgroundColor = `hsl(162, 80%, 55%)`;
     taskForm.classList.add("hidden-task-buttons");
     taskManager.classList.remove("hidden-task-buttons");
 
+    
+    panel.classList.remove("active");
     notificationsPanel.classList.add("active");
     overlay.classList.add("active");
   });
@@ -409,6 +410,7 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
       e.stopPropagation();
       document.documentElement.style.setProperty("--notification-color", `hsl(${hue}, 70%, 65%)`);
       menu.classList.remove("show");
+      panel.classList.remove("active");
       notificationsPanel.classList.add("active");
       overlay.classList.add("active");
     });
