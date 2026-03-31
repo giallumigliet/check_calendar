@@ -9,7 +9,7 @@ import { getDocs, deleteDoc, doc, collection, onSnapshot } from "https://www.gst
 
 import {
   createCalendar, listenClickCalendar, listenMonthCalendar, listenTaskButtons,
-  listenHue, listenPanelButtons, listenSaveTask, listenEditTask, createTaskList, markOccurrences, markAllTasks,
+  listenHue, listenPanelButtons, listenSaveTask, listenEditTask, listenNotifications, createTaskList, markOccurrences, markAllTasks,
   updateProgress, enterEditMode, exitEditMode
 } from "./calendar.js";
 
@@ -39,6 +39,7 @@ const nextMonthBtn = document.getElementById("nextMonth");
 const panel = document.getElementById("floating-panel");
 const statsPanel = document.getElementById("stats-floating-panel");
 const notificationsPanel = document.getElementById("notifications-floating-panel");
+const confirmNotificationBtn = document.getElementById("confirm-notification");
 const overlay = document.getElementById("overlay");
 const closePanel = document.getElementById("close-panel");
 const closeStatsPanel = document.getElementById("close-stats-panel");
@@ -224,6 +225,7 @@ onAuthStateChanged(auth, async user => {
 });
 
 // ------------------------------------------------
+listenNotifications(notificationsPanel, confirmNotificationBtn) 
 listenClickCalendar(addBtn, cancelBtn, taskBtn, dayActions, calendarDays, progressBar, progressText, currentTask, date, message, tasks);
 listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn, nextMonthBtn, progressBar, progressText, currentTask, tasks);
 listenTaskButtons(taskBtn, statsBtn, closePanel, closeStatsPanel, panel, statsPanel, overlay, calendarWrapper, buttonFooter, taskManager, taskForm, taskList, taskNameInput, taskHueInput, huePreview, currentTask, tasks, chartContainer);
