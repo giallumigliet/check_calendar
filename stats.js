@@ -149,7 +149,7 @@ export function drawCurrentTaskBarChart(container, data) {
     barBg.style.opacity = "0.2";
     
     // 🔹 Barra "completamenti"
-    const bar = document.createElement("div");
+    const bar = document.createElement("bar");
     bar.style.position = "absolute";
     bar.style.bottom = "0";
     bar.style.width = "100%";
@@ -247,7 +247,7 @@ export function drawAllTasksMultiBarChart(container, months, data, tasks) {
       barBg.style.opacity = "0.2";
 
       // 🔹 Barra valore
-      const bar = document.createElement("div");
+      const bar = document.createElement("bar");
       bar.style.position = "absolute";
       bar.style.bottom = "0";
       bar.style.width = "100%";
