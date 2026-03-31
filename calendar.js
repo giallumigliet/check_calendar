@@ -263,7 +263,7 @@ export function exitEditMode(taskList) {
 }
 
 
-export function createTaskList(taskList, tasks, currentTask, calendarDays, calendarTitle, date, progressWrapper, progressBar, progressText, calendarWrapper, buttonFooter, panel, overlay, taskForm, taskManager, hueContainer, huePreview, editTaskBtn, saveTaskBtn, taskHueInput, taskNameInput) {
+export function createTaskList(taskList, tasks, currentTask, calendarDays, calendarTitle, date, progressWrapper, progressBar, progressText, calendarWrapper, buttonFooter, panel, overlay, taskForm, taskManager, hueContainer, huePreview, editTaskBtn, saveTaskBtn, taskHueInput, taskNameInput, notificationsPanel) {
   taskList.innerHTML = "";
 
   if (tasks.length > 0) {
@@ -360,10 +360,8 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
 
 
     // to add a reminder for the task
-    notificationItem.addEventListener("click", async () => {
-    
-      panel.classList.remove("active");
-
+    notificationItem.addEventListener("click", () => {
+      notificationsPanel.classList.add("active");
     });
 
 
