@@ -752,7 +752,7 @@
   }
 
   #reminderDays {
-    display: grid;
+    display: flex;
   }
 
  flag {
