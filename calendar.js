@@ -154,7 +154,7 @@ export async function markAllTasks(calendarDays, date, tasks) {
 
 
 // -------- TASK UI --------
-export function (notificationsPanel, confirmNotificationBtn, mondayFlag, tuesdayFlag, wednesdayFlag, thursdayFlag, fridayFlag, saturdayFlag, sundayFlag) {
+export function listenNotifications(notificationsPanel, confirmNotificationBtn, mondayFlag, tuesdayFlag, wednesdayFlag, thursdayFlag, fridayFlag, saturdayFlag, sundayFlag) {
   confirmNotificationBtn.addEventListener("click", async () => {
     
     notificationsPanel.classList.remove("active");
