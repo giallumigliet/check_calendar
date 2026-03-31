@@ -800,7 +800,7 @@
   }
 
   .flag.clicked {
-    background: var(--main-color);
+    background: var(--notification-color);
     color: white; 
   }
 
