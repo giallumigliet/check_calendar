@@ -755,7 +755,7 @@
     display: grid;
   }
 
- flags {
+ flag {
     background: var(--bg-color);
     color: var(--text-color); 
     border: 1px solid var(--border-color);
@@ -764,12 +764,12 @@
     width: 20px;
   }
 
-  flags.clicked {
+  flag.clicked {
     background: var(--main-color);
     color: var(--text-color); 
   }
 
-  flags:hover {
+  flag:hover {
     background: var(--bg-hover-color);
   }
 
