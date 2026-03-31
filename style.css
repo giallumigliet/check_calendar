@@ -757,7 +757,7 @@
     margin-bottom: 20px;
   }
 
- flag {
+ .flag {
     background: var(--bg-color);
     color: var(--text-color); 
     text-align: center;
@@ -770,12 +770,12 @@
     margin: 0px;
   }
 
-  flag.clicked {
+  .flag.clicked {
     background: var(--main-color);
     color: white; 
   }
 
-  flag:hover {
+  .flag:hover {
     background: var(--bg-hover-color);
   }
 
