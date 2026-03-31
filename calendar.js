@@ -242,7 +242,7 @@ export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePrev
     taskManager.classList.remove("hidden-task-buttons");
 
     notificationsPanel.classList.add("active");
-    overlay.classList.remove("active");
+    overlay.classList.add("active");
   });
 }
 
@@ -407,7 +407,7 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
       e.stopPropagation();
       menu.classList.remove("show");
       notificationsPanel.classList.add("active");
-      overlay.classList.remove("active");
+      overlay.classList.add("active");
     });
 
 
