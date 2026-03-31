@@ -797,7 +797,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    position: absolute;
     content: "\2715";
     font-size: 10px;
     height: 18px;
