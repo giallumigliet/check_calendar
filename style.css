@@ -749,6 +749,7 @@
   #notifications-panel-content {
     padding-top: 10px;
     align-items: center;
+    place-items: center;
   }
 
   #reminderDays {
