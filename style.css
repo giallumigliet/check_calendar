@@ -785,11 +785,11 @@
     align-items: center;
     cursor: pointer;
     content: "";
-    width: 2em;
-    height: 1em;
+    width: 40px;
+    height: 20px;
     background-color: hsl(0, 80%, 90%);
-    border-radius: 1em;
-    margin-right: .25em;
+    border-radius: 20px;
+    margin-right: 5px;
     transition: background-color 200ms ease-in-out;
   }
   
@@ -799,14 +799,14 @@
     align-items: center;
     position: absolute;
     content: "\2715";
-    font-size: .5em;
-    height: .9em;
-    left: .2em;
-    width: 1.8em;
-    height: 1.8em;
+    font-size: 10px;
+    height: 18px;
+    left: 4px;
+    width: 36px;
+    height: 36px;
     background-color: hsl(0, 80%, 60%);
     color: white;
-    border-radius: 1em;
+    border-radius: 20px;
     transition: background-color 200ms ease-in-out, transform 200ms ease-in-out;
   }
   
