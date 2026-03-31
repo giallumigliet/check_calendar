@@ -72,6 +72,14 @@ const changeAccountBtn = document.getElementById("changeAccount-btn");
 
 const chartContainer = document.getElementById("time-bar-chart");
 
+const mondayFlag = document.getElementById("monday-flag");
+const tuesdayFlag = document.getElementById("tuesday-flag");
+const wednesdayFlag = document.getElementById("wednesday-flag");
+const thursdayFlag = document.getElementById("thursday-flag");
+const fridayFlag = document.getElementById("friday-flag");
+const saturdayFlag = document.getElementById("saturday-flag");
+const sundayFlag = document.getElementById("sunday-flag");
+
 
 
 
@@ -224,8 +232,9 @@ onAuthStateChanged(auth, async user => {
   }
 });
 
+
 // ------------------------------------------------
-listenNotifications(notificationsPanel, confirmNotificationBtn) 
+listenNotifications(notificationsPanel, confirmNotificationBtn, mondayFlag, tuesdayFlag, wednesdayFlag, thursdayFlag, fridayFlag, saturdayFlag, sundayFlag) 
 listenClickCalendar(addBtn, cancelBtn, taskBtn, dayActions, calendarDays, progressBar, progressText, currentTask, date, message, tasks);
 listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn, nextMonthBtn, progressBar, progressText, currentTask, tasks);
 listenTaskButtons(taskBtn, statsBtn, closePanel, closeStatsPanel, panel, statsPanel, overlay, calendarWrapper, buttonFooter, taskManager, taskForm, taskList, taskNameInput, taskHueInput, huePreview, currentTask, tasks, chartContainer);
