@@ -748,8 +748,11 @@
 
   #notifications-panel-content {
     padding-top: 10px;
-    align-items: center;
     place-items: center;
+    display: flex;
+    flex-direction: column;  
+    align-items: center;     
+    text-align: center;  
   }
 
   #reminderDays {
