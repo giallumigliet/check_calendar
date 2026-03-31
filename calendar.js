@@ -312,6 +312,10 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
     menu.classList.add("task-menu");
     menu.dataset.task = taskId;
 
+    const notificationItem = document.createElement("div");
+    notificationItem.classList.add("menu-item", "notifications");
+    notificationItem.textContent = "Notifications";
+
     const editItem = document.createElement("div");
     editItem.classList.add("menu-item", "edit");
     editItem.textContent = "Edit";
@@ -320,6 +324,7 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
     deleteItem.classList.add("menu-item", "delete");
     deleteItem.textContent = "Delete";
 
+    menu.appendChild(notificationItem);
     menu.appendChild(editItem);
     menu.appendChild(deleteItem);
     actions.appendChild(moreBtn);
@@ -354,8 +359,16 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
     });
 
 
+    // to add a reminder for the task
+    notificationItem.addEventListener("click", async () => {
     
-    // click su delete
+      panel.classList.remove("active");
+
+    });
+
+
+    
+    // to delete the task
     deleteItem.addEventListener("click", async (e) => {
       e.stopPropagation();
       menu.classList.remove("show");
@@ -385,7 +398,7 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
 
     });
 
-
+    // to edit the task
     editItem.addEventListener("click", (e) => {
       e.stopPropagation();
       menu.classList.remove("show");
@@ -410,7 +423,7 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
       enterEditMode(taskList, newTask);
     });
 
-
+    // to select the task
     newTask.addEventListener("click", async () => {
       currentTask.value = taskId;
       document.body.classList.add("color-mode");
