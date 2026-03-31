@@ -611,7 +611,7 @@ export function updateProgress(calendarDays, progressBar, progressText) {
 }
 
 // -------- PANEL LISTENERS --------
-export function listenTaskButtons(taskBtn, statsBtn, closePanel, closeStatsPanel, panel, statsPanel, overlay, calendarWrapper, buttonFooter, taskManager, taskForm, taskList, taskNameInput, taskHueInput, huePreview, currentTask, tasks, chartContainer) {
+export function listenTaskButtons(taskBtn, statsBtn, closePanel, closeStatsPanel, panel, statsPanel, notificationsPanel, overlay, calendarWrapper, buttonFooter, taskManager, taskForm, taskList, taskNameInput, taskHueInput, huePreview, currentTask, tasks, chartContainer) {
   taskBtn.addEventListener("click", () => {
         calendarWrapper.classList.add("hidden-day-buttons");
         buttonFooter.classList.add("hidden-day-buttons");
@@ -676,6 +676,7 @@ export function listenTaskButtons(taskBtn, statsBtn, closePanel, closeStatsPanel
         buttonFooter.classList.remove("hidden-day-buttons");
         panel.classList.remove("active");
         statsPanel.classList.remove("active");
+        notificationsPanel.classList.remove("active");
         overlay.classList.remove("active");
 
         requestAnimationFrame(() => {
