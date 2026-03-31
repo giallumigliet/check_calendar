@@ -816,6 +816,11 @@
   }
 
 
+  #confirm-notification {
+    border: 3px solid var(--notification-color);
+  }
+
+
   
 
 
