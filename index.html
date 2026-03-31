@@ -120,7 +120,6 @@
 
   <div id="stats-floating-panel">
     <div id="close-stats-panel" class="panel-header">CLOSE</div>
-
     <div id="stats-panel-content" class="panel-content">
       
       <div id="time-bar-chart" class="bar-chart"></div>
@@ -129,6 +128,38 @@
     </div>
   </div>
 
+
+  <div id="notifications-floating-panel">
+    <div id="close-notifications-panel" class="panel-header">
+      <label class="switch">
+        <input type="checkbox" id="enableReminder">
+        <span>Activate reminder</span>
+      </label>  
+    </div>
+    <div id="notifications-panel-content" class="panel-content">
+      <div class="field">
+        <label>Ora</label>
+        <input type="time" id="reminderTime">
+      </div>
+  
+      <div class="field">
+        <label>Ripeti</label>
+        <div id="reminderDays" class="dayFlags">
+          <button data-day="1">L</button>
+          <button data-day="2">M</button>
+          <button data-day="3">M</button>
+          <button data-day="4">G</button>
+          <button data-day="5">V</button>
+          <button data-day="6">S</button>
+          <button data-day="0">D</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel-footer">
+      <neutral-button id="confirm-notification">CONFIRM</neutral-button>
+    </div>
+  </div>
 
 
   <script type="module" src="script.js"></script>
