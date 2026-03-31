@@ -423,14 +423,14 @@
     display: flex;
     justify-content: flex-end;
     padding: 0px 40px;
-    gap: 40px;
+    gap: 20px;
   }
 
   #notifications-panel-footer {
     display: flex;
     justify-content: flex-end;
     padding: 0px 40px;
-    gap: 40px;
+    gap: 20px;
   }
 
   .editing-mode .task-item:not(.editing) {
