@@ -151,7 +151,6 @@ export async function markAllTasks(calendarDays, date, tasks) {
 
 
 
-
 // -------- TASK UI --------
 export function listenNotifications(notificationsPanel, overlay, calendarWrapper, buttonFooter, confirmNotificationBtn, mondayFlag, tuesdayFlag, wednesdayFlag, thursdayFlag, fridayFlag, saturdayFlag, sundayFlag) {
   confirmNotificationBtn.addEventListener("click", async () => {
