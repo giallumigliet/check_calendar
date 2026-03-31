@@ -776,7 +776,7 @@
   }
 
   .flag:hover {
-    background: var(--bg-hover-color);
+    filter: brightness(0.9);
   }
 
 
