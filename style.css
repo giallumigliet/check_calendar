@@ -385,6 +385,12 @@
     flex: 1;
   }
 
+  #task-editor{
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+
   #addTask-btn {
     font-size: 30px;
     margin-top: 8px;
