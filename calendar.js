@@ -154,10 +154,11 @@ export async function markAllTasks(calendarDays, date, tasks) {
 
 
 // -------- TASK UI --------
-export function listenNotifications(notificationsPanel, confirmNotificationBtn, mondayFlag, tuesdayFlag, wednesdayFlag, thursdayFlag, fridayFlag, saturdayFlag, sundayFlag) {
+export function listenNotifications(notificationsPanel, overlay, confirmNotificationBtn, mondayFlag, tuesdayFlag, wednesdayFlag, thursdayFlag, fridayFlag, saturdayFlag, sundayFlag) {
   confirmNotificationBtn.addEventListener("click", async () => {
     
     notificationsPanel.classList.remove("active");
+    overlay.classList.remove("active");
 
   });
 
@@ -194,7 +195,7 @@ export function listenNotifications(notificationsPanel, confirmNotificationBtn, 
 
 
 
-export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks, taskList, currentTask, calendarTitle, calendarDays, date, monthYear, progressBar, progressText, notificationsPanel) {
+export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks, taskList, currentTask, calendarTitle, calendarDays, date, monthYear, progressBar, progressText, notificationsPanel, overlay) {
   saveTaskBtn.addEventListener("click", async () => {
     const name = taskNameInput.value.trim();
     const hue = taskHueInput.value;
@@ -241,6 +242,7 @@ export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePrev
     taskManager.classList.remove("hidden-task-buttons");
 
     notificationsPanel.classList.add("active");
+    overlay.classList.remove("active");
   });
 }
 
@@ -405,6 +407,7 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
       e.stopPropagation();
       menu.classList.remove("show");
       notificationsPanel.classList.add("active");
+      overlay.classList.remove("active");
     });
 
 
