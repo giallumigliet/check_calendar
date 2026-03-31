@@ -15,7 +15,6 @@ export async function createCalendar(date, monthYear, calendarDays, currentTask,
   } else {
     monthYear.style.fontWeight = "normal";
   }
-
   
   calendarDays.innerHTML = "";
 
