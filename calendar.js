@@ -154,6 +154,16 @@ export async function markAllTasks(calendarDays, date, tasks) {
 
 
 // -------- TASK UI --------
+export function listenNotifications(notificationsPanel, confirmNotificationBtn) {
+  confirmNotificationBtn.addEventListener("click", async () => {
+    
+    notificationsPanel.classList.remove("active");
+
+  });
+}
+
+
+
 export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks, taskList, currentTask, calendarTitle, calendarDays, date, monthYear, progressBar, progressText) {
   saveTaskBtn.addEventListener("click", async () => {
     const name = taskNameInput.value.trim();
@@ -201,7 +211,6 @@ export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePrev
     taskManager.classList.remove("hidden-task-buttons");
   });
 }
-
 
 
 export function listenEditTask(editTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, taskList, calendarTitle, calendarDays, date, tasks) {
