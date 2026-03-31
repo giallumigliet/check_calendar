@@ -222,7 +222,7 @@ export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePrev
       console.log("current saved task:", taskId);
       document.body.classList.add("color-mode");
       document.documentElement.style.setProperty("--main-hue", hue);
-      document.documentElement.style.setProperty("--notification-color", `hsl(${hue}, 70%, 65%)`);
+      document.documentElement.style.setProperty("--notification-color", `hsl(${hue}, 35%, 75%)`);
       
       calendarTitle.textContent = name; 
       calendarDays.querySelectorAll(".day").forEach(day => day.classList.remove("completed") ); 
@@ -407,7 +407,7 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
     // to add a reminder for the task
     notificationItem.addEventListener("click", (e) => {
       e.stopPropagation();
-      document.documentElement.style.setProperty("--notification-color", `hsl(${hue}, 70%, 65%)`);
+      document.documentElement.style.setProperty("--notification-color", `hsl(${hue}, 35%, 75%)`);
       menu.classList.remove("show");
       panel.classList.remove("active");
       notificationsPanel.classList.add("active");
