@@ -699,7 +699,7 @@
     padding: 30px 10px;
   }
 
-  .bar {
+  bar {
     width: 40px;
     background-color: hsl(var(--main-hue), 70%, 55%, 0.8);
     border: 2px solid rgba(var(--main-color), 1);
@@ -709,13 +709,13 @@
     justify-content: center;
     align-items: flex-end;
     transition: 0.3s;
-}
-
-.bar:hover {
-    background-color: hsl(var(--main-hue), 70%, 40%, 0.8);
-    border: 2px solid rgba(var(--main-color-dark), 1);
-    transform: scale(1.1);
-}
+  }
+  
+  bar:hover {
+      background-color: hsl(var(--main-hue), 70%, 40%, 0.8);
+      border: 2px solid rgba(var(--main-color-dark), 1);
+      transform: scale(1.1);
+  }
 
 
 
@@ -755,7 +755,7 @@
     display: grid;
   }
 
- .dayFlags {
+ flags {
     background: var(--bg-color);
     color: var(--text-color); 
     border: 1px solid var(--border-color);
@@ -764,12 +764,12 @@
     width: 20px;
   }
 
-  .dayFlags.clicked {
+  flags.clicked {
     background: var(--main-color);
     color: var(--text-color); 
   }
 
-  .dayFlags:hover {
+  flags:hover {
     background: var(--bg-hover-color);
   }
 
