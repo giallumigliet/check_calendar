@@ -757,6 +757,7 @@
 
   #reminderDays {
     display: flex;
+    justify-content: center;
     gap: 20px;
     margin-bottom: 20px;
   }
@@ -767,6 +768,8 @@
     text-align: center;
     place-items: center;
     display: flex;
+    justify-content: center;
+    align-items: center;
     border: 1px solid var(--border-color);
     border-radius: 5px;
     height: 25px;
