@@ -783,7 +783,6 @@
 
 
   .switchTrack {
-    position: relative;
     display: flex;
     align-items: left;
     cursor: pointer;
@@ -792,7 +791,7 @@
     height: 20px;
     background-color: hsl(0, 80%, 90%);
     border-radius: 20px;
-    margin: 5px 0px;
+    margin: 0px 1px;
     transition: background-color 200ms ease-in-out;
   }
   
@@ -806,7 +805,7 @@
     height: 10px;
     background-color: hsl(0, 80%, 60%);
     color: white;
-    border-radius: 20px;
+    border-radius: 10px;
     transition: background-color 200ms ease-in-out, transform 200ms ease-in-out;
   }
   
