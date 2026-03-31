@@ -189,7 +189,6 @@ export function listenNotifications(notificationsPanel, confirmNotificationBtn, 
     sundayFlag.classList.toggle("clicked");
 
   });
-
   
 }
 
