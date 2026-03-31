@@ -759,6 +759,7 @@
     background: var(--bg-color);
     color: var(--text-color); 
     text-align: center;
+    place-items: center;
     border: 1px solid var(--border-color);
     border-radius: 5px;
     height: 25px;
