@@ -360,7 +360,8 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
 
 
     // to add a reminder for the task
-    notificationItem.addEventListener("click", () => {
+    notificationItem.addEventListener("click", (e) => {
+      e.stopPropagation();
       notificationsPanel.classList.add("active");
     });
 
