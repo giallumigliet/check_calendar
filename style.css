@@ -782,14 +782,14 @@
   .switchTrack {
     position: relative;
     display: flex;
-    align-items: center;
+    align-items: left;
     cursor: pointer;
     content: "";
     width: 40px;
     height: 20px;
     background-color: hsl(0, 80%, 90%);
     border-radius: 20px;
-    margin-right: 5px;
+    margin: 5px 0px;
     transition: background-color 200ms ease-in-out;
   }
   
@@ -812,11 +812,11 @@
   
   .switchTrack.checked {
     background-color: hsl(100, 70%, 90%);
+    align-items: right;
   }
   
   .switchCursor.checked {
     content: "\2713";
-    transform: translateX(100%);
     background-color: hsl(100, 70%, 60%);
   }
   
