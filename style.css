@@ -762,6 +762,7 @@
     color: var(--text-color); 
     text-align: center;
     place-items: center;
+    display: flex;
     border: 1px solid var(--border-color);
     border-radius: 5px;
     height: 25px;
