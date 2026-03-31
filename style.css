@@ -365,6 +365,8 @@
   .panel-footer {
     padding: 10px 20px;
     border-top: 2px solid var(--border-color);
+    display: flex;
+    justify-content: flex-end;
   }
 
   #overlay.active {
@@ -383,12 +385,6 @@
 
   .task-actions button {
     flex: 1;
-  }
-
-  #task-editor{
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
   }
 
   #addTask-btn {
