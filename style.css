@@ -420,6 +420,8 @@
   #task-editor {
     display: flex;
     justify-content: flex-end;
+    padding: 0px 40px;
+    gap: 40px;
   }
 
   .editing-mode .task-item:not(.editing) {
