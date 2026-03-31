@@ -751,6 +751,10 @@
     align-items: center;
   }
 
+  #reminderDays {
+    display: grid;
+  }
+
  .dayFlags {
     background: var(--bg-color);
     color: var(--text-color); 
