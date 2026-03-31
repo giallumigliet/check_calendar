@@ -38,9 +38,12 @@ const nextMonthBtn = document.getElementById("nextMonth");
 
 const panel = document.getElementById("floating-panel");
 const statsPanel = document.getElementById("stats-floating-panel");
+const notificationsPanel = document.getElementById("notifications-floating-panel");
 const overlay = document.getElementById("overlay");
 const closePanel = document.getElementById("close-panel");
 const closeStatsPanel = document.getElementById("close-stats-panel");
+
+
 
 const addTaskBtn = document.getElementById("addTask-btn");
 const editTaskBtn = document.getElementById("edit-task");
@@ -196,7 +199,7 @@ onAuthStateChanged(auth, async user => {
     onSnapshot(tasksRef, async snapshot => {
       tasks.length = 0;
       snapshot.forEach(doc => { tasks.push({ id: doc.id, ...doc.data() });  });
-      createTaskList(taskList, tasks, currentTask, calendarDays, calendarTitle, date, progressWrapper, progressBar, progressText, calendarWrapper, buttonFooter, panel, overlay, taskForm, taskManager, hueContainer, huePreview, editTaskBtn, saveTaskBtn, taskHueInput, taskNameInput);
+      createTaskList(taskList, tasks, currentTask, calendarDays, calendarTitle, date, progressWrapper, progressBar, progressText, calendarWrapper, buttonFooter, panel, overlay, taskForm, taskManager, hueContainer, huePreview, editTaskBtn, saveTaskBtn, taskHueInput, taskNameInput, notificationsPanel);
       
       if (first) {
         await createCalendar(date, monthYear, calendarDays, currentTask, progressBar, progressText, tasks);
