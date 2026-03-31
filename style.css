@@ -818,6 +818,7 @@
 
   #confirm-notification {
     border: 3px solid var(--notification-color);
+    color: var(--notification-color);
   }
 
 
