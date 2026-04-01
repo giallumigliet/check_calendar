@@ -211,7 +211,7 @@ export function drawAllTasksMultiBarChart(container, months, data, tasks) {
   tooltip.style.fontSize = "12px";
   tooltip.style.transition = "transform 0.05s";
   tooltip.style.whiteSpace = "nowrap";
-  tooltip.style.zIndex = "1000";
+  tooltip.style.zIndex = "5000";
   tooltip.style.display = "none";
   document.body.appendChild(tooltip);
 
