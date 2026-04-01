@@ -200,16 +200,30 @@ export function drawAllTasksMultiBarChart(container, months, data, tasks) {
 
   const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
+  const tooltip = document.createElement("div");
+  tooltip.style.position = "absolute";
+  tooltip.style.pointerEvents = "none";
+  tooltip.style.background = "rgba(0,0,0,0.8)";
+  tooltip.style.color = "white";
+  tooltip.style.padding = "4px 8px";
+  tooltip.style.borderRadius = "4px";
+  tooltip.style.fontSize = "12px";
+  tooltip.style.transition = "transform 0.05s";
+  tooltip.style.whiteSpace = "nowrap";
+  tooltip.style.zIndex = "1000";
+  tooltip.style.display = "none";
+  document.body.appendChild(tooltip);
+
   data.forEach(d => {
 
-    // 🔹 Wrapper mese
+    
     const monthWrapper = document.createElement("div");
     monthWrapper.style.display = "flex";
     monthWrapper.style.flexDirection = "column";
     monthWrapper.style.alignItems = "center";
     monthWrapper.style.flex = "0 0 auto";
 
-    // 🔹 Riga barre
+    
     const barsRow = document.createElement("div");
     barsRow.style.display = "flex";
     barsRow.style.flexDirection = "row";
@@ -217,7 +231,7 @@ export function drawAllTasksMultiBarChart(container, months, data, tasks) {
     barsRow.style.height = `${containerHeight}px`;
     barsRow.style.gap = "4px";
 
-    // 🔹 Calcolo giorni del mese (per ghost bar)
+    
     const [monthLabel, yearLabel] = d.label.split(" ");
     const monthIndex = monthNames.indexOf(monthLabel);
     const year = parseInt(yearLabel);
@@ -237,7 +251,7 @@ export function drawAllTasksMultiBarChart(container, months, data, tasks) {
       barContainer.style.width = "100%";
       barContainer.style.height = "100%";
 
-      // 🔹 Ghost bar (giorni del mese)
+      
       const barBg = document.createElement("div");
       barBg.style.position = "absolute";
       barBg.style.bottom = "0";
@@ -246,7 +260,7 @@ export function drawAllTasksMultiBarChart(container, months, data, tasks) {
       barBg.style.backgroundColor = `hsl(${t.color}, 70%, 55%)`;
       barBg.style.opacity = "0.2";
 
-      // 🔹 Barra valore
+      
       const bar = document.createElement("bar");
       bar.style.position = "absolute";
       bar.style.bottom = "0";
@@ -260,6 +274,20 @@ export function drawAllTasksMultiBarChart(container, months, data, tasks) {
       bar.style.color = "white";
       bar.style.fontSize = "9px";
       bar.textContent = value > 0 ? value : "";
+
+      bar.addEventListener("mouseenter", (e) => {
+        tooltip.textContent = t.name;
+        tooltip.style.display = "block";
+      });
+      
+      bar.addEventListener("mousemove", (e) => {
+        tooltip.style.left = e.pageX + 10 + "px"; 
+        tooltip.style.top = e.pageY + 10 + "px";
+      });
+      
+      bar.addEventListener("mouseleave", () => {
+        tooltip.style.display = "none";
+      });
 
       barContainer.appendChild(barBg);
       barContainer.appendChild(bar);
