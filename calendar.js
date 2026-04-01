@@ -159,7 +159,7 @@ export function listenNotifications(notificationsPanel, overlay, calendarWrapper
       notificationsPanel.classList.remove("active");
       overlay.classList.remove("active");
   
-      if (!currentTask.value) return;
+      if (!currentNotificationTask.value) return;
   
       const timeValue = reminderTimeInput.value; //  "14:30"
       if (!timeValue) return;
@@ -193,7 +193,7 @@ export function listenNotifications(notificationsPanel, overlay, calendarWrapper
 
 
 
-export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks, taskList, currentTask, calendarTitle, calendarDays, date, monthYear, progressBar, progressText, panel, notificationsPanel, overlay, currentNotificationTask) {
+export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks, taskList, currentTask, calendarTitle, calendarDays, date, monthYear, progressBar, progressText, panel, notificationsPanel, overlay, dayFlags, reminderTimeInput, currentNotificationTask) {
   saveTaskBtn.addEventListener("click", async () => {
     const name = taskNameInput.value.trim();
     const hue = taskHueInput.value;
@@ -223,11 +223,19 @@ export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePrev
       document.body.classList.add("color-mode");
       document.documentElement.style.setProperty("--main-hue", hue);
       document.documentElement.style.setProperty("--notification-color", `hsl(${hue}, 70%, 55%)`);
+
+      
       
       calendarTitle.textContent = name; 
       calendarDays.querySelectorAll(".day").forEach(day => day.classList.remove("completed") ); 
       await markOccurrences(taskId, calendarDays, date); 
       updateProgress(calendarDays, progressBar, progressText);
+
+      reminderTimeInput.value = "";
+      dayFlags.forEach(d => d.el.classList.remove("clicked"));
+      notificationsPanel.classList.add("active");
+      overlay.classList.add("active");
+
       
     } catch(err) { 
       console.error(err); 
@@ -243,8 +251,8 @@ export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePrev
 
     
     panel.classList.remove("active");
-    notificationsPanel.classList.add("active");
-    overlay.classList.add("active");
+    
+    
   });
 }
 
@@ -308,7 +316,7 @@ export function exitEditMode(taskList) {
 }
 
 
-export function createTaskList(taskList, tasks, currentTask, calendarDays, calendarTitle, date, progressWrapper, progressBar, progressText, calendarWrapper, buttonFooter, panel, overlay, taskForm, taskManager, hueContainer, huePreview, editTaskBtn, saveTaskBtn, taskHueInput, taskNameInput, notificationsPanel, currentNotificationTask) {
+export function createTaskList(taskList, tasks, currentTask, calendarDays, calendarTitle, date, progressWrapper, progressBar, progressText, calendarWrapper, buttonFooter, panel, overlay, taskForm, taskManager, hueContainer, huePreview, editTaskBtn, saveTaskBtn, taskHueInput, taskNameInput, notificationsPanel, dayFlags, reminderTimeInput, currentNotificationTask) {
   taskList.innerHTML = "";
 
   if (tasks.length > 0) {
