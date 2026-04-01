@@ -80,6 +80,15 @@ const fridayFlag = document.getElementById("friday-flag");
 const saturdayFlag = document.getElementById("saturday-flag");
 const sundayFlag = document.getElementById("sunday-flag");
 
+const dayFlags = [
+  { el: mondayFlag, name: "monday" },
+  { el: tuesdayFlag, name: "tuesday" },
+  { el: wednesdayFlag, name: "wednesday" },
+  { el: thursdayFlag, name: "thursday" },
+  { el: fridayFlag, name: "friday" },
+  { el: saturdayFlag, name: "saturday" },
+  { el: sundayFlag, name: "sunday" },
+];
 
 
 
