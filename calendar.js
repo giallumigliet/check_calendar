@@ -152,43 +152,43 @@ export async function markAllTasks(calendarDays, date, tasks) {
 
 
 // -------- TASK UI --------
-export function listenNotifications(notificationsPanel, overlay, calendarWrapper, buttonFooter, confirmNotificationBtn, mondayFlag, tuesdayFlag, wednesdayFlag, thursdayFlag, fridayFlag, saturdayFlag, sundayFlag) {
-  confirmNotificationBtn.addEventListener("click", async () => {
-    calendarWrapper.classList.remove("hidden-day-buttons");
-    buttonFooter.classList.remove("hidden-day-buttons");
-    notificationsPanel.classList.remove("active");
-    overlay.classList.remove("active");
+export function listenNotifications(notificationsPanel, overlay, calendarWrapper, buttonFooter, confirmNotificationBtn, dayFlags, reminderTimeInput, currentNotificationTask) {
+    confirmNotificationBtn.addEventListener("click", async () => {
+      calendarWrapper.classList.remove("hidden-day-buttons");
+      buttonFooter.classList.remove("hidden-day-buttons");
+      notificationsPanel.classList.remove("active");
+      overlay.classList.remove("active");
+  
+      if (!currentTask.value) return;
+  
+      const timeValue = reminderTimeInput.value; //  "14:30"
+      if (!timeValue) return;
+  
 
-  });
+      const selectedDays = dayFlags
+        .filter(d => d.el.classList.contains("clicked"))
+        .map(d => d.name);
+  
+      if (selectedDays.length === 0) return; 
+  
+      try {
+        const uid = auth.currentUser.uid;
+        await setDoc(
+          doc(db, "users", uid, "tasks", currentNotificationTask.value, "reminders"),
+          { time: timeValue, days: selectedDays },
+          { merge: true }
+        );
+        console.log("Reminder salvato:", timeValue, selectedDays);
+      } catch(err) {
+        console.error("Errore salvataggio reminder:", err);
+      }
+    });
+  
 
-  mondayFlag.addEventListener("click", async () => {
-    mondayFlag.classList.toggle("clicked");
-
-  });
-  tuesdayFlag.addEventListener("click", async () => {
-    tuesdayFlag.classList.toggle("clicked");
-
-  });
-  wednesdayFlag.addEventListener("click", async () => {
-    wednesdayFlag.classList.toggle("clicked");
-
-  });
-  thursdayFlag.addEventListener("click", async () => {
-    thursdayFlag.classList.toggle("clicked");
-
-  });
-  fridayFlag.addEventListener("click", async () => {
-    fridayFlag.classList.toggle("clicked");
-
-  });
-  saturdayFlag.addEventListener("click", async () => {
-    saturdayFlag.classList.toggle("clicked");
-
-  });
-  sundayFlag.addEventListener("click", async () => {
-    sundayFlag.classList.toggle("clicked");
-
-  });
+    dayFlags.forEach(d => {
+      d.el.addEventListener("click", () => d.el.classList.toggle("clicked"));
+    });
+  }
   
 }
 
