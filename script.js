@@ -123,6 +123,7 @@ lightDarkButton.addEventListener('click', () => {
 let tasks = [];
 const date = new Date();
 let currentTask = { value: "" };
+let currentNotificationTask = { value: "" };
 
 
 
