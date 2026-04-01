@@ -231,7 +231,11 @@ export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePrev
       await markOccurrences(taskId, calendarDays, date); 
       updateProgress(calendarDays, progressBar, progressText);
 
-      reminderTimeInput.value = "";
+      const timeHM = new Date();
+      const hours = timeHM.getHours().toString().padStart(2, "0");
+      const minutes = timeHM.getMinutes().toString().padStart(2, "0");
+      
+      reminderTimeInput.value = `${hours}:${minutes}`;
       dayFlags.forEach(d => d.el.classList.remove("clicked"));
       notificationsPanel.classList.add("active");
       overlay.classList.add("active");
@@ -423,23 +427,25 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
         const uid = auth.currentUser.uid;
         const docRef = doc(db, "users", uid, "tasks", currentNotificationTask.value, "reminders");
         const docSnap = await getDoc(docRef);
-    
+        
+        
         if (!docSnap.exists()) {
-          reminderTimeInput.value = "";
-          dayFlags.forEach(d => d.el.classList.remove("clicked"));
-          return;
+          const timeHM = new Date();
+          const hours = timeHM.getHours().toString().padStart(2, "0");
+          const minutes = timeHM.getMinutes().toString().padStart(2, "0");
+          
+          reminderTimeInput.value = `${hours}:${minutes}`;
+        } else {
+          const data = docSnap.data();
+          const { time, days } = data;
+      
+          if (time) reminderTimeInput.value = time;
         }
-    
-        const data = docSnap.data();
-        const { time, days } = data;
-    
-        if (time) reminderTimeInput.value = time;
-    
+        
+        dayFlags.forEach(d => d.el.classList.remove("clicked"));
         dayFlags.forEach(d => {
           if (days && days.includes(d.name)) {
             d.el.classList.add("clicked");
-          } else {
-            d.el.classList.remove("clicked");
           }
         });
     
