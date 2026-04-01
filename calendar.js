@@ -169,8 +169,6 @@ export function listenNotifications(notificationsPanel, overlay, calendarWrapper
         .filter(d => d.el.classList.contains("clicked"))
         .map(d => d.name);
   
-      if (selectedDays.length === 0) return; 
-  
       try {
         const uid = auth.currentUser.uid;
 
