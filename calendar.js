@@ -174,12 +174,13 @@ export function listenNotifications(notificationsPanel, overlay, calendarWrapper
       try {
         const uid = auth.currentUser.uid;
 
-        await updateDoc(
+        await setDoc(
           doc(db, "users", uid, "tasks", currentNotificationTask.value),
           {
             reminderTime: timeValue,
             reminderDays: selectedDays
-          }
+          },
+          { merge: true }
         );
         console.log("Reminder salvato:", timeValue, selectedDays);
       } catch(err) {
@@ -430,24 +431,22 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
         const uid = auth.currentUser.uid;
         const docRef = doc(db, "users", uid, "tasks", currentNotificationTask.value);
         const docSnap = await getDoc(docRef);
-        const data = docSnap.data();
-        const time = data.reminderTime;
-        const days = data.reminderDays;
+      
+        let time = null;
+        let days = [];
         
-        if (!docSnap.exists()) {
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          time = data.reminderTime;
+          days = data.reminderDays || [];
+        }
+        
+        if (time) reminderTimeInput.value = time;
+        else {
           const timeHM = new Date();
           const hours = timeHM.getHours().toString().padStart(2, "0");
           const minutes = timeHM.getMinutes().toString().padStart(2, "0");
-          
           reminderTimeInput.value = `${hours}:${minutes}`;
-        } else {
-          if (time) reminderTimeInput.value = time;
-          else {
-            const timeHM = new Date();
-            const hours = timeHM.getHours().toString().padStart(2, "0");
-            const minutes = timeHM.getMinutes().toString().padStart(2, "0");
-            reminderTimeInput.value = `${hours}:${minutes}`;
-          }
         }
         
         dayFlags.forEach(d => d.el.classList.remove("clicked"));
@@ -684,8 +683,6 @@ export function listenTaskButtons(taskBtn, statsBtn, closePanel, closeStatsPanel
     });
 
     statsBtn.addEventListener("click", () => {
-        if (currentTask.value == "") updateAllTasksMultiBarChart(chartContainer, tasks)
-        else updateTaskBarChart(chartContainer, currentTask.value);
         calendarWrapper.classList.add("hidden-day-buttons");
         buttonFooter.classList.add("hidden-day-buttons");
         statsPanel.classList.add("active");
@@ -693,7 +690,11 @@ export function listenTaskButtons(taskBtn, statsBtn, closePanel, closeStatsPanel
       
         requestAnimationFrame(() => {
           setTimeout(() => {
-            updateTaskBarChart(chartContainer, currentTask.value);
+            if (currentTask.value == "") {
+              updateAllTasksMultiBarChart(chartContainer, tasks);
+            } else {
+              updateTaskBarChart(chartContainer, currentTask.value);
+            }
           }, 50); 
         });
     });
@@ -802,13 +803,6 @@ export function listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn,
         updateProgress(calendarDays, progressBar, progressText);
     });
 }
-
-
-
-
-
-
-
 
 
 
