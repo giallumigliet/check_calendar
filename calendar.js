@@ -421,6 +421,35 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
       panel.classList.remove("active");
       notificationsPanel.classList.add("active");
       overlay.classList.add("active");
+      
+      if (!auth.currentUser || !currentNotificationTask.value) return;
+      try {
+        const uid = auth.currentUser.uid;
+        const docRef = doc(db, "users", uid, "tasks", currentNotificationTask.value, "reminders");
+        const docSnap = await getDoc(docRef);
+    
+        if (!docSnap.exists()) {
+          reminderTimeInput.value = "";
+          dayFlags.forEach(d => d.el.classList.remove("clicked"));
+          return;
+        }
+    
+        const data = docSnap.data();
+        const { time, days } = data;
+    
+        if (time) reminderTimeInput.value = time;
+    
+        dayFlags.forEach(d => {
+          if (days && days.includes(d.name)) {
+            d.el.classList.add("clicked");
+          } else {
+            d.el.classList.remove("clicked");
+          }
+        });
+    
+      } catch (err) {
+        console.error("Error loading reminder:", err);
+      }
     });
 
 
