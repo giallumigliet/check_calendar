@@ -428,9 +428,11 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
       if (!auth.currentUser || !currentNotificationTask.value) return;
       try {
         const uid = auth.currentUser.uid;
-        const docRef = doc(db, "users", uid, "tasks", currentNotificationTask.value, "reminders");
+        const docRef = doc(db, "users", uid, "tasks", currentNotificationTask.value);
         const docSnap = await getDoc(docRef);
-        
+        const data = docSnap.data();
+        const time = data.reminderTime;
+        const days = data.reminderDays;
         
         if (!docSnap.exists()) {
           const timeHM = new Date();
@@ -439,15 +441,11 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
           
           reminderTimeInput.value = `${hours}:${minutes}`;
         } else {
-          const data = docSnap.data();
-          const time = data.reminderTime;
-          const days = data.reminderDays;
-
           if (time) reminderTimeInput.value = time;
           else {
             const timeHM = new Date();
-            const hours = now.getHours().toString().padStart(2, "0");
-            const minutes = now.getMinutes().toString().padStart(2, "0");
+            const hours = timeHM.getHours().toString().padStart(2, "0");
+            const minutes = timeHM.getMinutes().toString().padStart(2, "0");
             reminderTimeInput.value = `${hours}:${minutes}`;
           }
         }
