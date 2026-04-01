@@ -188,7 +188,6 @@ export function listenNotifications(notificationsPanel, overlay, calendarWrapper
     dayFlags.forEach(d => {
       d.el.addEventListener("click", () => d.el.classList.toggle("clicked"));
     });
-  }
   
 }
 
