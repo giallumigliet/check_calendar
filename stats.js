@@ -269,7 +269,7 @@ export function drawAllTasksMultiBarChart(container, months, data, tasks) {
 
       bar.addEventListener("mouseenter", (e) => {
         tooltip.textContent = t.name;
-        tooltip.style.backgroundColor = `hsl(${t.color}, 70%, 55%)`; 
+        tooltip.style.backgroundColor = `hsl(${t.color}, 60%, 60%)`; 
         tooltip.style.display = "block";
       });
       
