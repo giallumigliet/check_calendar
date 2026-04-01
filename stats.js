@@ -202,17 +202,7 @@ export function drawAllTasksMultiBarChart(container, months, data, tasks) {
   const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
   const tooltip = document.createElement("div");
-  tooltip.style.position = "absolute";
-  tooltip.style.pointerEvents = "none";
-  tooltip.style.background = "rgba(0,0,0,0.8)";
-  tooltip.style.color = "white";
-  tooltip.style.padding = "4px 8px";
-  tooltip.style.borderRadius = "4px";
-  tooltip.style.fontSize = "12px";
-  tooltip.style.transition = "transform 0.05s";
-  tooltip.style.whiteSpace = "nowrap";
-  tooltip.style.zIndex = "5000";
-  tooltip.style.display = "none";
+  tooltip.id = "chart-tooltip";
   document.body.appendChild(tooltip);
 
   data.forEach(d => {
