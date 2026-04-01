@@ -173,10 +173,13 @@ export function listenNotifications(notificationsPanel, overlay, calendarWrapper
   
       try {
         const uid = auth.currentUser.uid;
-        await setDoc(
-          doc(db, "users", uid, "tasks", currentNotificationTask.value, "reminders"),
-          { time: timeValue, days: selectedDays },
-          { merge: true }
+
+        await updateDoc(
+          doc(db, "users", uid, "tasks", currentNotificationTask.value),
+          {
+            reminderTime: timeValue,
+            reminderDays: selectedDays
+          }
         );
         console.log("Reminder salvato:", timeValue, selectedDays);
       } catch(err) {
@@ -437,9 +440,16 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
           reminderTimeInput.value = `${hours}:${minutes}`;
         } else {
           const data = docSnap.data();
-          const { time, days } = data;
-      
+          const time = data.reminderTime;
+          const days = data.reminderDays;
+
           if (time) reminderTimeInput.value = time;
+          else {
+            const timeHM = new Date();
+            const hours = now.getHours().toString().padStart(2, "0");
+            const minutes = now.getMinutes().toString().padStart(2, "0");
+            reminderTimeInput.value = `${hours}:${minutes}`;
+          }
         }
         
         dayFlags.forEach(d => d.el.classList.remove("clicked"));
