@@ -276,6 +276,10 @@ export function drawAllTasksMultiBarChart(container, months, data, tasks) {
       bar.addEventListener("mousemove", (e) => {
         tooltip.style.left = e.pageX + 10 + "px"; 
         tooltip.style.top = (e.pageY - tooltip.offsetHeight - 10) + "px";
+      
+        if (tooltip.style.left + tooltip.offsetWidth > window.pageXOffset + window.innerWidth) {
+          tooltip.style.left = e.pageX - tooltip.offsetWidth - 10; 
+        }
       });
       
       bar.addEventListener("mouseleave", () => {
