@@ -715,7 +715,7 @@
     padding: 30px 10px;
   }
 
-  bar {
+  .bar {
     width: 40px;
     background-color: hsl(var(--main-hue), 70%, 55%, 0.8);
     border: 2px solid rgba(var(--main-color), 1);
@@ -727,7 +727,7 @@
     transition: 0.3s;
   }
   
-  bar:hover {
+  .bar:hover {
       background-color: hsl(var(--main-hue), 70%, 40%, 0.8);
       border: 2px solid rgba(var(--main-color-dark), 1);
       transform: scale(1.1);
