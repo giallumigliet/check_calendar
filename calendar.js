@@ -194,7 +194,7 @@ export function listenNotifications(notificationsPanel, overlay, calendarWrapper
 
 
 
-export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks, taskList, currentTask, calendarTitle, calendarDays, date, monthYear, progressBar, progressText, panel, notificationsPanel, overlay) {
+export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks, taskList, currentTask, calendarTitle, calendarDays, date, monthYear, progressBar, progressText, panel, notificationsPanel, overlay, currentNotificationTask) {
   saveTaskBtn.addEventListener("click", async () => {
     const name = taskNameInput.value.trim();
     const hue = taskHueInput.value;
@@ -308,7 +308,7 @@ export function exitEditMode(taskList) {
 }
 
 
-export function createTaskList(taskList, tasks, currentTask, calendarDays, calendarTitle, date, progressWrapper, progressBar, progressText, calendarWrapper, buttonFooter, panel, overlay, taskForm, taskManager, hueContainer, huePreview, editTaskBtn, saveTaskBtn, taskHueInput, taskNameInput, notificationsPanel) {
+export function createTaskList(taskList, tasks, currentTask, calendarDays, calendarTitle, date, progressWrapper, progressBar, progressText, calendarWrapper, buttonFooter, panel, overlay, taskForm, taskManager, hueContainer, huePreview, editTaskBtn, saveTaskBtn, taskHueInput, taskNameInput, notificationsPanel, currentNotificationTask) {
   taskList.innerHTML = "";
 
   if (tasks.length > 0) {
