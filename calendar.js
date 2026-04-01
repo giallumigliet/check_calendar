@@ -417,10 +417,6 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
       e.stopPropagation();
       document.documentElement.style.setProperty("--notification-color", `hsl(${hue}, 70%, 55%)`);
       currentNotificationTask.value = taskId;
-      menu.classList.remove("show");
-      panel.classList.remove("active");
-      notificationsPanel.classList.add("active");
-      overlay.classList.add("active");
       
       if (!auth.currentUser || !currentNotificationTask.value) return;
       try {
@@ -450,6 +446,12 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
       } catch (err) {
         console.error("Error loading reminder:", err);
       }
+
+
+      menu.classList.remove("show");
+      panel.classList.remove("active");
+      notificationsPanel.classList.add("active");
+      overlay.classList.add("active");
     });
 
 
