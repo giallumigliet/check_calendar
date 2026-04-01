@@ -213,6 +213,7 @@ export function listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePrev
       );
       const taskId = docRef.id;
       currentTask.value = taskId;
+      currentNotificationTask.value = taskId;
       
       tasks.push({
         id: taskId,
@@ -408,6 +409,7 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
     notificationItem.addEventListener("click", (e) => {
       e.stopPropagation();
       document.documentElement.style.setProperty("--notification-color", `hsl(${hue}, 70%, 55%)`);
+      currentNotificationTask.value = taskId;
       menu.classList.remove("show");
       panel.classList.remove("active");
       notificationsPanel.classList.add("active");
