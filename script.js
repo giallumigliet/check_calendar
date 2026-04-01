@@ -80,6 +80,9 @@ const fridayFlag = document.getElementById("friday-flag");
 const saturdayFlag = document.getElementById("saturday-flag");
 const sundayFlag = document.getElementById("sunday-flag");
 
+const reminderTimeInput = document.getElementById("reminderTime");
+
+
 const dayFlags = [
   { el: mondayFlag, name: "monday" },
   { el: tuesdayFlag, name: "tuesday" },
