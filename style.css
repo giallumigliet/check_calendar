@@ -733,6 +733,19 @@
       transform: scale(1.1);
   }
 
+  #chart-tooltip {
+    position: absolute;
+    pointer-events: none;
+    background: rgba(0,0,0,0.8);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 5000; 
+    display: none;
+  }
+
 
 
 
