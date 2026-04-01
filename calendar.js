@@ -413,7 +413,7 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
 
 
     // to add a reminder for the task
-    notificationItem.addEventListener("click", (e) => {
+    notificationItem.addEventListener("click", async (e) => {
       e.stopPropagation();
       document.documentElement.style.setProperty("--notification-color", `hsl(${hue}, 70%, 55%)`);
       currentNotificationTask.value = taskId;
