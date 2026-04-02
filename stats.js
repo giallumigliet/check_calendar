@@ -266,14 +266,19 @@ export function drawAllTasksMultiBarChart(container, months, data, tasks) {
       bar.style.color = "white";
       bar.style.fontSize = "9px";
       bar.textContent = value > 0 ? value : "";
-
-      bar.addEventListener("mouseenter", (e) => {
+      let isScrolling = false;
+      let scrollTimeout;
+      
+      bar.addEventListener("mouseenter", () => {
+        if (isScrolling) return;
         tooltip.textContent = t.name;
-        tooltip.style.backgroundColor = `hsl(${t.color}, 60%, 60%)`; 
+        tooltip.style.backgroundColor = `hsl(${t.color}, 60%, 60%)`;
         tooltip.style.display = "block";
       });
-      
+
       bar.addEventListener("mousemove", (e) => {
+        if (isScrolling) return;
+
         const offset = 10;
         const tooltipWidth = tooltip.offsetWidth;
         const tooltipHeight = tooltip.offsetHeight;
@@ -284,7 +289,7 @@ export function drawAllTasksMultiBarChart(container, months, data, tasks) {
         if (left + tooltipWidth > window.pageXOffset + window.innerWidth) {
           left = e.pageX - tooltipWidth - offset;
         }
-        
+
         if (top < window.pageYOffset) {
           top = e.pageY + offset;
         }
@@ -297,14 +302,20 @@ export function drawAllTasksMultiBarChart(container, months, data, tasks) {
         tooltip.style.display = "none";
       });
 
-       // Nascondi quando si tocca fuori
+
       document.addEventListener("touchstart", () => {
         tooltip.style.display = "none";
       });
 
-       // Nascondi durante scroll
-      window.addEventListener("scroll", () => {
+       
+      container.addEventListener("scroll", () => {
+        isScrolling = true;
         tooltip.style.display = "none";
+
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(() => {
+          isScrolling = false;
+        }, 100);
       });
 
       barContainer.appendChild(barBg);
