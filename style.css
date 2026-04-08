@@ -37,7 +37,6 @@
   }
 
 
-
   .color-mode {
     --main-color: hsl(var(--main-hue), 70%, 55%);
     --main-color-dark: hsl(var(--main-hue), 70%, 40%);
