@@ -53,14 +53,9 @@
     font-weight: bold;
   
     text-shadow:
-      -2px -2px 0 var(--main-color),
-       2px -2px 0 var(--main-color),
-      -2px  2px 0 var(--main-color),
-       2px  2px 0 var(--main-color),
-      -2px  0px 0 var(--main-color),
-       2px  0px 0 var(--main-color),
-       0px -2px 0 var(--main-color),
-       0px  2px 0 var(--main-color);
+      0 0 2px var(--main-color),
+      0 0 3px var(--main-color),
+      0 0 4px var(--main-color);
   }
 
   /* Buttons */
