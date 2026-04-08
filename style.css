@@ -46,6 +46,7 @@
 
   /* App Title */
   h1 {
+    font-family: 'Anton', Arial, sans-serif;
     font-size: 38px;
     margin-top: 15px;
     margin-bottom: 10px;
