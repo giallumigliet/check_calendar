@@ -111,7 +111,7 @@ lightDarkButton.addEventListener('click', () => {
   
   const metaTheme = document.querySelector("#theme-color-meta");
   const bgColor = getComputedStyle(document.body)
-    .getPropertyValue("--bg-color")
+    .getPropertyValue("--bg-main")
     .trim();
   metaTheme.setAttribute("content", bgColor);
 });
