@@ -27,14 +27,14 @@
 
 
   html {
-      background: var(--bg-color);
+      background: var(--bg-main);
   }
 
   body {
       font-family: Roboto, sans-serif;
       display: grid;
       place-items: center;
-      background: var(--bg-color);
+      background: var(--bg-main);
       color: var(--text-color);
   }
 
