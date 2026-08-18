@@ -315,7 +315,7 @@
     right: 10px;
     bottom: 10px;
 
-    background: var(--bg-color);
+    background: var(--bg-main);
     border-radius: 57px;
     border: 0px solid var(--border-color);
     box-shadow: 0 -5px 5px rgba(0,0,0,0.1);
@@ -331,6 +331,7 @@
   }
 
   #floating-panel.active {
+    background: var(--bg-color);
     transform: translateY(0);
   }
 
@@ -675,7 +676,7 @@
     right: 10px;
     top: 75px;
 
-    background: var(--bg-color);
+    background: var(--bg-main);
     border-radius: 57px;
     border: 0px solid var(--border-color);
     box-shadow: 0 -5px 5px rgba(0,0,0,0.1);
@@ -691,6 +692,7 @@
   }
 
   #stats-floating-panel.active {
+    background: var(--bg-color);
     transform: translateY(0);
   }
 
