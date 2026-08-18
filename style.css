@@ -1,7 +1,7 @@
   :root {
-    --main-color: hsl(210, 35%, 75%);
-    --main-color-dark: hsl(210, 25%, 60%);
-    --main-color-light: hsl(210, 25%, 80%);
+    --main-color: hsl(210, 45%, 75%);
+    --main-color-dark: hsl(210, 35%, 60%);
+    --main-color-light: hsl(210, 35%, 80%);
 
     --notification-color: hsl(210, 70%, 55%);
     
