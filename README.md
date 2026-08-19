@@ -1,8 +1,7 @@
-<img width="869" height="869" alt="check_calendar" src="check_calendar.png" />
-
-
 # 🕒 Check Calendar Web App
-
+<p align="center">
+  <img width="150" height="150" alt="check_calendar" src="check_calendar.png" />
+</p>
 Do you want to register every time you took a medicine? Do you want to register if you have completed a daily task? This is the calendar web app for you!
 
 Frontend: *HTML* / *CSS* / *JS*.  
