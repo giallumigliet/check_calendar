@@ -1,5 +1,5 @@
 import { db, auth } from "./firebase.js";
-import { doc, setDoc, deleteDoc, addDoc, getDoc, updateDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { doc, setDoc, deleteDoc, addDoc, getDoc, updateDoc, collection, getDocs, query, where, runTransaction} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { updateTaskBarChart, updateAllTasksMultiBarChart, updateAllTasksLineChart } from "./stats.js";
 
 // -------- CALENDAR DRAW --------
@@ -56,41 +56,153 @@ export async function createCalendar(date, monthYear, calendarDays, currentTask,
 // -------- OCCURRENCES --------
 export async function saveOccurrence(taskId, dateStr, quantity = 1) {
   if (!auth.currentUser || !taskId) return;
+
   try {
     const uid = auth.currentUser.uid;
-    if (quantity > 0) {
-      await setDoc(
-        doc(db, "users", uid, "tasks", taskId, "occurrences", dateStr),
-        { quantity },
-        { merge: true }
-      );
-    } else {
-      // elimina occorrenza se quantity 0
-      await deleteDoc(doc(db, "users", uid, "tasks", taskId, "occurrences", dateStr));
-    }
-  } catch(err) {
+
+    const occurrenceRef = doc(
+      db,
+      "users",
+      uid,
+      "tasks",
+      taskId,
+      "occurrences",
+      dateStr
+    );
+
+    const monthKey = dateStr.substring(0, 7);
+
+    const monthlyStatsRef = doc(
+      db,
+      "users",
+      uid,
+      "tasks",
+      taskId,
+      "monthlyStats",
+      monthKey
+    );
+
+    await runTransaction(db, async transaction => {
+
+      const occurrenceSnap =
+        await transaction.get(occurrenceRef);
+
+      const statsSnap =
+        await transaction.get(monthlyStatsRef);
+
+      const currentCount =
+        statsSnap.exists()
+          ? (statsSnap.data().count || 0)
+          : 0;
+
+      // -------------------------
+      // AGGIUNTA
+      // -------------------------
+
+      if (quantity > 0) {
+
+        // Evita di contare due volte
+        // la stessa occorrenza
+        if (!occurrenceSnap.exists()) {
+
+          transaction.set(
+            occurrenceRef,
+            { quantity }
+          );
+
+          transaction.set(
+            monthlyStatsRef,
+            {
+              count: currentCount + quantity
+            },
+            { merge: true }
+          );
+        }
+
+      }
+
+      // -------------------------
+      // ELIMINAZIONE
+      // -------------------------
+
+      else {
+
+        if (occurrenceSnap.exists()) {
+
+          const oldQuantity =
+            occurrenceSnap.data().quantity || 1;
+
+          transaction.delete(occurrenceRef);
+
+          transaction.set(
+            monthlyStatsRef,
+            {
+              count: Math.max(
+                0,
+                currentCount - oldQuantity
+              )
+            },
+            { merge: true }
+          );
+        }
+      }
+    });
+
+  } catch (err) {
     console.error("Error saving occurrence:", err);
   }
 }
 
 export async function markOccurrences(taskId, calendarDays, date) {
   if (!auth.currentUser || !taskId) return;
+
   try {
     const uid = auth.currentUser.uid;
-    const occRef = collection(db, "users", uid, "tasks", taskId, "occurrences");
-    const snapshot = await getDocs(occRef);
-    const completedDates = snapshot.docs.map(doc => doc.id);
 
-    const month = (date.getMonth() + 1).toString().padStart(2, "0");
     const year = date.getFullYear();
+    const month = date.getMonth();
+
+    const startDate =
+      `${year}-${String(month + 1).padStart(2, "0")}-01`;
+
+    const endDate =
+      `${year}-${String(month + 1).padStart(2, "0")}-${String(
+        new Date(year, month + 1, 0).getDate()
+      ).padStart(2, "0")}`;
+
+    const occRef = collection(
+      db,
+      "users",
+      uid,
+      "tasks",
+      taskId,
+      "occurrences"
+    );
+
+    const q = query(
+      occRef,
+      where("__name__", ">=", startDate),
+      where("__name__", "<=", endDate)
+    );
+
+    const snapshot = await getDocs(q);
+
+    const completedDates = new Set(
+      snapshot.docs.map(docSnap => docSnap.id)
+    );
 
     calendarDays.querySelectorAll(".day").forEach(dayDiv => {
-      dayDiv.style.background = "";
       const day = dayDiv.textContent.padStart(2, "0");
-      const dateKey = `${year}-${month}-${day}`;
-      dayDiv.classList.toggle("completed", completedDates.includes(dateKey));
+      const dateKey =
+        `${year}-${String(month + 1).padStart(2, "0")}-${day}`;
+
+      dayDiv.classList.toggle(
+        "completed",
+        completedDates.has(dateKey)
+      );
     });
-  } catch(err) {
+
+  } catch (err) {
     console.error("Error marking occurrences:", err);
   }
 }
@@ -101,29 +213,69 @@ export async function markAllTasks(calendarDays, date, tasks) {
   if (!auth.currentUser) return;
 
   const uid = auth.currentUser.uid;
-  const month = (date.getMonth() + 1).toString().padStart(2, "0");
+
   const year = date.getFullYear();
+  const month = date.getMonth();
 
-  const dayColors = {}; // { "2026-03-01": ["hsl(...)","hsl(...)"] }
+  const startDate =
+    `${year}-${String(month + 1).padStart(2, "0")}-01`;
 
-  for (const task of tasks) {
-    const occRef = collection(db, "users", uid, "tasks", task.id, "occurrences");
-    const snapshot = await getDocs(occRef);
+  const endDate =
+    `${year}-${String(month + 1).padStart(2, "0")}-${String(
+      new Date(year, month + 1, 0).getDate()
+    ).padStart(2, "0")}`;
+
+  const dayColors = {};
+
+  const snapshots = await Promise.all(
+    tasks.map(async task => {
+
+      const occRef = collection(
+        db,
+        "users",
+        uid,
+        "tasks",
+        task.id,
+        "occurrences"
+      );
+
+      const q = query(
+        occRef,
+        where("__name__", ">=", startDate),
+        where("__name__", "<=", endDate)
+      );
+
+      const snapshot = await getDocs(q);
+
+      return {
+        task,
+        snapshot
+      };
+    })
+  );
+
+  snapshots.forEach(({ task, snapshot }) => {
 
     snapshot.docs.forEach(docSnap => {
+
       const key = docSnap.id;
 
-      if (!key.startsWith(`${year}-${month}`)) return;
+      if (!dayColors[key]) {
+        dayColors[key] = [];
+      }
 
-      if (!dayColors[key]) dayColors[key] = [];
-
-      dayColors[key].push(`hsl(${task.color},70%,55%)`);
+      dayColors[key].push(
+        `hsl(${task.color},70%,55%)`
+      );
     });
-  }
+
+  });
 
   calendarDays.querySelectorAll(".day").forEach(dayDiv => {
+
     const d = dayDiv.textContent.padStart(2, "0");
-    const key = `${year}-${month}-${d}`;
+    const key =
+      `${year}-${String(month + 1).padStart(2, "0")}-${d}`;
 
     const colors = dayColors[key] || [];
 
@@ -141,13 +293,12 @@ export async function markAllTasks(calendarDays, date, tasks) {
       return;
     }
 
-    const gradient = `linear-gradient(180deg, ${colors.join(",")})`;
-    dayDiv.style.background = gradient;
+    dayDiv.style.background =
+      `linear-gradient(180deg, ${colors.join(",")})`;
+
     dayDiv.classList.add("completed");
   });
 }
-
-
 
 
 
