@@ -865,6 +865,7 @@ export function listenClickCalendar(addBtn, cancelBtn, taskBtn, dayActions, cale
       selectedDay = null;
 
       const taskId = currentTask.value;
+      const uid = auth.currentUser.uid;
       
       const taskRef = doc(db, "users", uid, "tasks", taskId);
       
