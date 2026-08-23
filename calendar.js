@@ -286,6 +286,8 @@ async function updateOccurrenceRange(taskId) {
 }
 
 
+
+
 export async function markOccurrences(taskId, calendarDays, date) {
   if (!auth.currentUser || !taskId) return;
 
@@ -1055,51 +1057,128 @@ export function listenClickCalendar(addBtn, cancelBtn, taskBtn, dayActions, cale
   // CANCEL OCCURRENCE
   // --------------------------------------------------
 
-  cancelBtn.addEventListener("click", async () => {
-
+  cancelBtn.addEventListener("click", async e => {
+  
+    e.preventDefault();
+    e.stopPropagation();
+  
     if (!selectedDay || !currentTask.value) return;
+  
     const dayElement = selectedDay;
-
+  
     const d = dayElement.textContent.padStart(2, "0");
     const m = (date.getMonth() + 1)
       .toString()
       .padStart(2, "0");
     const y = date.getFullYear();
+  
     const key = `${y}-${m}-${d}`;
+  
     const taskId = currentTask.value;
     const uid = auth.currentUser.uid;
-    const occurrenceRef = doc(db, "users", uid, "tasks", taskId, "occurrences", key);
-
-    // UI immediata
-    dayElement.classList.remove("selected");
-    dayElement.classList.remove("completed");
-    selectedDay = null;
-    dayActions.classList.add("hidden-day-buttons");
-    updateProgress(calendarDays, progressBar, progressText);
-
+  
+    const occurrenceRef = doc(
+      db,
+      "users",
+      uid,
+      "tasks",
+      taskId,
+      "occurrences",
+      key
+    );
+  
     try {
-      // Controlliamo solo l'occurrence
-      const occurrenceSnap = await getDoc(occurrenceRef);
-
+  
+      // -----------------------------------------
+      // 1. Controlla che l'occurrence esista
+      // -----------------------------------------
+  
+      const occurrenceSnap = await getDoc(
+        occurrenceRef
+      );
+  
       if (!occurrenceSnap.exists()) {
+        dayActions.classList.add(
+          "hidden-day-buttons"
+        );
+  
+        selectedDay = null;
+  
         return;
       }
-
-      const quantity = occurrenceSnap.data().quantity || 1;
-
-      // Delete + stats + ricerca range
-      // vengono eseguiti contemporaneamente
+  
+      const quantity =
+        occurrenceSnap.data().quantity || 1;
+  
+  
+      // -----------------------------------------
+      // 2. CANCELLA PRIMA IL DOCUMENTO
+      // -----------------------------------------
+  
+      await deleteDoc(occurrenceRef);
+  
+  
+      // -----------------------------------------
+      // 3. SOLO DOPO aggiorna first/last
+      // -----------------------------------------
+  
       await Promise.all([
-        deleteDoc(occurrenceRef),
-        decrementMonthlyStats(taskId, key, quantity),
-        updateOccurrenceRange(taskId)
+        decrementMonthlyStats(
+          taskId,
+          key,
+          quantity
+        ),
+  
+        updateOccurrenceRange(
+          taskId
+        )
       ]);
-
+  
+  
+      // -----------------------------------------
+      // 4. Aggiorna UI
+      // -----------------------------------------
+  
+      dayElement.classList.remove(
+        "selected",
+        "completed"
+      );
+  
+      // Importante: elimina anche eventuale
+      // background inline
+      dayElement.style.background = "";
+      dayElement.style.color = "";
+  
+      selectedDay = null;
+  
+      dayActions.classList.add(
+        "hidden-day-buttons"
+      );
+  
+      updateProgress(
+        calendarDays,
+        progressBar,
+        progressText
+      );
+  
     } catch (err) {
-      console.error("Error cancelling occurrence:", err);
-      // Rollback UI
-      dayElement.classList.add("completed");
-      updateProgress(calendarDays, progressBar, progressText);
+  
+      console.error(
+        "Error cancelling occurrence:",
+        err
+      );
+  
+      // Se qualcosa va storto, mantieni
+      // visivamente il giorno completato
+      dayElement.classList.add(
+        "completed"
+      );
+  
+      updateProgress(
+        calendarDays,
+        progressBar,
+        progressText
+      );
     }
   });
 }
