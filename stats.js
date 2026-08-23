@@ -5,41 +5,46 @@ export async function getTaskMonthlyOccurrences(taskId) {
   if (!auth.currentUser || !taskId) return [];
 
   const uid = auth.currentUser.uid;
-  const occRef = collection(db, "users", uid, "tasks", taskId, "occurrences");
-  const occSnapshot = await getDocs(occRef);
 
-  const monthCounts = {};
+  const statsRef = collection(
+    db,
+    "users",
+    uid,
+    "tasks",
+    taskId,
+    "monthlyStats"
+  );
 
-  occSnapshot.docs.forEach(doc => {
-    const [year, month] = doc.id.split("-");
-    const key = `${year}-${month}`;
-    monthCounts[key] = (monthCounts[key] || 0) + doc.data().quantity;
-  });
+  const snapshot = await getDocs(statsRef);
 
-  // Se non ci sono dati, ritorna array vuoto
-  if (!Object.keys(monthCounts).length) return [];
-
-  // Trova il mese minimo e massimo
-  const allDates = Object.keys(monthCounts).map(k => new Date(k + "-01"));
-  const minDate = new Date(Math.min(...allDates));
-  const maxDate = new Date(Math.max(...allDates));
-
-  // Genera tutti i mesi nel range
-  const sortedMonths = [];
-  let iterDate = new Date(minDate.getFullYear(), minDate.getMonth(), 1);
-  while (iterDate <= maxDate) {
-    const key = `${iterDate.getFullYear()}-${String(iterDate.getMonth() + 1).padStart(2, "0")}`;
-    sortedMonths.push(key);
-    iterDate.setMonth(iterDate.getMonth() + 1);
+  if (snapshot.empty) {
+    return [];
   }
 
-  const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  const monthNames = [
+    "Jan", "Feb", "Mar", "Apr",
+    "May", "Jun", "Jul", "Aug",
+    "Sep", "Oct", "Nov", "Dec"
+  ];
 
-  return sortedMonths.map(key => {
+  const sortedMonths =
+    snapshot.docs
+      .map(docSnap => ({
+        key: docSnap.id,
+        count: docSnap.data().count || 0
+      }))
+      .sort((a, b) =>
+        a.key.localeCompare(b.key)
+      );
+
+  return sortedMonths.map(({ key, count }) => {
+
     const [year, month] = key.split("-");
+
     return {
-      label: `${monthNames[parseInt(month)-1]} ${year}`,
-      count: monthCounts[key] || 0 // zero se non c'è
+      label:
+        `${monthNames[parseInt(month) - 1]} ${year}`,
+      count
     };
   });
 }
@@ -49,59 +54,109 @@ export async function getAllTasksMonthlyOccurrences(tasks) {
   if (!auth.currentUser) return [];
 
   const uid = auth.currentUser.uid;
+
   const monthCountsPerTask = {};
 
-  // Crea oggetto vuoto per ogni task
-  tasks.forEach(t => monthCountsPerTask[t.id] = { name: t.name, color: t.color, counts: {} });
-
-  for (const task of tasks) {
-    const occRef = collection(db, "users", uid, "tasks", task.id, "occurrences");
-    const snapshot = await getDocs(occRef);
-
-    snapshot.docs.forEach(docSnap => {
-      const [year, month] = docSnap.id.split("-");
-      const key = `${year}-${month}`;
-      monthCountsPerTask[task.id].counts[key] = (monthCountsPerTask[task.id].counts[key] || 0) + docSnap.data().quantity;
-    });
-  }
-
-  // Trova il range globale di mesi tra tutte le task
-  const allKeys = [];
-  Object.values(monthCountsPerTask).forEach(task => allKeys.push(...Object.keys(task.counts)));
-  const allDates = allKeys.map(k => new Date(k + "-01"));
-  if (!allDates.length) return [];
-
-  const minDate = new Date(Math.min(...allDates));
-  const maxDate = new Date(Math.max(...allDates));
-
-  // Genera tutti i mesi nel range
-  const sortedMonths = [];
-  let iterDate = new Date(minDate.getFullYear(), minDate.getMonth(), 1);
-  while (iterDate <= maxDate) {
-    const key = `${iterDate.getFullYear()}-${String(iterDate.getMonth()+1).padStart(2,"0")}`;
-    sortedMonths.push(key);
-    iterDate.setMonth(iterDate.getMonth()+1);
-  }
-
-  const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-
-  // Costruisci array finale
-  const result = sortedMonths.map(key => {
-    const [year, month] = key.split("-");
-    const monthLabel = `${monthNames[parseInt(month)-1]} ${year}`;
-    const values = {};
-    Object.entries(monthCountsPerTask).forEach(([taskId, t]) => {
-      values[taskId] = t.counts[key] || 0;
-    });
-    return { label: monthLabel, values };
+  tasks.forEach(task => {
+    monthCountsPerTask[task.id] = {
+      name: task.name,
+      color: task.color,
+      counts: {}
+    };
   });
 
-  return { months: sortedMonths.map(k => {
-    const [year, month] = k.split("-");
-    return `${monthNames[parseInt(month)-1]} ${year}`;
-  }), data: result, tasks: monthCountsPerTask };
-}
+  const results = await Promise.all(
+    tasks.map(async task => {
 
+      const statsRef = collection(
+        db,
+        "users",
+        uid,
+        "tasks",
+        task.id,
+        "monthlyStats"
+      );
+
+      const snapshot = await getDocs(statsRef);
+
+      return {
+        task,
+        snapshot
+      };
+    })
+  );
+
+  results.forEach(({ task, snapshot }) => {
+
+    snapshot.docs.forEach(docSnap => {
+
+      const monthKey = docSnap.id;
+
+      monthCountsPerTask[task.id]
+        .counts[monthKey] =
+          docSnap.data().count || 0;
+    });
+  });
+
+  const allKeys = [];
+
+  Object.values(monthCountsPerTask).forEach(task => {
+    allKeys.push(
+      ...Object.keys(task.counts)
+    );
+  });
+
+  if (!allKeys.length) {
+    return {
+      months: [],
+      data: [],
+      tasks: monthCountsPerTask
+    };
+  }
+
+  const sortedMonths =
+    [...new Set(allKeys)].sort();
+
+  const monthNames = [
+    "Jan", "Feb", "Mar", "Apr",
+    "May", "Jun", "Jul", "Aug",
+    "Sep", "Oct", "Nov", "Dec"
+  ];
+
+  const data =
+    sortedMonths.map(key => {
+
+      const [year, month] =
+        key.split("-");
+
+      const values = {};
+
+      Object.entries(monthCountsPerTask)
+        .forEach(([taskId, task]) => {
+          values[taskId] =
+            task.counts[key] || 0;
+        });
+
+      return {
+        label:
+          `${monthNames[parseInt(month) - 1]} ${year}`,
+        values
+      };
+    });
+
+  return {
+    months: sortedMonths.map(key => {
+
+      const [year, month] =
+        key.split("-");
+
+      return `${monthNames[parseInt(month) - 1]} ${year}`;
+    }),
+
+    data,
+    tasks: monthCountsPerTask
+  };
+}
 
 export function drawCurrentTaskBarChart(container, data) { 
   container.innerHTML = ""; 
