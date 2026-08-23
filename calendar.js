@@ -126,54 +126,6 @@ export async function saveOccurrence(taskId, dateStr, quantity = 1) {
 
 
 
-async function incrementMonthlyStats(taskId, dateStr, quantity) {
-  const uid = auth.currentUser.uid;
-  const monthKey = getMonthKey(dateStr);
-
-  const statsRef = doc(
-    db,
-    "users",
-    uid,
-    "tasks",
-    taskId,
-    "monthlyStats",
-    monthKey
-  );
-
-  await setDoc(
-    statsRef,
-    {
-      count: increment(quantity)
-    },
-    { merge: true }
-  );
-}
-
-
-
-async function decrementMonthlyStats(taskId, dateStr, quantity) {
-  const uid = auth.currentUser.uid;
-  const monthKey = getMonthKey(dateStr);
-
-  const statsRef = doc(
-    db,
-    "users",
-    uid,
-    "tasks",
-    taskId,
-    "monthlyStats",
-    monthKey
-  );
-
-  await setDoc(
-    statsRef,
-    {
-      count: increment(-quantity)
-    },
-    { merge: true }
-  );
-}
-
 
 
 async function ensureMonthlyStats(taskId, firstMonth, lastMonth) {
