@@ -15,56 +15,26 @@ export async function getTaskMonthlyOccurrences(taskId) {
     "monthlyStats"
   );
 
-  const snapshot = await getDocs(statsRef);
+  const snapshot =
+    await getDocs(statsRef);
 
-  if (snapshot.empty) return [];
-
-  const monthCounts = {};
-
-  snapshot.docs.forEach(docSnap => {
-    monthCounts[docSnap.id] =
-      docSnap.data().count || 0;
-  });
-
-  const sortedMonths =
-    Object.keys(monthCounts).sort();
-
-  const monthNames = [
-    "Jan", "Feb", "Mar", "Apr",
-    "May", "Jun", "Jul", "Aug",
-    "Sep", "Oct", "Nov", "Dec"
-  ];
-
-  return sortedMonths.map(key => {
-
-    const [year, month] = key.split("-");
-
-    return {
-      label:
-        `${monthNames[parseInt(month) - 1]} ${year}`,
-
-      count: monthCounts[key]
-    };
-  });
+  return snapshot.docs
+    .map(docSnap => ({
+      month: docSnap.id,
+      count: docSnap.data().count || 0
+    }))
+    .sort((a, b) =>
+      a.month.localeCompare(b.month)
+    );
 }
 
 
 
 
 export async function getAllTasksMonthlyOccurrences(tasks) {
-  if (!auth.currentUser) return [];
+  if (!auth.currentUser) return {};
 
   const uid = auth.currentUser.uid;
-
-  const monthCountsPerTask = {};
-
-  tasks.forEach(task => {
-    monthCountsPerTask[task.id] = {
-      name: task.name,
-      color: task.color,
-      counts: {}
-    };
-  });
 
   const results = await Promise.all(
     tasks.map(async task => {
@@ -78,87 +48,36 @@ export async function getAllTasksMonthlyOccurrences(tasks) {
         "monthlyStats"
       );
 
-      const snapshot = await getDocs(statsRef);
+      const snapshot =
+        await getDocs(statsRef);
+
+      const counts = {};
+
+      snapshot.docs.forEach(docSnap => {
+        counts[docSnap.id] =
+          docSnap.data().count || 0;
+      });
 
       return {
         task,
-        snapshot
+        counts
       };
     })
   );
 
-  results.forEach(({ task, snapshot }) => {
+  const output = {};
 
-    snapshot.docs.forEach(docSnap => {
+  results.forEach(({ task, counts }) => {
 
-      const monthKey = docSnap.id;
-
-      monthCountsPerTask[task.id]
-        .counts[monthKey] =
-          docSnap.data().count || 0;
-
-    });
-
-  });
-
-  const allKeys = [];
-
-  Object.values(monthCountsPerTask).forEach(task => {
-    allKeys.push(
-      ...Object.keys(task.counts)
-    );
-  });
-
-  if (!allKeys.length) {
-    return {
-      months: [],
-      data: [],
-      tasks: monthCountsPerTask
+    output[task.id] = {
+      name: task.name,
+      color: task.color,
+      counts
     };
-  }
 
-  const sortedMonths =
-    [...new Set(allKeys)].sort();
-
-  const monthNames = [
-    "Jan", "Feb", "Mar", "Apr",
-    "May", "Jun", "Jul", "Aug",
-    "Sep", "Oct", "Nov", "Dec"
-  ];
-
-  const data = sortedMonths.map(key => {
-
-    const [year, month] = key.split("-");
-
-    const values = {};
-
-    Object.entries(monthCountsPerTask)
-      .forEach(([taskId, task]) => {
-
-        values[taskId] =
-          task.counts[key] || 0;
-
-      });
-
-    return {
-      label:
-        `${monthNames[parseInt(month) - 1]} ${year}`,
-      values
-    };
   });
 
-  return {
-    months: sortedMonths.map(key => {
-
-      const [year, month] = key.split("-");
-
-      return `${monthNames[parseInt(month) - 1]} ${year}`;
-
-    }),
-
-    data,
-    tasks: monthCountsPerTask
-  };
+  return output;
 }
 
 export function drawCurrentTaskBarChart(container, data) { 
