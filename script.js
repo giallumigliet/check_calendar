@@ -171,17 +171,43 @@ resetDataBtn.addEventListener("click", async () => {
 
     for (const taskDoc of tasksSnap.docs) {
       const taskId = taskDoc.id;
-
-      // delete occurrences
-      const occRef = collection(db, "users", uid, "tasks", taskId, "occurrences");
+    
+      // Delete occurrences
+      const occRef = collection(
+        db,
+        "users",
+        uid,
+        "tasks",
+        taskId,
+        "occurrences"
+      );
+    
       const occSnap = await getDocs(occRef);
-
+    
       for (const occDoc of occSnap.docs) {
-        await deleteDoc(doc(db, "users", uid, "tasks", taskId, "occurrences", occDoc.id));
+        await deleteDoc(occDoc.ref);
       }
-
-      // delete tasks
-      await deleteDoc(doc(db, "users", uid, "tasks", taskId));
+    
+      // Delete monthly statistics
+      const statsRef = collection(
+        db,
+        "users",
+        uid,
+        "tasks",
+        taskId,
+        "monthlyStats"
+      );
+    
+      const statsSnap = await getDocs(statsRef);
+    
+      for (const statsDoc of statsSnap.docs) {
+        await deleteDoc(statsDoc.ref);
+      }
+    
+      // Delete task
+      await deleteDoc(
+        doc(db, "users", uid, "tasks", taskId)
+      );
     }
     await deleteUser(auth.currentUser);
 
