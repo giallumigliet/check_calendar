@@ -250,38 +250,24 @@ async function updateOccurrenceRange(taskId) {
     taskId
   );
 
-  const firstQuery = query(
-    occRef,
-    orderBy("__name__"),
-    limit(1)
-  );
+  // Nessun orderBy -> nessun composite index richiesto
+  const snapshot = await getDocs(occRef);
 
-  const lastQuery = query(
-    occRef,
-    orderBy("__name__", "desc"),
-    limit(1)
-  );
-
-  const [firstSnapshot, lastSnapshot] = await Promise.all([
-    getDocs(firstQuery),
-    getDocs(lastQuery)
-  ]);
-
-  if (firstSnapshot.empty) {
+  if (snapshot.empty) {
     await updateDoc(taskRef, {
       firstOccurrence: null,
       lastOccurrence: null
     });
-
     return;
   }
 
-  const firstOccurrence = firstSnapshot.docs[0].id;
-  const lastOccurrence = lastSnapshot.docs[0].id;
+  const dates = snapshot.docs
+    .map(docSnap => docSnap.id)
+    .sort();
 
   await updateDoc(taskRef, {
-    firstOccurrence,
-    lastOccurrence
+    firstOccurrence: dates[0],
+    lastOccurrence: dates[dates.length - 1]
   });
 }
 
@@ -1058,130 +1044,200 @@ export function listenClickCalendar(addBtn, cancelBtn, taskBtn, dayActions, cale
   // --------------------------------------------------
 
   cancelBtn.addEventListener("click", async e => {
-  
-    e.preventDefault();
-    e.stopPropagation();
-  
-    if (!selectedDay || !currentTask.value) return;
-  
-    const dayElement = selectedDay;
-  
-    const d = dayElement.textContent.padStart(2, "0");
-    const m = (date.getMonth() + 1)
-      .toString()
-      .padStart(2, "0");
-    const y = date.getFullYear();
-  
-    const key = `${y}-${m}-${d}`;
-  
-    const taskId = currentTask.value;
-    const uid = auth.currentUser.uid;
-  
-    const occurrenceRef = doc(
+
+  e.preventDefault();
+  e.stopPropagation();
+
+  if (!selectedDay || !currentTask.value) return;
+
+  const dayElement = selectedDay;
+
+  const d = dayElement.textContent.padStart(2, "0");
+  const m = (date.getMonth() + 1)
+    .toString()
+    .padStart(2, "0");
+  const y = date.getFullYear();
+
+  const key = `${y}-${m}-${d}`;
+
+  const taskId = currentTask.value;
+  const uid = auth.currentUser.uid;
+
+  const occurrenceRef = doc(
+    db,
+    "users",
+    uid,
+    "tasks",
+    taskId,
+    "occurrences",
+    key
+  );
+
+  const taskRef = doc(
+    db,
+    "users",
+    uid,
+    "tasks",
+    taskId
+  );
+
+  const occRef = collection(
+    db,
+    "users",
+    uid,
+    "tasks",
+    taskId,
+    "occurrences"
+  );
+
+  try {
+
+    // -----------------------------------------
+    // 1. Leggi occurrence e occurrences
+    //    contemporaneamente
+    // -----------------------------------------
+
+    const [occurrenceSnap, allOccurrencesSnap] = await Promise.all([
+      getDoc(occurrenceRef),
+      getDocs(occRef)
+    ]);
+
+    // Se l'occurrence non esiste più,
+    // pulisci comunque la UI.
+    if (!occurrenceSnap.exists()) {
+
+      dayElement.classList.remove(
+        "selected",
+        "completed"
+      );
+
+      dayElement.style.background = "";
+      dayElement.style.color = "";
+
+      selectedDay = null;
+
+      dayActions.classList.add(
+        "hidden-day-buttons"
+      );
+
+      updateProgress(
+        calendarDays,
+        progressBar,
+        progressText
+      );
+
+      return;
+    }
+
+    const quantity =
+      occurrenceSnap.data().quantity || 1;
+
+
+    // -----------------------------------------
+    // 2. Calcola first/last DOPO la cancellazione
+    // -----------------------------------------
+
+    const remainingDates = allOccurrencesSnap.docs
+      .map(docSnap => docSnap.id)
+      .filter(id => id !== key)
+      .sort();
+
+
+    const newFirst =
+      remainingDates.length > 0
+        ? remainingDates[0]
+        : null;
+
+    const newLast =
+      remainingDates.length > 0
+        ? remainingDates[remainingDates.length - 1]
+        : null;
+
+
+    // -----------------------------------------
+    // 3. Prepara statistiche mensili
+    // -----------------------------------------
+
+    const monthKey = getMonthKey(key);
+
+    const statsRef = doc(
       db,
       "users",
       uid,
       "tasks",
       taskId,
-      "occurrences",
-      key
+      "monthlyStats",
+      monthKey
     );
-  
-    try {
-  
-      // -----------------------------------------
-      // 1. Controlla che l'occurrence esista
-      // -----------------------------------------
-  
-      const occurrenceSnap = await getDoc(
-        occurrenceRef
-      );
-  
-      if (!occurrenceSnap.exists()) {
-        dayActions.classList.add(
-          "hidden-day-buttons"
-        );
-  
-        selectedDay = null;
-  
-        return;
-      }
-  
-      const quantity =
-        occurrenceSnap.data().quantity || 1;
-  
-  
-      // -----------------------------------------
-      // 2. CANCELLA PRIMA IL DOCUMENTO
-      // -----------------------------------------
-  
-      await deleteDoc(occurrenceRef);
-  
-  
-      // -----------------------------------------
-      // 3. SOLO DOPO aggiorna first/last
-      // -----------------------------------------
-  
-      await Promise.all([
-        decrementMonthlyStats(
-          taskId,
-          key,
-          quantity
-        ),
-  
-        updateOccurrenceRange(
-          taskId
-        )
-      ]);
-  
-  
-      // -----------------------------------------
-      // 4. Aggiorna UI
-      // -----------------------------------------
-  
-      dayElement.classList.remove(
-        "selected",
-        "completed"
-      );
-  
-      // Importante: elimina anche eventuale
-      // background inline
-      dayElement.style.background = "";
-      dayElement.style.color = "";
-  
-      selectedDay = null;
-  
-      dayActions.classList.add(
-        "hidden-day-buttons"
-      );
-  
-      updateProgress(
-        calendarDays,
-        progressBar,
-        progressText
-      );
-  
-    } catch (err) {
-  
-      console.error(
-        "Error cancelling occurrence:",
-        err
-      );
-  
-      // Se qualcosa va storto, mantieni
-      // visivamente il giorno completato
-      dayElement.classList.add(
-        "completed"
-      );
-  
-      updateProgress(
-        calendarDays,
-        progressBar,
-        progressText
-      );
-    }
-  });
-}
+
+
+    // -----------------------------------------
+    // 4. UNA SOLA operazione atomica
+    // -----------------------------------------
+
+    const batch = writeBatch(db);
+
+    batch.delete(occurrenceRef);
+
+    batch.set(
+      statsRef,
+      {
+        count: increment(-quantity)
+      },
+      { merge: true }
+    );
+
+    batch.update(taskRef, {
+      firstOccurrence: newFirst,
+      lastOccurrence: newLast
+    });
+
+    await batch.commit();
+
+
+    // -----------------------------------------
+    // 5. Aggiorna UI immediatamente
+    // -----------------------------------------
+
+    dayElement.classList.remove(
+      "selected",
+      "completed"
+    );
+
+    dayElement.style.background = "";
+    dayElement.style.color = "";
+
+    selectedDay = null;
+
+    dayActions.classList.add(
+      "hidden-day-buttons"
+    );
+
+    updateProgress(
+      calendarDays,
+      progressBar,
+      progressText
+    );
+
+
+  } catch (err) {
+
+    console.error(
+      "Error cancelling occurrence:",
+      err
+    );
+
+    // La UI rimane completata solo se
+    // Firestore ha realmente fallito.
+    dayElement.classList.add("completed");
+
+    updateProgress(
+      calendarDays,
+      progressBar,
+      progressText
+    );
+  }
+});
 
   
 // -------- PROGRESS --------
