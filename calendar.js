@@ -127,106 +127,93 @@ function getNextMonth(monthKey) {
 export async function saveOccurrence(taskId, dateStr, quantity = 1) {
   if (!auth.currentUser || !taskId) return;
 
+  const uid = auth.currentUser.uid;
+
+  const taskRef = doc(
+    db,
+    "users",
+    uid,
+    "tasks",
+    taskId
+  );
+
+  const occurrenceRef = doc(
+    db,
+    "users",
+    uid,
+    "tasks",
+    taskId,
+    "occurrences",
+    dateStr
+  );
+
+  const monthKey = dateStr.substring(0, 7);
+
+  const monthlyStatsRef = doc(
+    db,
+    "users",
+    uid,
+    "tasks",
+    taskId,
+    "monthlyStats",
+    monthKey
+  );
+
   try {
-    const uid = auth.currentUser.uid;
-
-    const taskRef = doc(
-      db,
-      "users",
-      uid,
-      "tasks",
-      taskId
-    );
-
-    const occurrenceRef = doc(
-      db,
-      "users",
-      uid,
-      "tasks",
-      taskId,
-      "occurrences",
-      dateStr
-    );
-
-    const monthKey = getMonthKey(dateStr);
-
-    const monthlyStatsRef = doc(
-      db,
-      "users",
-      uid,
-      "tasks",
-      taskId,
-      "monthlyStats",
-      monthKey
-    );
 
     await runTransaction(db, async transaction => {
 
-      // ------------------------------------------------
-      // TUTTE LE LETTURE DEVONO AVVENIRE PRIMA DELLE SCRITTURE
-      // ------------------------------------------------
-
-      const [
-        taskSnap,
-        occurrenceSnap,
-        monthlyStatsSnap
-      ] = await Promise.all([
-        transaction.get(taskRef),
-        transaction.get(occurrenceRef),
-        transaction.get(monthlyStatsRef)
-      ]);
+      const taskSnap = await transaction.get(taskRef);
+      const occurrenceSnap = await transaction.get(occurrenceRef);
+      const statsSnap = await transaction.get(monthlyStatsRef);
 
       if (!taskSnap.exists()) {
-        throw new Error("Task does not exist.");
+        throw new Error("Task non trovata");
       }
 
-      const taskData = taskSnap.data();
+      const task = taskSnap.data();
 
-      // =================================================
-      // AGGIUNTA
-      // =================================================
+      /* =========================================
+         AGGIUNTA OCCORRENZA
+      ========================================= */
 
       if (quantity > 0) {
 
-        // L'occorrenza esiste già:
-        // non facciamo niente e soprattutto
-        // NON incrementiamo nuovamente il contatore.
-        if (occurrenceSnap.exists()) {
-          return;
-        }
+        if (occurrenceSnap.exists()) return;
 
-        let firstOccurrence = taskData.firstOccurrence || null;
-        let lastOccurrence = taskData.lastOccurrence || null;
+        let first = task.firstOccurrence || dateStr;
+        let last = task.lastOccurrence || dateStr;
 
-        const newFirst =
-          !firstOccurrence ||
-          dateStr < firstOccurrence;
+        if (dateStr < first) first = dateStr;
+        if (dateStr > last) last = dateStr;
 
-        const newLast =
-          !lastOccurrence ||
-          dateStr > lastOccurrence;
+        const firstMonth = first.substring(0, 7);
+        const lastMonth = last.substring(0, 7);
 
-        const finalFirst =
-          newFirst ? dateStr : firstOccurrence;
+        const months = [];
 
-        const finalLast =
-          newLast ? dateStr : lastOccurrence;
+        let [y, m] = firstMonth.split("-").map(Number);
+        const [ey, em] = lastMonth.split("-").map(Number);
 
-        // -----------------------------------------------
-        // Se è la prima occorrenza, creiamo il primo mese.
-        // Se stiamo estendendo l'intervallo, creiamo
-        // eventuali mesi intermedi mancanti con count 0.
-        // -----------------------------------------------
+        while (y < ey || (y === ey && m <= em)) {
 
-        const monthsToEnsure =
-          getMonthsBetween(
-            getMonthKey(finalFirst),
-            getMonthKey(finalLast)
+          months.push(
+            `${y}-${String(m).padStart(2, "0")}`
           );
 
-        const monthlyStatsRefs = monthsToEnsure.map(month => ({
-          month,
-          ref: doc(
+          m++;
+
+          if (m === 13) {
+            m = 1;
+            y++;
+          }
+        }
+
+        const monthDocs = [];
+
+        for (const month of months) {
+
+          const ref = doc(
             db,
             "users",
             uid,
@@ -234,94 +221,91 @@ export async function saveOccurrence(taskId, dateStr, quantity = 1) {
             taskId,
             "monthlyStats",
             month
-          )
-        }));
+          );
 
-        // Dobbiamo leggere tutti i documenti prima di scrivere.
-        const monthlySnapshots = await Promise.all(
-          monthlyStatsRefs.map(item =>
-            transaction.get(item.ref)
-          )
+          const snap = await transaction.get(ref);
+
+          monthDocs.push({
+            month,
+            ref,
+            snap
+          });
+        }
+
+        transaction.set(
+          occurrenceRef,
+          { quantity: 1 }
         );
 
-        // Crea i mesi mancanti con count 0.
-        monthlySnapshots.forEach((snap, index) => {
-          if (!snap.exists()) {
+        monthDocs.forEach(({ month, ref, snap }) => {
+
+          if (month === monthKey) {
+
+            const oldCount =
+              snap.exists()
+                ? snap.data().count || 0
+                : 0;
+
             transaction.set(
-              monthlyStatsRefs[index].ref,
+              ref,
+              { count: oldCount + 1 }
+            );
+
+          } else if (!snap.exists()) {
+
+            transaction.set(
+              ref,
               { count: 0 }
             );
+
           }
         });
 
-        // Crea l'occorrenza.
-        transaction.set(
-          occurrenceRef,
-          { quantity }
-        );
-
-        // Incrementa il mese dell'occorrenza.
-        const currentCount =
-          monthlyStatsSnap.exists()
-            ? (monthlyStatsSnap.data().count || 0)
-            : 0;
-
-        transaction.set(
-          monthlyStatsRef,
-          {
-            count: currentCount + quantity
-          },
-          { merge: true }
-        );
-
-        // Aggiorna primo/ultimo giorno della task.
-        transaction.update(
-          taskRef,
-          {
-            firstOccurrence: finalFirst,
-            lastOccurrence: finalLast
-          }
-        );
+        transaction.update(taskRef, {
+          firstOccurrence: first,
+          lastOccurrence: last
+        });
 
         return;
       }
 
-      // =================================================
-      // ELIMINAZIONE
-      // =================================================
+      /* =========================================
+         CANCELLA OCCORRENZA
+      ========================================= */
 
-      if (!occurrenceSnap.exists()) {
-        return;
-      }
+      if (!occurrenceSnap.exists()) return;
 
       const oldQuantity =
         occurrenceSnap.data().quantity || 1;
 
-      const firstOccurrence =
-        taskData.firstOccurrence || dateStr;
+      const currentCount =
+        statsSnap.exists()
+          ? statsSnap.data().count || 0
+          : 0;
 
-      const lastOccurrence =
-        taskData.lastOccurrence || dateStr;
+      const oldFirst =
+        task.firstOccurrence;
+
+      const oldLast =
+        task.lastOccurrence;
 
       const isFirst =
-        dateStr === firstOccurrence;
+        dateStr === oldFirst;
 
       const isLast =
-        dateStr === lastOccurrence;
+        dateStr === oldLast;
 
-      // -----------------------------------------------
-      // Se non stiamo eliminando né la prima né l'ultima
-      // occorrenza, è sufficiente decrementare il mese.
-      // -----------------------------------------------
+      /* -----------------------------------------
+         cancelliamo SEMPRE l'occorrenza
+      ----------------------------------------- */
+
+      transaction.delete(occurrenceRef);
+
+      /* -----------------------------------------
+         se non è né prima né ultima
+      ----------------------------------------- */
 
       if (!isFirst && !isLast) {
-
-        const currentCount =
-          monthlyStatsSnap.exists()
-            ? (monthlyStatsSnap.data().count || 0)
-            : 0;
-
-        transaction.delete(occurrenceRef);
 
         transaction.set(
           monthlyStatsRef,
@@ -330,17 +314,15 @@ export async function saveOccurrence(taskId, dateStr, quantity = 1) {
               0,
               currentCount - oldQuantity
             )
-          },
-          { merge: true }
+          }
         );
 
         return;
       }
 
-      // -----------------------------------------------
-      // Se eliminiamo prima/ultima occorrenza,
-      // dobbiamo trovare il nuovo intervallo.
-      // -----------------------------------------------
+      /* =========================================
+         DOBBIAMO TROVARE NUOVA PRIMA / ULTIMA
+      ========================================= */
 
       const occurrencesRef = collection(
         db,
@@ -355,86 +337,78 @@ export async function saveOccurrence(taskId, dateStr, quantity = 1) {
       let newLast = null;
 
       if (isFirst) {
-        const firstQuery = query(
+
+        const qFirst = query(
           occurrencesRef,
-          orderBy("__name__", "asc"),
+          orderBy("__name__"),
           limit(2)
         );
 
-        const firstSnapshot =
-          await transaction.get(firstQuery);
+        const firstSnap =
+          await transaction.get(qFirst);
 
-        for (const snap of firstSnapshot.docs) {
-          if (snap.id !== dateStr) {
-            newFirst = snap.id;
+        for (const d of firstSnap.docs) {
+          if (d.id !== dateStr) {
+            newFirst = d.id;
             break;
           }
         }
+
       } else {
-        newFirst = firstOccurrence;
+
+        newFirst = oldFirst;
+
       }
 
       if (isLast) {
-        const lastQuery = query(
+
+        const qLast = query(
           occurrencesRef,
           orderBy("__name__", "desc"),
           limit(2)
         );
 
-        const lastSnapshot =
-          await transaction.get(lastQuery);
+        const lastSnap =
+          await transaction.get(qLast);
 
-        for (const snap of lastSnapshot.docs) {
-          if (snap.id !== dateStr) {
-            newLast = snap.id;
+        for (const d of lastSnap.docs) {
+          if (d.id !== dateStr) {
+            newLast = d.id;
             break;
           }
         }
+
       } else {
-        newLast = lastOccurrence;
+
+        newLast = oldLast;
+
       }
 
-      // -----------------------------------------------
-      // Caso: era l'unica occorrenza.
-      // -----------------------------------------------
+      /* =========================================
+         ERA L'ULTIMA OCCORRENZA DELLA TASK
+      ========================================= */
 
       if (!newFirst || !newLast) {
 
-        transaction.delete(occurrenceRef);
-
         transaction.delete(monthlyStatsRef);
 
-        transaction.update(
-          taskRef,
-          {
-            firstOccurrence: null,
-            lastOccurrence: null
-          }
-        );
+        transaction.update(taskRef, {
+          firstOccurrence: null,
+          lastOccurrence: null
+        });
 
         return;
       }
 
       const newFirstMonth =
-        getMonthKey(newFirst);
+        newFirst.substring(0, 7);
 
       const newLastMonth =
-        getMonthKey(newLast);
+        newLast.substring(0, 7);
 
-      // -----------------------------------------------
-      // Elimina l'occorrenza.
-      // -----------------------------------------------
-
-      transaction.delete(occurrenceRef);
-
-      // -----------------------------------------------
-      // Aggiorna il count del mese eliminato.
-      // -----------------------------------------------
-
-      const currentCount =
-        monthlyStatsSnap.exists()
-          ? (monthlyStatsSnap.data().count || 0)
-          : 0;
+      /* -----------------------------------------
+         aggiorna il mese cancellato
+      ----------------------------------------- */
 
       const newCount =
         Math.max(
@@ -442,107 +416,111 @@ export async function saveOccurrence(taskId, dateStr, quantity = 1) {
           currentCount - oldQuantity
         );
 
-      // -----------------------------------------------
-      // Se il mese è ancora dentro l'intervallo,
-      // deve rimanere anche se count = 0.
-      // -----------------------------------------------
-
       if (
         monthKey >= newFirstMonth &&
         monthKey <= newLastMonth
       ) {
+
         transaction.set(
           monthlyStatsRef,
-          {
-            count: newCount
-          },
-          { merge: true }
+          { count: newCount }
         );
+
       } else {
-        // Il mese è diventato esterno all'intervallo.
+
         transaction.delete(monthlyStatsRef);
+
       }
 
-      // -----------------------------------------------
-      // Se abbiamo accorciato il range, eliminiamo
-      // eventuali monthlyStats diventati esterni.
-      // -----------------------------------------------
+      /* -----------------------------------------
+         elimina monthlyStats prima del nuovo first
+      ----------------------------------------- */
 
       if (isFirst) {
 
-        const oldFirstMonth =
-          getMonthKey(firstOccurrence);
+        let month =
+          oldFirst.substring(0, 7);
 
-        if (oldFirstMonth < newFirstMonth) {
+        while (month < newFirstMonth) {
 
-          const monthsToDelete =
-            getMonthsBetween(
-              oldFirstMonth,
-              getPreviousMonth(newFirstMonth)
-            );
+          const ref = doc(
+            db,
+            "users",
+            uid,
+            "tasks",
+            taskId,
+            "monthlyStats",
+            month
+          );
 
-          for (const month of monthsToDelete) {
-            transaction.delete(
-              doc(
-                db,
-                "users",
-                uid,
-                "tasks",
-                taskId,
-                "monthlyStats",
-                month
-              )
-            );
+          transaction.delete(ref);
+
+          let [yy, mm] =
+            month.split("-").map(Number);
+
+          mm++;
+
+          if (mm === 13) {
+            mm = 1;
+            yy++;
           }
+
+          month =
+            `${yy}-${String(mm).padStart(2, "0")}`;
         }
       }
+
+      /* -----------------------------------------
+         elimina monthlyStats dopo il nuovo last
+      ----------------------------------------- */
 
       if (isLast) {
 
-        const oldLastMonth =
-          getMonthKey(lastOccurrence);
+        let month =
+          oldLast.substring(0, 7);
 
-        if (newLastMonth < oldLastMonth) {
+        while (month > newLastMonth) {
 
-          const monthsToDelete =
-            getMonthsBetween(
-              getNextMonth(newLastMonth),
-              oldLastMonth
-            );
+          const ref = doc(
+            db,
+            "users",
+            uid,
+            "tasks",
+            taskId,
+            "monthlyStats",
+            month
+          );
 
-          for (const month of monthsToDelete) {
-            transaction.delete(
-              doc(
-                db,
-                "users",
-                uid,
-                "tasks",
-                taskId,
-                "monthlyStats",
-                month
-              )
-            );
+          transaction.delete(ref);
+
+          let [yy, mm] =
+            month.split("-").map(Number);
+
+          mm--;
+
+          if (mm === 0) {
+            mm = 12;
+            yy--;
           }
+
+          month =
+            `${yy}-${String(mm).padStart(2, "0")}`;
         }
       }
 
-      // Aggiorna l'intervallo della task.
-      transaction.update(
-        taskRef,
-        {
-          firstOccurrence: newFirst,
-          lastOccurrence: newLast
-        }
-      );
+      transaction.update(taskRef, {
+        firstOccurrence: newFirst,
+        lastOccurrence: newLast
+      });
+
     });
 
-  } catch (err) {
-    console.error("Error saving occurrence:", err);
-    throw err;
+  } catch (error) {
+
+    console.error("Errore saveOccurrence:", error);
+
   }
 }
-
-
 
 
 export async function markOccurrences(taskId, calendarDays, date) {
