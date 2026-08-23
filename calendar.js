@@ -167,6 +167,15 @@ async function cleanupMonthlyStats(taskId, firstMonth, lastMonth) {
 
   const snapshot = await getDocs(statsRef);
 
+  // Nessuna occorrenza rimasta:
+  // elimina tutti i monthlyStats.
+  if (!firstMonth || !lastMonth) {
+    await Promise.all(
+      snapshot.docs.map(docSnap => deleteDoc(docSnap.ref))
+    );
+    return;
+  }
+
   const first = getMonthKey(firstMonth);
   const last = getMonthKey(lastMonth);
 
@@ -179,7 +188,6 @@ async function cleanupMonthlyStats(taskId, firstMonth, lastMonth) {
       .map(docSnap => deleteDoc(docSnap.ref))
   );
 }
-
 
 
 async function updateOccurrenceRange(taskId) {
@@ -978,6 +986,14 @@ export function listenClickCalendar(addBtn, cancelBtn, taskBtn, dayActions, cale
 
       await batch.commit();
 
+      // Crea eventuali monthlyStats = 0
+      // per i mesi compresi tra la prima e l'ultima occorrenza.
+      await ensureMonthlyStats(
+        taskId,
+        getMonthKey(newFirst),
+        getMonthKey(newLast)
+      );
+
     } catch (err) {
       console.error(
         "Error adding occurrence:",
@@ -1145,6 +1161,12 @@ export function listenClickCalendar(addBtn, cancelBtn, taskBtn, dayActions, cale
       });
   
       await batch.commit();
+
+      await cleanupMonthlyStats(
+        taskId,
+        newFirst,
+        newLast
+      );
   
   
       // -----------------------------------------
