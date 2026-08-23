@@ -67,11 +67,11 @@ function getMonthsBetween(startMonth, endMonth) {
   const months = [];
 
   let [year, month] = startMonth.split("-").map(Number);
-  const [endYear, endMonth] = endMonth.split("-").map(Number);
+  const [endYear, endMonthNumber] = endMonth.split("-").map(Number);
 
   while (
     year < endYear ||
-    (year === endYear && month <= endMonth)
+    (year === endYear && month <= endMonthNumber)
   ) {
     months.push(
       `${year}-${String(month).padStart(2, "0")}`
@@ -95,23 +95,117 @@ function getMonthsBetween(startMonth, endMonth) {
 // -------- OCCURRENCES --------
 export async function saveOccurrence(taskId, dateStr, quantity = 1) {
   if (!auth.currentUser || !taskId) return;
+
   try {
     const uid = auth.currentUser.uid;
+
+    const occurrenceRef = doc(
+      db,
+      "users",
+      uid,
+      "tasks",
+      taskId,
+      "occurrences",
+      dateStr
+    );
+
     if (quantity > 0) {
       await setDoc(
-        doc(db, "users", uid, "tasks", taskId, "occurrences", dateStr),
+        occurrenceRef,
         { quantity },
         { merge: true }
       );
     } else {
-      // elimina occorrenza se quantity 0
-      await deleteDoc(doc(db, "users", uid, "tasks", taskId, "occurrences", dateStr));
+      await deleteDoc(occurrenceRef);
     }
-  } catch(err) {
+
+  } catch (err) {
     console.error("Error saving occurrence:", err);
   }
 }
 
+
+
+async function incrementMonthlyStats(taskId, dateStr, quantity) {
+  const uid = auth.currentUser.uid;
+  const monthKey = getMonthKey(dateStr);
+
+  const statsRef = doc(
+    db,
+    "users",
+    uid,
+    "tasks",
+    taskId,
+    "monthlyStats",
+    monthKey
+  );
+
+  const snap = await getDoc(statsRef);
+
+  const currentCount = snap.exists()
+    ? (snap.data().count || 0)
+    : 0;
+
+  await setDoc(
+    statsRef,
+    { count: currentCount + quantity },
+    { merge: true }
+  );
+}
+
+
+
+async function decrementMonthlyStats(taskId, dateStr, quantity) {
+  const uid = auth.currentUser.uid;
+  const monthKey = getMonthKey(dateStr);
+
+  const statsRef = doc(
+    db,
+    "users",
+    uid,
+    "tasks",
+    taskId,
+    "monthlyStats",
+    monthKey
+  );
+
+  const snap = await getDoc(statsRef);
+
+  if (!snap.exists()) return;
+
+  const currentCount = snap.data().count || 0;
+
+  await setDoc(
+    statsRef,
+    { count: Math.max(0, currentCount - quantity) },
+    { merge: true }
+  );
+}
+
+
+async function ensureMonthlyStats(taskId, firstMonth, lastMonth) {
+  const uid = auth.currentUser.uid;
+
+  const months = getMonthsBetween(firstMonth, lastMonth);
+
+  for (const month of months) {
+    const statsRef = doc(
+      db,
+      "users",
+      uid,
+      "tasks",
+      taskId,
+      "monthlyStats",
+      month
+    );
+
+    const snap = await getDoc(statsRef);
+
+    if (!snap.exists()) {
+      await setDoc(statsRef, { count: 0 });
+    }
+  }
+}
 
 
 
@@ -770,7 +864,29 @@ export function listenClickCalendar(addBtn, cancelBtn, taskBtn, dayActions, cale
       selectedDay.classList.add("completed");
       selectedDay = null;
 
-      await saveOccurrence(currentTask.value, key, 1);
+      const taskId = currentTask.value;
+      
+      const taskRef = doc(db, "users", uid, "tasks", taskId);
+      
+      const taskSnap = await getDoc(taskRef);
+      const taskData = taskSnap.data();
+      
+      const newFirst = !taskData.firstOccurrence || key < taskData.firstOccurrence ? key : taskData.firstOccurrence;
+      
+      const newLast = !taskData.lastOccurrence || key > taskData.lastOccurrence ? key : taskData.lastOccurrence;
+      
+      // Salva occurrence
+      await saveOccurrence(taskId, key, 1);
+      
+      // Aggiorna intervallo task
+      await updateDoc(taskRef, { firstOccurrence: newFirst, lastOccurrence: newLast });
+      
+      // Crea eventuali mesi mancanti
+      await ensureMonthlyStats(taskId, getMonthKey(newFirst), getMonthKey(newLast));
+      
+      // Incrementa il mese corrente
+      await incrementMonthlyStats(taskId, key, 1);
+      
       dayActions.classList.add("hidden-day-buttons");
       updateProgress(calendarDays, progressBar, progressText);
     }
@@ -787,7 +903,16 @@ export function listenClickCalendar(addBtn, cancelBtn, taskBtn, dayActions, cale
       selectedDay.classList.remove("completed");
       selectedDay = null;
 
-      await saveOccurrence(currentTask.value, key, 0);
+      const uid = auth.currentUser.uid;
+      
+      const occurrenceRef = doc(db, "users", uid, "tasks", currentTask.value, "occurrences", key);
+      
+      const occurrenceSnap = await getDoc(occurrenceRef);
+      
+      if (occurrenceSnap.exists()) {
+        await saveOccurrence(currentTask.value, key, 0);
+        await decrementMonthlyStats(currentTask.value, key, 1);
+      }  
       dayActions.classList.add("hidden-day-buttons");
       updateProgress(calendarDays, progressBar, progressText);
     }
