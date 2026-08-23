@@ -996,201 +996,201 @@ export function listenClickCalendar(addBtn, cancelBtn, taskBtn, dayActions, cale
   // --------------------------------------------------
 
   cancelBtn.addEventListener("click", async e => {
-
-  e.preventDefault();
-  e.stopPropagation();
-
-  if (!selectedDay || !currentTask.value) return;
-
-  const dayElement = selectedDay;
-
-  const d = dayElement.textContent.padStart(2, "0");
-  const m = (date.getMonth() + 1)
-    .toString()
-    .padStart(2, "0");
-  const y = date.getFullYear();
-
-  const key = `${y}-${m}-${d}`;
-
-  const taskId = currentTask.value;
-  const uid = auth.currentUser.uid;
-
-  const occurrenceRef = doc(
-    db,
-    "users",
-    uid,
-    "tasks",
-    taskId,
-    "occurrences",
-    key
-  );
-
-  const taskRef = doc(
-    db,
-    "users",
-    uid,
-    "tasks",
-    taskId
-  );
-
-  const occRef = collection(
-    db,
-    "users",
-    uid,
-    "tasks",
-    taskId,
-    "occurrences"
-  );
-
-  try {
-
-    // -----------------------------------------
-    // 1. Leggi occurrence e occurrences
-    //    contemporaneamente
-    // -----------------------------------------
-
-    const [occurrenceSnap, allOccurrencesSnap] = await Promise.all([
-      getDoc(occurrenceRef),
-      getDocs(occRef)
-    ]);
-
-    // Se l'occurrence non esiste più,
-    // pulisci comunque la UI.
-    if (!occurrenceSnap.exists()) {
-
-      dayElement.classList.remove(
-        "selected",
-        "completed"
-      );
-
-      dayElement.style.background = "";
-      dayElement.style.color = "";
-
-      selectedDay = null;
-
-      dayActions.classList.add(
-        "hidden-day-buttons"
-      );
-
-      updateProgress(
-        calendarDays,
-        progressBar,
-        progressText
-      );
-
-      return;
-    }
-
-    const quantity =
-      occurrenceSnap.data().quantity || 1;
-
-
-    // -----------------------------------------
-    // 2. Calcola first/last DOPO la cancellazione
-    // -----------------------------------------
-
-    const remainingDates = allOccurrencesSnap.docs
-      .map(docSnap => docSnap.id)
-      .filter(id => id !== key)
-      .sort();
-
-
-    const newFirst =
-      remainingDates.length > 0
-        ? remainingDates[0]
-        : null;
-
-    const newLast =
-      remainingDates.length > 0
-        ? remainingDates[remainingDates.length - 1]
-        : null;
-
-
-    // -----------------------------------------
-    // 3. Prepara statistiche mensili
-    // -----------------------------------------
-
-    const monthKey = getMonthKey(key);
-
-    const statsRef = doc(
+  
+    e.preventDefault();
+    e.stopPropagation();
+  
+    if (!selectedDay || !currentTask.value) return;
+  
+    const dayElement = selectedDay;
+  
+    const d = dayElement.textContent.padStart(2, "0");
+    const m = (date.getMonth() + 1)
+      .toString()
+      .padStart(2, "0");
+    const y = date.getFullYear();
+  
+    const key = `${y}-${m}-${d}`;
+  
+    const taskId = currentTask.value;
+    const uid = auth.currentUser.uid;
+  
+    const occurrenceRef = doc(
       db,
       "users",
       uid,
       "tasks",
       taskId,
-      "monthlyStats",
-      monthKey
+      "occurrences",
+      key
     );
-
-
-    // -----------------------------------------
-    // 4. UNA SOLA operazione atomica
-    // -----------------------------------------
-
-    const batch = writeBatch(db);
-
-    batch.delete(occurrenceRef);
-
-    batch.set(
-      statsRef,
-      {
-        count: increment(-quantity)
-      },
-      { merge: true }
+  
+    const taskRef = doc(
+      db,
+      "users",
+      uid,
+      "tasks",
+      taskId
     );
-
-    batch.update(taskRef, {
-      firstOccurrence: newFirst,
-      lastOccurrence: newLast
-    });
-
-    await batch.commit();
-
-
-    // -----------------------------------------
-    // 5. Aggiorna UI immediatamente
-    // -----------------------------------------
-
-    dayElement.classList.remove(
-      "selected",
-      "completed"
+  
+    const occRef = collection(
+      db,
+      "users",
+      uid,
+      "tasks",
+      taskId,
+      "occurrences"
     );
-
-    dayElement.style.background = "";
-    dayElement.style.color = "";
-
-    selectedDay = null;
-
-    dayActions.classList.add(
-      "hidden-day-buttons"
-    );
-
-    updateProgress(
-      calendarDays,
-      progressBar,
-      progressText
-    );
-
-
-  } catch (err) {
-
-    console.error(
-      "Error cancelling occurrence:",
-      err
-    );
-
-    // La UI rimane completata solo se
-    // Firestore ha realmente fallito.
-    dayElement.classList.add("completed");
-
-    updateProgress(
-      calendarDays,
-      progressBar,
-      progressText
-    );
-  }
-});
-
+  
+    try {
+  
+      // -----------------------------------------
+      // 1. Leggi occurrence e occurrences
+      //    contemporaneamente
+      // -----------------------------------------
+  
+      const [occurrenceSnap, allOccurrencesSnap] = await Promise.all([
+        getDoc(occurrenceRef),
+        getDocs(occRef)
+      ]);
+  
+      // Se l'occurrence non esiste più,
+      // pulisci comunque la UI.
+      if (!occurrenceSnap.exists()) {
+  
+        dayElement.classList.remove(
+          "selected",
+          "completed"
+        );
+  
+        dayElement.style.background = "";
+        dayElement.style.color = "";
+  
+        selectedDay = null;
+  
+        dayActions.classList.add(
+          "hidden-day-buttons"
+        );
+  
+        updateProgress(
+          calendarDays,
+          progressBar,
+          progressText
+        );
+  
+        return;
+      }
+  
+      const quantity =
+        occurrenceSnap.data().quantity || 1;
+  
+  
+      // -----------------------------------------
+      // 2. Calcola first/last DOPO la cancellazione
+      // -----------------------------------------
+  
+      const remainingDates = allOccurrencesSnap.docs
+        .map(docSnap => docSnap.id)
+        .filter(id => id !== key)
+        .sort();
+  
+  
+      const newFirst =
+        remainingDates.length > 0
+          ? remainingDates[0]
+          : null;
+  
+      const newLast =
+        remainingDates.length > 0
+          ? remainingDates[remainingDates.length - 1]
+          : null;
+  
+  
+      // -----------------------------------------
+      // 3. Prepara statistiche mensili
+      // -----------------------------------------
+  
+      const monthKey = getMonthKey(key);
+  
+      const statsRef = doc(
+        db,
+        "users",
+        uid,
+        "tasks",
+        taskId,
+        "monthlyStats",
+        monthKey
+      );
+  
+  
+      // -----------------------------------------
+      // 4. UNA SOLA operazione atomica
+      // -----------------------------------------
+  
+      const batch = writeBatch(db);
+  
+      batch.delete(occurrenceRef);
+  
+      batch.set(
+        statsRef,
+        {
+          count: increment(-quantity)
+        },
+        { merge: true }
+      );
+  
+      batch.update(taskRef, {
+        firstOccurrence: newFirst,
+        lastOccurrence: newLast
+      });
+  
+      await batch.commit();
+  
+  
+      // -----------------------------------------
+      // 5. Aggiorna UI immediatamente
+      // -----------------------------------------
+  
+      dayElement.classList.remove(
+        "selected",
+        "completed"
+      );
+  
+      dayElement.style.background = "";
+      dayElement.style.color = "";
+  
+      selectedDay = null;
+  
+      dayActions.classList.add(
+        "hidden-day-buttons"
+      );
+  
+      updateProgress(
+        calendarDays,
+        progressBar,
+        progressText
+      );
+  
+  
+    } catch (err) {
+  
+      console.error(
+        "Error cancelling occurrence:",
+        err
+      );
+  
+      // La UI rimane completata solo se
+      // Firestore ha realmente fallito.
+      dayElement.classList.add("completed");
+  
+      updateProgress(
+        calendarDays,
+        progressBar,
+        progressText
+      );
+    }
+  });
+}
   
 // -------- PROGRESS --------
 export function updateProgress(calendarDays, progressBar, progressText) {
