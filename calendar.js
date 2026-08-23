@@ -1,5 +1,5 @@
 import { db, auth } from "./firebase.js";
-import { doc, setDoc, deleteDoc, addDoc, getDoc, updateDoc, collection, getDocs, query, where, orderBy, limit, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { doc, setDoc, deleteDoc, addDoc, getDoc, updateDoc, collection, getDocs, query, where, orderBy, limit, runTransaction, writeBatch, increment } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { updateTaskBarChart, updateAllTasksMultiBarChart, updateAllTasksLineChart } from "./stats.js";
 
 // -------- CALENDAR DRAW --------
@@ -140,15 +140,13 @@ async function incrementMonthlyStats(taskId, dateStr, quantity) {
     monthKey
   );
 
-  const snap = await getDoc(statsRef);
-
-  const currentCount = snap.exists()
-    ? (snap.data().count || 0)
-    : 0;
-
-  await setDoc(statsRef, {
-    count: currentCount + quantity
-  });
+  await setDoc(
+    statsRef,
+    {
+      count: increment(quantity)
+    },
+    { merge: true }
+  );
 }
 
 
@@ -167,15 +165,13 @@ async function decrementMonthlyStats(taskId, dateStr, quantity) {
     monthKey
   );
 
-  const snap = await getDoc(statsRef);
-
-  if (!snap.exists()) return;
-
-  const currentCount = snap.data().count || 0;
-
-  await setDoc(statsRef, {
-    count: Math.max(0, currentCount - quantity)
-  });
+  await setDoc(
+    statsRef,
+    {
+      count: increment(-quantity)
+    },
+    { merge: true }
+  );
 }
 
 
@@ -246,8 +242,6 @@ async function updateOccurrenceRange(taskId) {
     "occurrences"
   );
 
-  const snapshot = await getDocs(occRef);
-
   const taskRef = doc(
     db,
     "users",
@@ -256,7 +250,24 @@ async function updateOccurrenceRange(taskId) {
     taskId
   );
 
-  if (snapshot.empty) {
+  const firstQuery = query(
+    occRef,
+    orderBy("__name__"),
+    limit(1)
+  );
+
+  const lastQuery = query(
+    occRef,
+    orderBy("__name__", "desc"),
+    limit(1)
+  );
+
+  const [firstSnapshot, lastSnapshot] = await Promise.all([
+    getDocs(firstQuery),
+    getDocs(lastQuery)
+  ]);
+
+  if (firstSnapshot.empty) {
     await updateDoc(taskRef, {
       firstOccurrence: null,
       lastOccurrence: null
@@ -265,28 +276,14 @@ async function updateOccurrenceRange(taskId) {
     return;
   }
 
-  const dates = snapshot.docs
-    .map(docSnap => docSnap.id)
-    .sort();
+  const firstOccurrence = firstSnapshot.docs[0].id;
+  const lastOccurrence = lastSnapshot.docs[0].id;
 
   await updateDoc(taskRef, {
-    firstOccurrence: dates[0],
-    lastOccurrence: dates[dates.length - 1]
+    firstOccurrence,
+    lastOccurrence
   });
-
-  await ensureMonthlyStats(
-    taskId,
-    getMonthKey(dates[0]),
-    getMonthKey(dates[dates.length - 1])
-  );
-
-  await cleanupMonthlyStats(
-    taskId,
-    getMonthKey(dates[0]),
-    getMonthKey(dates[dates.length - 1])
-  );
 }
-
 
 
 export async function markOccurrences(taskId, calendarDays, date) {
@@ -870,49 +867,76 @@ export function listenClickCalendar(addBtn, cancelBtn, taskBtn, dayActions, cale
 
   calendarDays.addEventListener("click", async e => {
     if (!e.target.classList.contains("day")) return;
+
     selectedDay = e.target;
-    calendarDays.querySelectorAll(".day").forEach(d => d.classList.remove("selected"));
+
+    calendarDays
+      .querySelectorAll(".day")
+      .forEach(d => d.classList.remove("selected"));
+
     selectedDay.classList.add("selected");
+
     if (currentTask.value) {
       dayActions.classList.remove("hidden-day-buttons");
-      if (!e.target.classList.contains("completed")) cancelBtn.classList.add("hidden-day-buttons");
-      else cancelBtn.classList.remove("hidden-day-buttons");
- 
+
+      if (!e.target.classList.contains("completed")) {
+        cancelBtn.classList.add("hidden-day-buttons");
+      } else {
+        cancelBtn.classList.remove("hidden-day-buttons");
+      }
+
     } else {
-      if (!e.target.classList.contains("completed")) { 
+      if (!e.target.classList.contains("completed")) {
+
         message.textContent = "";
         taskBtn.classList.add("warning");
+
         setTimeout(() => {
           taskBtn.classList.remove("warning");
+
           setTimeout(() => {
             taskBtn.classList.add("warning");
+
             setTimeout(() => {
               taskBtn.classList.remove("warning");
             }, 150);
+
           }, 150);
+
         }, 150);
-      } else { 
+
+      } else {
+
         const day = e.target.textContent.padStart(2, "0");
-        const month = (date.getMonth() + 1).toString().padStart(2, "0");
+        const month = (date.getMonth() + 1)
+          .toString()
+          .padStart(2, "0");
         const year = date.getFullYear();
         const key = `${year}-${month}-${day}`;
-
+        
         if (!auth.currentUser) return;
         const uid = auth.currentUser.uid;
-      
-        let completedTasks = [];
-      
-        for (const task of tasks) {
-          const occRef = doc(db, "users", uid, "tasks", task.id, "occurrences", key);
-          const occSnap = await getDoc(occRef); 
-      
-          if (occSnap.exists()) {
-            completedTasks.push({
-              name: task.name,
-              color: task.color
-            });
-          }
-        }
+
+        // Letture in parallelo invece che una alla volta
+        const results = await Promise.all(
+          tasks.map(async task => {
+            const occRef = doc(db, "users", uid, "tasks", task.id, "occurrences", key);
+            const occSnap = await getDoc(occRef);
+
+            return {
+              task,
+              exists: occSnap.exists()
+            };
+          })
+        );
+
+        const completedTasks = results
+          .filter(result => result.exists)
+          .map(result => ({
+            name: result.task.name,
+            color: result.task.color
+          }));
+
         message.innerHTML = completedTasks
           .map(t => `
             <div style="color: hsl(${t.color},70%,45%)">
@@ -924,99 +948,157 @@ export function listenClickCalendar(addBtn, cancelBtn, taskBtn, dayActions, cale
     }
   });
 
+
+  // --------------------------------------------------
+  // CLICK FUORI DAL CALENDARIO
+  // --------------------------------------------------
+
   document.addEventListener("click", e => {
-    if (!e.target.closest(".days") && !e.target.closest("#day-actions")) {
-      calendarDays.querySelectorAll(".day").forEach(d => d.classList.remove("selected"));
+
+    if (
+      !e.target.closest(".days") &&
+      !e.target.closest("#day-actions")
+    ) {
+
+      calendarDays
+        .querySelectorAll(".day")
+        .forEach(d => d.classList.remove("selected"));
+
       selectedDay = null;
+
       dayActions.classList.add("hidden-day-buttons");
+
       message.textContent = "";
     }
   });
 
+
+  // --------------------------------------------------
+  // ADD OCCURRENCE
+  // --------------------------------------------------
+
   addBtn.addEventListener("click", async () => {
-    if (selectedDay && currentTask.value) {
-      const d = selectedDay.textContent.padStart(2, "0");
-      const m = (date.getMonth() + 1).toString().padStart(2, "0");
-      const y = date.getFullYear();
-      const key = `${y}-${m}-${d}`;
-  
-      selectedDay.classList.remove("selected");
-      selectedDay.classList.add("completed");
-      selectedDay = null;
-  
-      const taskId = currentTask.value;
-      const uid = auth.currentUser.uid;
-  
-      const occurrenceRef = doc(db, "users", uid, "tasks", taskId, "occurrences", key);
-  
-      const occurrenceSnap = await getDoc(occurrenceRef);
-  
-      // Evita di incrementare le statistiche due volte
+
+    if (!selectedDay || !currentTask.value) return;
+    const dayElement = selectedDay;
+
+    const d = dayElement.textContent.padStart(2, "0");
+    const m = (date.getMonth() + 1)
+      .toString()
+      .padStart(2, "0");
+    const y = date.getFullYear();
+
+    const key = `${y}-${m}-${d}`;
+    const taskId = currentTask.value;
+    const uid = auth.currentUser.uid;
+    const occurrenceRef = doc(db, "users", uid, "tasks", taskId, "occurrences", key);
+    const taskRef = doc(db, "users", uid, "tasks", taskId);
+
+    // UI immediata
+    dayElement.classList.remove("selected");
+    dayElement.classList.add("completed");
+    selectedDay = null;
+    dayActions.classList.add("hidden-day-buttons");
+    updateProgress(calendarDays, progressBar, progressText);
+
+    try {
+      // Le due letture vengono fatte contemporaneamente
+      const [occurrenceSnap, taskSnap] = await Promise.all([
+        getDoc(occurrenceRef),
+        getDoc(taskRef)
+      ]);
+
+      // Evita doppio inserimento
       if (occurrenceSnap.exists()) {
-        dayActions.classList.add("hidden-day-buttons");
         return;
       }
-  
-      await saveOccurrence(taskId, key, 1);
-  
-      const taskRef = doc(db, "users", uid, "tasks", taskId);
-  
-      const taskSnap = await getDoc(taskRef);
+
       const taskData = taskSnap.data();
-  
+
       const newFirst =
-        !taskData.firstOccurrence || key < taskData.firstOccurrence
+        !taskData.firstOccurrence ||
+        key < taskData.firstOccurrence
           ? key
           : taskData.firstOccurrence;
-  
+
       const newLast =
-        !taskData.lastOccurrence || key > taskData.lastOccurrence
+        !taskData.lastOccurrence ||
+        key > taskData.lastOccurrence
           ? key
           : taskData.lastOccurrence;
-  
-      await updateDoc(taskRef, {firstOccurrence: newFirst, lastOccurrence: newLast});
-  
-      await ensureMonthlyStats(taskId, getMonthKey(newFirst), getMonthKey(newLast));
-  
-      await incrementMonthlyStats(taskId, key, 1);
-  
-      dayActions.classList.add("hidden-day-buttons");
+
+      const monthKey = getMonthKey(key);
+      const statsRef = doc(db, "users", uid, "tasks", taskId, "monthlyStats", monthKey);
+
+      // UNA SOLA operazione di scrittura
+      const batch = writeBatch(db);
+      batch.set(occurrenceRef, { quantity: 1 }, { merge: true });
+      batch.update(taskRef, {firstOccurrence: newFirst, lastOccurrence: newLast});
+      batch.set(statsRef, { count: increment(1) }, { merge: true });
+
+      await batch.commit();
+
+    } catch (err) {
+      console.error(
+        "Error adding occurrence:",
+        err
+      );
+
+      // Rollback UI se Firestore fallisce
+      dayElement.classList.remove("completed");
       updateProgress(calendarDays, progressBar, progressText);
     }
   });
-  
+
+
+  // --------------------------------------------------
+  // CANCEL OCCURRENCE
+  // --------------------------------------------------
+
   cancelBtn.addEventListener("click", async () => {
-    if (selectedDay && currentTask.value) {
-      const d = selectedDay.textContent.padStart(2, "0");
-      const m = (date.getMonth() + 1).toString().padStart(2, "0");
-      const y = date.getFullYear();
-      const key = `${y}-${m}-${d}`;
-  
-      selectedDay.classList.remove("selected");
-      selectedDay.classList.remove("completed");
-      selectedDay = null;
-  
-      const taskId = currentTask.value;
-      const uid = auth.currentUser.uid;
-  
-      const occurrenceRef = doc(db, "users", uid, "tasks", taskId, "occurrences", key);
-  
+
+    if (!selectedDay || !currentTask.value) return;
+    const dayElement = selectedDay;
+
+    const d = dayElement.textContent.padStart(2, "0");
+    const m = (date.getMonth() + 1)
+      .toString()
+      .padStart(2, "0");
+    const y = date.getFullYear();
+    const key = `${y}-${m}-${d}`;
+    const taskId = currentTask.value;
+    const uid = auth.currentUser.uid;
+    const occurrenceRef = doc(db, "users", uid, "tasks", taskId, "occurrences", key);
+
+    // UI immediata
+    dayElement.classList.remove("selected");
+    dayElement.classList.remove("completed");
+    selectedDay = null;
+    dayActions.classList.add("hidden-day-buttons");
+    updateProgress(calendarDays, progressBar, progressText);
+
+    try {
+      // Controlliamo solo l'occurrence
       const occurrenceSnap = await getDoc(occurrenceRef);
-  
+
       if (!occurrenceSnap.exists()) {
-        dayActions.classList.add("hidden-day-buttons");
         return;
       }
-  
+
       const quantity = occurrenceSnap.data().quantity || 1;
-  
-      await saveOccurrence(taskId, key, 0);
-  
-      await decrementMonthlyStats(taskId, key, quantity);
-  
-      await updateOccurrenceRange(taskId);
-  
-      dayActions.classList.add("hidden-day-buttons");
+
+      // Delete + stats + ricerca range
+      // vengono eseguiti contemporaneamente
+      await Promise.all([
+        deleteDoc(occurrenceRef),
+        decrementMonthlyStats(taskId, key, quantity),
+        updateOccurrenceRange(taskId)
+      ]);
+
+    } catch (err) {
+      console.error("Error cancelling occurrence:", err);
+      // Rollback UI
+      dayElement.classList.add("completed");
       updateProgress(calendarDays, progressBar, progressText);
     }
   });
