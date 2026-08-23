@@ -986,41 +986,41 @@ export function listenClickCalendar(addBtn, cancelBtn, taskBtn, dayActions, cale
   });
   
   cancelBtn.addEventListener("click", async () => {
-  if (selectedDay && currentTask.value) {
-    const d = selectedDay.textContent.padStart(2, "0");
-    const m = (date.getMonth() + 1).toString().padStart(2, "0");
-    const y = date.getFullYear();
-    const key = `${y}-${m}-${d}`;
-
-    selectedDay.classList.remove("selected");
-    selectedDay.classList.remove("completed");
-    selectedDay = null;
-
-    const taskId = currentTask.value;
-    const uid = auth.currentUser.uid;
-
-    const occurrenceRef = doc(db, "users", uid, "tasks", taskId, "occurrences", key);
-
-    const occurrenceSnap = await getDoc(occurrenceRef);
-
-    if (!occurrenceSnap.exists()) {
+    if (selectedDay && currentTask.value) {
+      const d = selectedDay.textContent.padStart(2, "0");
+      const m = (date.getMonth() + 1).toString().padStart(2, "0");
+      const y = date.getFullYear();
+      const key = `${y}-${m}-${d}`;
+  
+      selectedDay.classList.remove("selected");
+      selectedDay.classList.remove("completed");
+      selectedDay = null;
+  
+      const taskId = currentTask.value;
+      const uid = auth.currentUser.uid;
+  
+      const occurrenceRef = doc(db, "users", uid, "tasks", taskId, "occurrences", key);
+  
+      const occurrenceSnap = await getDoc(occurrenceRef);
+  
+      if (!occurrenceSnap.exists()) {
+        dayActions.classList.add("hidden-day-buttons");
+        return;
+      }
+  
+      const quantity = occurrenceSnap.data().quantity || 1;
+  
+      await saveOccurrence(taskId, key, 0);
+  
+      await decrementMonthlyStats(taskId, key, quantity);
+  
+      await updateOccurrenceRange(taskId);
+  
       dayActions.classList.add("hidden-day-buttons");
-      return;
+      updateProgress(calendarDays, progressBar, progressText);
     }
-
-    const quantity = occurrenceSnap.data().quantity || 1;
-
-    await saveOccurrence(taskId, key, 0);
-
-    await decrementMonthlyStats(taskId, key, quantity);
-
-    await updateOccurrenceRange(taskId);
-
-    dayActions.classList.add("hidden-day-buttons");
-    updateProgress(calendarDays, progressBar, progressText);
-  }
-});
-
+  });
+}
 
   
 // -------- PROGRESS --------
