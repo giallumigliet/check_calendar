@@ -1,264 +1,541 @@
-// script.js
+import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { auth, db } from "./firebase.js";
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import {
-  GoogleAuthProvider, signInWithPopup, setPersistence,
-  browserLocalPersistence, onAuthStateChanged, signOut, deleteUser 
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getDocs, deleteDoc, doc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-import {
-  createCalendar, listenClickCalendar, listenMonthCalendar, listenTaskButtons,
-  listenHue, listenPanelButtons, listenSaveTask, listenEditTask, listenNotifications, createTaskList, markOccurrences, markAllTasks,
-  updateProgress, enterEditMode, exitEditMode
-} from "./calendar.js";
+export async function getTaskMonthlyOccurrences(taskId) {
+  if (!auth.currentUser || !taskId) return [];
 
+  const uid = auth.currentUser.uid;
 
-// ---- ELEMENTS ----
-const calendarWrapper = document.getElementById("calendar-wrapper");
-const monthYear = document.getElementById("monthYear");
-const calendarDays = document.getElementById("calendarDays");
-const calendarTitle = document.getElementById("calendar-title");
+  const statsRef = collection(
+    db,
+    "users",
+    uid,
+    "tasks",
+    taskId,
+    "monthlyStats"
+  );
 
-const message = document.getElementById("message");
+  const snapshot = await getDocs(statsRef);
 
-const dayActions = document.getElementById("day-actions");
-const addBtn = document.getElementById("add-btn");
-const cancelBtn = document.getElementById("cancel-btn");
-const taskBtn = document.getElementById("task-btn");
-const statsBtn = document.getElementById("stats-btn");
+  if (snapshot.empty) return [];
 
-const progressWrapper = document.getElementById("progressWrapper");
-const progressContainer = document.getElementById("progress-container");
-const progressBar = document.getElementById("progressBar");
-const progressText = document.getElementById("progressText");
+  const monthCounts = {};
 
-const prevMonthBtn = document.getElementById("prevMonth");
-const nextMonthBtn = document.getElementById("nextMonth");
+  snapshot.docs.forEach(docSnap => {
+    monthCounts[docSnap.id] =
+      docSnap.data().count || 0;
+  });
 
-const panel = document.getElementById("floating-panel");
-const statsPanel = document.getElementById("stats-floating-panel");
-const notificationsPanel = document.getElementById("notifications-floating-panel");
-const confirmNotificationBtn = document.getElementById("confirm-notification");
-const overlay = document.getElementById("overlay");
-const closePanel = document.getElementById("close-panel");
-const closeStatsPanel = document.getElementById("close-stats-panel");
+  const sortedMonths =
+    Object.keys(monthCounts).sort();
 
+  const monthNames = [
+    "Jan", "Feb", "Mar", "Apr",
+    "May", "Jun", "Jul", "Aug",
+    "Sep", "Oct", "Nov", "Dec"
+  ];
 
+  return sortedMonths.map(key => {
 
-const addTaskBtn = document.getElementById("addTask-btn");
-const editTaskBtn = document.getElementById("edit-task");
-const saveTaskBtn = document.getElementById("save-task");
-const goBackBtn = document.getElementById("goback-task");
-const buttonFooter = document.getElementById("button-footer");
+    const [year, month] = key.split("-");
 
-const taskList = document.getElementById("task-list");
-const taskManager = document.getElementById("task-manager");
-const taskForm = document.getElementById("task-form");
+    return {
+      label:
+        `${monthNames[parseInt(month) - 1]} ${year}`,
 
-const taskNameInput = document.getElementById("task-name");
-const taskHueInput = document.getElementById("task-hue");
-const huePreview = document.getElementById("hue-preview");
-const hueContainer = document.getElementById("hue-container");
-
-const loginBtn = document.getElementById("login-btn");
-const logoutBtn = document.getElementById("logout-btn");
-const resetDataBtn = document.getElementById("resetData-btn");
-
-const profileBtn = document.getElementById("profile-btn");
-const userPhoto = document.getElementById("user-photo");
-const accountPanel = document.getElementById("account-floating-panel");
-const changeAccountBtn = document.getElementById("changeAccount-btn");
-
-const chartContainer = document.getElementById("time-bar-chart");
-
-const mondayFlag = document.getElementById("monday-flag");
-const tuesdayFlag = document.getElementById("tuesday-flag");
-const wednesdayFlag = document.getElementById("wednesday-flag");
-const thursdayFlag = document.getElementById("thursday-flag");
-const fridayFlag = document.getElementById("friday-flag");
-const saturdayFlag = document.getElementById("saturday-flag");
-const sundayFlag = document.getElementById("sunday-flag");
-
-const reminderTimeInput = document.getElementById("reminderTime");
-
-
-const dayFlags = [
-  { el: mondayFlag, name: "monday" },
-  { el: tuesdayFlag, name: "tuesday" },
-  { el: wednesdayFlag, name: "wednesday" },
-  { el: thursdayFlag, name: "thursday" },
-  { el: fridayFlag, name: "friday" },
-  { el: saturdayFlag, name: "saturday" },
-  { el: sundayFlag, name: "sunday" },
-];
-
-
-
-const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-document.body.classList.add(prefersDark ? 'dark' : 'light');
-const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-mediaQuery.addEventListener('change', e => {
-  document.body.classList.toggle('dark', e.matches);
-  document.body.classList.toggle('light', !e.matches);
-});
-
-const lightDarkButton = document.getElementById('lightDark-btn');
-
-lightDarkButton.addEventListener('click', () => {
-  document.body.classList.toggle('dark');
-  document.body.classList.toggle('light');
-  
-  const metaTheme = document.querySelector("#theme-color-meta");
-  const bgColor = getComputedStyle(document.body)
-    .getPropertyValue("--bg-main")
-    .trim();
-  metaTheme.setAttribute("content", bgColor);
-});
+      count: monthCounts[key]
+    };
+  });
+}
 
 
 
 
-// ---- STATE ----
-let tasks = [];
-const date = new Date();
-let currentTask = { value: "" };
-let currentNotificationTask = { value: "" };
+export async function getAllTasksMonthlyOccurrences(tasks) {
+  if (!auth.currentUser) return [];
 
+  const uid = auth.currentUser.uid;
 
+  const monthCountsPerTask = {};
 
+  tasks.forEach(task => {
+    monthCountsPerTask[task.id] = {
+      name: task.name,
+      color: task.color,
+      counts: {}
+    };
+  });
 
-// ---- FIREBASE AUTH ----
-const provider = new GoogleAuthProvider();
-(async () => {
-  await setPersistence(auth, browserLocalPersistence);
-})();
+  const results = await Promise.all(
+    tasks.map(async task => {
 
-// ---- AUTH UI ----
-loginBtn.addEventListener("click", async () => {
-  try { await signInWithPopup(auth, provider); } catch(err) { console.error(err); }
-});
+      const statsRef = collection(
+        db,
+        "users",
+        uid,
+        "tasks",
+        task.id,
+        "monthlyStats"
+      );
 
-changeAccountBtn.addEventListener("click", async () => {
-  try { await signOut(auth); await signInWithPopup(auth, provider); } catch(err){ console.error(err); }
-  accountPanel.classList.add("hidden-task-buttons");
-  currentTask.value = "";
-  calendarTitle.textContent = "CHECK CALENDAR";
-  document.body.classList.remove("color-mode");
-  calendarDays.querySelectorAll(".day").forEach(day => day.classList.remove("completed"));
-});
+      const snapshot = await getDocs(statsRef);
 
-logoutBtn.addEventListener("click", async () => { 
-  await signOut(auth); 
-  accountPanel.classList.add("hidden-task-buttons"); 
-  currentTask.value = "";
-  calendarTitle.textContent = "CHECK CALENDAR";
-  document.body.classList.remove("color-mode");
-  calendarDays.querySelectorAll(".day").forEach(day => day.classList.remove("completed"));
-});
+      return {
+        task,
+        snapshot
+      };
+    })
+  );
 
+  results.forEach(({ task, snapshot }) => {
 
-resetDataBtn.addEventListener("click", async () => {
-  if (!auth.currentUser) return;
+    snapshot.docs.forEach(docSnap => {
 
-  const confirmDelete = confirm("Your account and all associated data will be deleted permanently. Continue?");
-  if (!confirmDelete) return;
+      const monthKey = docSnap.id;
 
-  try {
-    const uid = auth.currentUser.uid;
-    const tasksRef = collection(db, "users", uid, "tasks");
-    const tasksSnap = await getDocs(tasksRef);
+      monthCountsPerTask[task.id]
+        .counts[monthKey] =
+          docSnap.data().count || 0;
 
-    for (const taskDoc of tasksSnap.docs) {
-      const taskId = taskDoc.id;
-
-      // delete occurrences
-      const occRef = collection(db, "users", uid, "tasks", taskId, "occurrences");
-      const occSnap = await getDocs(occRef);
-
-      for (const occDoc of occSnap.docs) {
-        await deleteDoc(doc(db, "users", uid, "tasks", taskId, "occurrences", occDoc.id));
-      }
-
-      // delete tasks
-      await deleteDoc(doc(db, "users", uid, "tasks", taskId));
-    }
-    await deleteUser(auth.currentUser);
-
-    // reset UI
-    accountPanel.classList.add("hidden-task-buttons");
-    currentTask.value = "";
-    calendarTitle.textContent = "CHECK CALENDAR";
-    document.body.classList.remove("color-mode");
-
-  } catch (err) {
-    console.error("Error deleting account:", err);
-
-    // important case
-    if (err.code === "auth/requires-recent-login") {
-      alert("Please log in again before deleting your account.");
-    }
-  }
-});
-
-
-profileBtn.addEventListener("click", e => { e.stopPropagation(); accountPanel.classList.toggle("hidden-task-buttons"); });
-document.addEventListener("click", e => { if (!accountPanel.contains(e.target) && !profileBtn.contains(e.target)) accountPanel.classList.add("hidden-task-buttons"); });
-
-// ---- AUTH STATE ----
-onAuthStateChanged(auth, async user => {
-  if(user){
-    console.log("user logged: ", user.uid);
-    calendarWrapper.classList.remove("hidden-task-buttons");
-    loginBtn.classList.add("hidden-task-buttons");
-    profileBtn.classList.remove("hidden-task-buttons");
-    taskBtn.classList.remove("semi-transparent");
-    statsBtn.classList.remove("semi-transparent");
-    userPhoto.src = user.photoURL;
-    let first = true;
-    
-    const tasksRef = collection(db, "users", user.uid, "tasks");
-    onSnapshot(tasksRef, async snapshot => {
-      tasks.length = 0;
-      snapshot.forEach(doc => { tasks.push({ id: doc.id, ...doc.data() });  });
-      createTaskList(taskList, tasks, currentTask, calendarDays, calendarTitle, date, progressWrapper, progressBar, progressText, calendarWrapper, buttonFooter, panel, overlay, taskForm, taskManager, hueContainer, huePreview, editTaskBtn, saveTaskBtn, taskHueInput, taskNameInput, notificationsPanel, dayFlags, reminderTimeInput, currentNotificationTask);
-      
-      if (first) {
-        await createCalendar(date, monthYear, calendarDays, currentTask, progressBar, progressText, tasks);
-        first = false;
-      }
     });
 
-  } else {
-    console.log("user NOT logged!!");
-    calendarWrapper.classList.add("hidden-task-buttons");
-    loginBtn.classList.remove("hidden-task-buttons");
-    profileBtn.classList.add("hidden-task-buttons");
-    taskBtn.classList.add("semi-transparent");
-    statsBtn.classList.add("semi-transparent");
+  });
 
-    tasks = [];
-    taskList.innerHTML = "";
-    currentTask.value = "";
-    calendarDays.querySelectorAll(".day").forEach(day => day.classList.remove("completed"));
-    updateProgress(calendarDays, progressBar, progressText);
+  const allKeys = [];
+
+  Object.values(monthCountsPerTask).forEach(task => {
+    allKeys.push(
+      ...Object.keys(task.counts)
+    );
+  });
+
+  if (!allKeys.length) {
+    return {
+      months: [],
+      data: [],
+      tasks: monthCountsPerTask
+    };
   }
-});
+
+  const sortedMonths =
+    [...new Set(allKeys)].sort();
+
+  const monthNames = [
+    "Jan", "Feb", "Mar", "Apr",
+    "May", "Jun", "Jul", "Aug",
+    "Sep", "Oct", "Nov", "Dec"
+  ];
+
+  const data = sortedMonths.map(key => {
+
+    const [year, month] = key.split("-");
+
+    const values = {};
+
+    Object.entries(monthCountsPerTask)
+      .forEach(([taskId, task]) => {
+
+        values[taskId] =
+          task.counts[key] || 0;
+
+      });
+
+    return {
+      label:
+        `${monthNames[parseInt(month) - 1]} ${year}`,
+      values
+    };
+  });
+
+  return {
+    months: sortedMonths.map(key => {
+
+      const [year, month] = key.split("-");
+
+      return `${monthNames[parseInt(month) - 1]} ${year}`;
+
+    }),
+
+    data,
+    tasks: monthCountsPerTask
+  };
+}
+
+export function drawCurrentTaskBarChart(container, data) { 
+  container.innerHTML = ""; 
+  if (!data.length) return; 
+
+  const maxCount = 31; 
+  const containerHeight = 400;
+  
+  container.style.display = "flex"; 
+  container.style.flexDirection = "row"; 
+  container.style.alignItems = "flex-end"; 
+  container.style.overflowX = "auto"; 
+  container.style.gap = "10px"; 
+  container.style.padding = "10px"; 
+  
+  data.forEach(d => { 
+    const barWrapper = document.createElement("div"); 
+    barWrapper.style.display = "flex"; 
+    barWrapper.style.flexDirection = "column"; 
+    barWrapper.style.alignItems = "center"; 
+    barWrapper.style.flex = "0 0 auto"; 
+    // larghezza fissa, non scalare 
+    barWrapper.style.width = "40px"; 
+    // larghezza barra + spazio 
+    barWrapper.style.margin = "0"; 
+    const barContainer = document.createElement("div");
+    barContainer.style.position = "relative";
+    barContainer.style.width = "100%";
+    barContainer.style.height = `${containerHeight}px`;
 
 
-// ------------------------------------------------
-listenNotifications(notificationsPanel, overlay, calendarWrapper, buttonFooter, confirmNotificationBtn, dayFlags, reminderTimeInput, currentNotificationTask)
-listenClickCalendar(addBtn, cancelBtn, taskBtn, dayActions, calendarDays, progressBar, progressText, currentTask, date, message, tasks);
-listenMonthCalendar(date, monthYear, calendarDays, prevMonthBtn, nextMonthBtn, progressBar, progressText, currentTask, tasks);
-listenTaskButtons(taskBtn, statsBtn, closePanel, closeStatsPanel, panel, statsPanel, notificationsPanel, overlay, calendarWrapper, buttonFooter, taskManager, taskForm, taskList, taskNameInput, taskHueInput, huePreview, currentTask, tasks, chartContainer);
-listenPanelButtons(addTaskBtn, goBackBtn, taskManager, taskForm, taskList, hueContainer, editTaskBtn, saveTaskBtn, taskNameInput, taskHueInput, huePreview);
-listenHue(huePreview, hueContainer, taskHueInput, taskList);
-listenSaveTask(saveTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, tasks, taskList, currentTask, calendarTitle, calendarDays, date, monthYear, progressBar, progressText, panel, notificationsPanel, overlay, dayFlags, reminderTimeInput, currentNotificationTask);
-listenEditTask(editTaskBtn, taskNameInput, taskHueInput, huePreview, taskManager, taskForm, taskList, calendarTitle, calendarDays, date, tasks);
+    const [monthLabel, yearLabel] = d.label.split(" ");
+    const monthIndex = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"].indexOf(monthLabel);
+    const year = parseInt(yearLabel);
+    const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
+    
+    
+    // 🔹 Barra "totale mese" (sfondo)
+    const barBg = document.createElement("div");
+    barBg.style.position = "absolute";
+    barBg.style.bottom = "0";
+    barBg.style.width = "100%";
+    barBg.style.height = `${(daysInMonth / maxCount) * (containerHeight - 50)}px`;
+    barBg.style.backgroundColor = "var(--main-color)";
+    barBg.style.opacity = "0.2";
+    
+    // 🔹 Barra "completamenti"
+    const bar = document.createElement("div");
+    bar.classList.add("bar");
+    bar.style.position = "absolute";
+    bar.style.bottom = "0";
+    bar.style.width = "100%";
+    bar.style.height = `${(d.count / maxCount) * (containerHeight - 50)}px`;
+    bar.style.backgroundColor = "var(--main-color)";
+    bar.style.opacity = "1";
+    
+    bar.style.display = "flex";
+    bar.style.alignItems = "flex-end";
+    bar.style.justifyContent = "center";
+    bar.style.color = "white";
+    bar.style.fontWeight = "bold";
+    bar.style.fontSize = "10px";
+    bar.textContent = d.count;
+
+    barContainer.appendChild(barBg);
+    barContainer.appendChild(bar);
+    
+    const label = document.createElement("span"); 
+    label.style.fontSize = "12px"; 
+    label.style.marginTop = "4px"; 
+    label.style.textAlign = "center"; 
+    label.textContent = d.label; 
+    barWrapper.appendChild(barContainer); 
+    barWrapper.appendChild(label); 
+    container.appendChild(barWrapper); 
+  }); 
+
+  requestAnimationFrame(() => {
+    container.scrollLeft = container.scrollWidth;
+  });
+}
 
 
+export function drawAllTasksMultiBarChart(container, months, data, tasks) {
+  container.innerHTML = "";
+  if (!data.length) return;
+
+  const maxCount = 31;
+  const containerHeight = 400;
+
+  container.style.display = "flex";
+  container.style.flexDirection = "row";
+  container.style.alignItems = "flex-end";
+  container.style.overflowX = "auto";
+  container.style.gap = "20px";
+  container.style.padding = "10px";
+
+  const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+  const tooltip = document.createElement("div");
+  tooltip.id = "chart-tooltip";
+  document.body.appendChild(tooltip);
+
+  data.forEach(d => {
+
+    
+    const monthWrapper = document.createElement("div");
+    monthWrapper.style.display = "flex";
+    monthWrapper.style.flexDirection = "column";
+    monthWrapper.style.alignItems = "center";
+    monthWrapper.style.flex = "0 0 auto";
+
+    
+    const barsRow = document.createElement("div");
+    barsRow.style.display = "flex";
+    barsRow.style.flexDirection = "row";
+    barsRow.style.alignItems = "flex-end";
+    barsRow.style.height = `${containerHeight}px`;
+    barsRow.style.gap = "4px";
+
+    
+    const [monthLabel, yearLabel] = d.label.split(" ");
+    const monthIndex = monthNames.indexOf(monthLabel);
+    const year = parseInt(yearLabel);
+    const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
+
+    Object.entries(tasks).forEach(([taskId, t]) => {
+      const value = d.values[taskId] || 0;
+
+      const barWrapper = document.createElement("div");
+      barWrapper.style.display = "flex";
+      barWrapper.style.flexDirection = "column";
+      barWrapper.style.alignItems = "center";
+      barWrapper.style.width = "20px";
+
+      const barContainer = document.createElement("div");
+      barContainer.style.position = "relative";
+      barContainer.style.width = "100%";
+      barContainer.style.height = "100%";
+
+      
+      const barBg = document.createElement("div");
+      barBg.style.position = "absolute";
+      barBg.style.bottom = "0";
+      barBg.style.width = "100%";
+      barBg.style.height = `${(daysInMonth / maxCount) * (containerHeight - 50)}px`;
+      barBg.style.backgroundColor = `hsl(${t.color}, 70%, 55%)`;
+      barBg.style.opacity = "0.2";
+
+      
+      const bar = document.createElement("div");
+      bar.classList.add("bar");
+      bar.style.position = "absolute";
+      bar.style.bottom = "0";
+      bar.style.width = "100%";
+      bar.style.height = `${(value / maxCount) * (containerHeight - 50)}px`;
+      bar.style.backgroundColor = `hsl(${t.color}, 70%, 55%)`;
+
+      bar.style.display = "flex";
+      bar.style.alignItems = "flex-end";
+      bar.style.justifyContent = "center";
+      bar.style.color = "white";
+      bar.style.fontSize = "9px";
+      bar.textContent = value > 0 ? value : "";
+      let isScrolling = false;
+      let scrollTimeout;
+      
+      bar.addEventListener("mouseenter", () => {
+        if (isScrolling) return;
+        tooltip.textContent = t.name;
+        tooltip.style.backgroundColor = `hsl(${t.color}, 60%, 60%)`;
+        tooltip.style.display = "block";
+      });
+
+      bar.addEventListener("mousemove", (e) => {
+        if (isScrolling) return;
+
+        const offset = 10;
+        const tooltipWidth = tooltip.offsetWidth;
+        const tooltipHeight = tooltip.offsetHeight;
+
+        let left = e.pageX + offset;
+        let top = e.pageY - tooltipHeight - offset;
+
+        if (left + tooltipWidth > window.pageXOffset + window.innerWidth) {
+          left = e.pageX - tooltipWidth - offset;
+        }
+
+        if (top < window.pageYOffset) {
+          top = e.pageY + offset;
+        }
+
+        tooltip.style.left = left + "px";
+        tooltip.style.top = top + "px";
+      });
+      
+      bar.addEventListener("mouseleave", () => {
+        tooltip.style.display = "none";
+      });
 
 
+      document.addEventListener("touchstart", () => {
+        tooltip.style.display = "none";
+      });
+
+       
+      container.addEventListener("scroll", () => {
+        isScrolling = true;
+        tooltip.style.display = "none";
+
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(() => {
+          isScrolling = false;
+        }, 100);
+      });
+
+      barContainer.appendChild(barBg);
+      barContainer.appendChild(bar);
+      barWrapper.appendChild(barContainer);
+      barsRow.appendChild(barWrapper);
+    });
+
+    // 🔹 Label mese
+    const label = document.createElement("span");
+    label.style.fontSize = "12px";
+    label.style.marginTop = "6px";
+    label.style.textAlign = "center";
+    label.textContent = d.label;
+
+    monthWrapper.appendChild(barsRow);
+    monthWrapper.appendChild(label);
+    container.appendChild(monthWrapper);
+  });
+
+  requestAnimationFrame(() => {
+    container.scrollLeft = container.scrollWidth;
+  });
+}
 
 
+export function drawAllTasksLineChart(container, months, data, tasks) {
+  container.innerHTML = "";
+  if (!data.length) return;
 
+  const height = 400;
+  const padding = 40;
+  const monthWidth = 80;
+
+  const width = months.length * monthWidth;
+
+  container.style.position = "relative";
+  container.style.overflowX = "auto";
+  container.style.overflowY = "hidden";
+
+  const inner = document.createElement("div");
+  inner.style.position = "relative";
+  inner.style.width = width + "px";
+  inner.style.height = height + "px";
+
+  container.appendChild(inner);
+
+  const chartHeight = height - padding * 2;
+
+  let maxY = 0;
+  data.forEach(d => {
+    Object.values(d.values).forEach(v => maxY = Math.max(maxY, v));
+  });
+
+  const yScale = y => chartHeight - (y / maxY * chartHeight) + padding;
+
+  const stepY = Math.ceil(maxY / 5);
+
+  for (let yVal = 0; yVal <= maxY; yVal += stepY) {
+    const y = yScale(yVal);
+
+    const line = document.createElement("div");
+    line.style.position = "absolute";
+    line.style.left = "0";
+    line.style.width = "100%";
+    line.style.height = "1px";
+    line.style.top = y + "px";
+    line.style.background = "var(--border-color)";
+    line.style.opacity = "0.3";
+
+    inner.appendChild(line);
+
+    const label = document.createElement("div");
+    label.style.position = "absolute";
+    label.style.left = "0";
+    label.style.top = (y - 8) + "px";
+    label.style.fontSize = "12px";
+    label.style.color = "var(--text-color)";
+    label.textContent = yVal;
+
+    container.appendChild(label);
+  }
+
+  Object.entries(tasks).forEach(([taskId, t]) => {
+
+    for (let i = 0; i < data.length - 1; i++) {
+      const x1 = i * monthWidth;
+      const y1 = yScale(data[i].values[taskId] || 0);
+
+      const x2 = (i + 1) * monthWidth;
+      const y2 = yScale(data[i + 1].values[taskId] || 0);
+
+      const dx = x2 - x1;
+      const dy = y2 - y1;
+
+      const length = Math.sqrt(dx * dx + dy * dy);
+      const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+
+      const line = document.createElement("div");
+      line.style.position = "absolute";
+      line.style.left = x1 + "px";
+      line.style.top = y1 + "px";
+      line.style.width = length + "px";
+      line.style.height = "3px";
+      line.style.background = `hsl(${t.color}, 70%, 55%)`;
+      line.style.transformOrigin = "0 0";
+      line.style.transform = `rotate(${angle}deg)`;
+
+      inner.appendChild(line);
+    }
+
+    data.forEach((d, i) => {
+      const x = i * monthWidth;
+      const y = yScale(d.values[taskId] || 0);
+
+      const dot = document.createElement("div");
+      dot.style.position = "absolute";
+      dot.style.left = (x - 4) + "px";
+      dot.style.top = (y - 4) + "px";
+      dot.style.width = "8px";
+      dot.style.height = "8px";
+      dot.style.borderRadius = "50%";
+      dot.style.background = `hsl(${t.color}, 70%, 55%)`;
+
+      inner.appendChild(dot);
+    });
+  });
+
+  months.forEach((m, i) => {
+    const x = i * monthWidth;
+
+    const label = document.createElement("div");
+    label.style.position = "absolute";
+    label.style.left = (x - 20) + "px";
+    label.style.top = (height - padding + 10) + "px";
+    label.style.fontSize = "12px";
+    label.style.color = "var(--text-color)";
+    label.style.width = "60px";
+    label.style.textAlign = "center";
+    label.textContent = m;
+
+    inner.appendChild(label);
+  });
+
+  requestAnimationFrame(() => {
+    container.scrollLeft = container.scrollWidth;
+  });
+}
+
+export async function updateTaskBarChart(container, taskId) {
+  const data = await getTaskMonthlyOccurrences(taskId);
+  drawCurrentTaskBarChart(container, data);
+}
+
+
+export async function updateAllTasksMultiBarChart(container, tasks) {
+  const { months, data, tasks: taskInfo } = await getAllTasksMonthlyOccurrences(tasks);
+  drawAllTasksMultiBarChart(container, months, data, taskInfo);
+}
+
+
+export async function updateAllTasksLineChart(container, tasks) {
+  const { months, data, tasks: taskInfo } = await getAllTasksMonthlyOccurrences(tasks);
+  drawAllTasksLineChart(container, months, data, taskInfo);
+}
