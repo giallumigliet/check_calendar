@@ -1,5 +1,5 @@
 import { db, auth } from "./firebase.js";
-import { doc, setDoc, deleteDoc, addDoc, getDoc, updateDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { doc, setDoc, deleteDoc, addDoc, getDoc, updateDoc, collection, getDocs, query, where, orderBy, limit, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { updateTaskBarChart, updateAllTasksMultiBarChart, updateAllTasksLineChart } from "./stats.js";
 
 // -------- CALENDAR DRAW --------
@@ -53,44 +53,553 @@ export async function createCalendar(date, monthYear, calendarDays, currentTask,
   }
 }
 
+
+
+
+
+
+
+function getMonthKey(dateStr) {
+  return dateStr.substring(0, 7);
+}
+
+function getMonthsBetween(startMonth, endMonth) {
+  const months = [];
+
+  let [year, month] = startMonth.split("-").map(Number);
+  const [endYear, endMonthNumber] = endMonth.split("-").map(Number);
+
+  while (
+    year < endYear ||
+    (year === endYear && month <= endMonthNumber)
+  ) {
+    months.push(
+      `${year}-${String(month).padStart(2, "0")}`
+    );
+
+    month++;
+
+    if (month > 12) {
+      month = 1;
+      year++;
+    }
+  }
+
+  return months;
+}
+
+function getPreviousMonth(monthKey) {
+  const [year, month] = monthKey.split("-").map(Number);
+
+  let newYear = year;
+  let newMonth = month - 1;
+
+  if (newMonth === 0) {
+    newMonth = 12;
+    newYear--;
+  }
+
+  return `${newYear}-${String(newMonth).padStart(2, "0")}`;
+}
+
+function getNextMonth(monthKey) {
+  const [year, month] = monthKey.split("-").map(Number);
+
+  let newYear = year;
+  let newMonth = month + 1;
+
+  if (newMonth === 13) {
+    newMonth = 1;
+    newYear++;
+  }
+
+  return `${newYear}-${String(newMonth).padStart(2, "0")}`;
+}
+
+
+
+
+
+
+
+
 // -------- OCCURRENCES --------
 export async function saveOccurrence(taskId, dateStr, quantity = 1) {
   if (!auth.currentUser || !taskId) return;
+
   try {
     const uid = auth.currentUser.uid;
-    if (quantity > 0) {
-      await setDoc(
-        doc(db, "users", uid, "tasks", taskId, "occurrences", dateStr),
-        { quantity },
-        { merge: true }
+
+    const taskRef = doc(
+      db,
+      "users",
+      uid,
+      "tasks",
+      taskId
+    );
+
+    const occurrenceRef = doc(
+      db,
+      "users",
+      uid,
+      "tasks",
+      taskId,
+      "occurrences",
+      dateStr
+    );
+
+    const monthKey = getMonthKey(dateStr);
+
+    const monthlyStatsRef = doc(
+      db,
+      "users",
+      uid,
+      "tasks",
+      taskId,
+      "monthlyStats",
+      monthKey
+    );
+
+    await runTransaction(db, async transaction => {
+
+      // ------------------------------------------------
+      // TUTTE LE LETTURE DEVONO AVVENIRE PRIMA DELLE SCRITTURE
+      // ------------------------------------------------
+
+      const [
+        taskSnap,
+        occurrenceSnap,
+        monthlyStatsSnap
+      ] = await Promise.all([
+        transaction.get(taskRef),
+        transaction.get(occurrenceRef),
+        transaction.get(monthlyStatsRef)
+      ]);
+
+      if (!taskSnap.exists()) {
+        throw new Error("Task does not exist.");
+      }
+
+      const taskData = taskSnap.data();
+
+      // =================================================
+      // AGGIUNTA
+      // =================================================
+
+      if (quantity > 0) {
+
+        // L'occorrenza esiste già:
+        // non facciamo niente e soprattutto
+        // NON incrementiamo nuovamente il contatore.
+        if (occurrenceSnap.exists()) {
+          return;
+        }
+
+        let firstOccurrence = taskData.firstOccurrence || null;
+        let lastOccurrence = taskData.lastOccurrence || null;
+
+        const newFirst =
+          !firstOccurrence ||
+          dateStr < firstOccurrence;
+
+        const newLast =
+          !lastOccurrence ||
+          dateStr > lastOccurrence;
+
+        const finalFirst =
+          newFirst ? dateStr : firstOccurrence;
+
+        const finalLast =
+          newLast ? dateStr : lastOccurrence;
+
+        // -----------------------------------------------
+        // Se è la prima occorrenza, creiamo il primo mese.
+        // Se stiamo estendendo l'intervallo, creiamo
+        // eventuali mesi intermedi mancanti con count 0.
+        // -----------------------------------------------
+
+        const monthsToEnsure =
+          getMonthsBetween(
+            getMonthKey(finalFirst),
+            getMonthKey(finalLast)
+          );
+
+        const monthlyStatsRefs = monthsToEnsure.map(month => ({
+          month,
+          ref: doc(
+            db,
+            "users",
+            uid,
+            "tasks",
+            taskId,
+            "monthlyStats",
+            month
+          )
+        }));
+
+        // Dobbiamo leggere tutti i documenti prima di scrivere.
+        const monthlySnapshots = await Promise.all(
+          monthlyStatsRefs.map(item =>
+            transaction.get(item.ref)
+          )
+        );
+
+        // Crea i mesi mancanti con count 0.
+        monthlySnapshots.forEach((snap, index) => {
+          if (!snap.exists()) {
+            transaction.set(
+              monthlyStatsRefs[index].ref,
+              { count: 0 }
+            );
+          }
+        });
+
+        // Crea l'occorrenza.
+        transaction.set(
+          occurrenceRef,
+          { quantity }
+        );
+
+        // Incrementa il mese dell'occorrenza.
+        const currentCount =
+          monthlyStatsSnap.exists()
+            ? (monthlyStatsSnap.data().count || 0)
+            : 0;
+
+        transaction.set(
+          monthlyStatsRef,
+          {
+            count: currentCount + quantity
+          },
+          { merge: true }
+        );
+
+        // Aggiorna primo/ultimo giorno della task.
+        transaction.update(
+          taskRef,
+          {
+            firstOccurrence: finalFirst,
+            lastOccurrence: finalLast
+          }
+        );
+
+        return;
+      }
+
+      // =================================================
+      // ELIMINAZIONE
+      // =================================================
+
+      if (!occurrenceSnap.exists()) {
+        return;
+      }
+
+      const oldQuantity =
+        occurrenceSnap.data().quantity || 1;
+
+      const firstOccurrence =
+        taskData.firstOccurrence || dateStr;
+
+      const lastOccurrence =
+        taskData.lastOccurrence || dateStr;
+
+      const isFirst =
+        dateStr === firstOccurrence;
+
+      const isLast =
+        dateStr === lastOccurrence;
+
+      // -----------------------------------------------
+      // Se non stiamo eliminando né la prima né l'ultima
+      // occorrenza, è sufficiente decrementare il mese.
+      // -----------------------------------------------
+
+      if (!isFirst && !isLast) {
+
+        const currentCount =
+          monthlyStatsSnap.exists()
+            ? (monthlyStatsSnap.data().count || 0)
+            : 0;
+
+        transaction.delete(occurrenceRef);
+
+        transaction.set(
+          monthlyStatsRef,
+          {
+            count: Math.max(
+              0,
+              currentCount - oldQuantity
+            )
+          },
+          { merge: true }
+        );
+
+        return;
+      }
+
+      // -----------------------------------------------
+      // Se eliminiamo prima/ultima occorrenza,
+      // dobbiamo trovare il nuovo intervallo.
+      // -----------------------------------------------
+
+      const occurrencesRef = collection(
+        db,
+        "users",
+        uid,
+        "tasks",
+        taskId,
+        "occurrences"
       );
-    } else {
-      // elimina occorrenza se quantity 0
-      await deleteDoc(doc(db, "users", uid, "tasks", taskId, "occurrences", dateStr));
-    }
-  } catch(err) {
+
+      let newFirst = null;
+      let newLast = null;
+
+      if (isFirst) {
+        const firstQuery = query(
+          occurrencesRef,
+          orderBy("__name__", "asc"),
+          limit(2)
+        );
+
+        const firstSnapshot =
+          await transaction.get(firstQuery);
+
+        for (const snap of firstSnapshot.docs) {
+          if (snap.id !== dateStr) {
+            newFirst = snap.id;
+            break;
+          }
+        }
+      } else {
+        newFirst = firstOccurrence;
+      }
+
+      if (isLast) {
+        const lastQuery = query(
+          occurrencesRef,
+          orderBy("__name__", "desc"),
+          limit(2)
+        );
+
+        const lastSnapshot =
+          await transaction.get(lastQuery);
+
+        for (const snap of lastSnapshot.docs) {
+          if (snap.id !== dateStr) {
+            newLast = snap.id;
+            break;
+          }
+        }
+      } else {
+        newLast = lastOccurrence;
+      }
+
+      // -----------------------------------------------
+      // Caso: era l'unica occorrenza.
+      // -----------------------------------------------
+
+      if (!newFirst || !newLast) {
+
+        transaction.delete(occurrenceRef);
+
+        transaction.delete(monthlyStatsRef);
+
+        transaction.update(
+          taskRef,
+          {
+            firstOccurrence: null,
+            lastOccurrence: null
+          }
+        );
+
+        return;
+      }
+
+      const newFirstMonth =
+        getMonthKey(newFirst);
+
+      const newLastMonth =
+        getMonthKey(newLast);
+
+      // -----------------------------------------------
+      // Elimina l'occorrenza.
+      // -----------------------------------------------
+
+      transaction.delete(occurrenceRef);
+
+      // -----------------------------------------------
+      // Aggiorna il count del mese eliminato.
+      // -----------------------------------------------
+
+      const currentCount =
+        monthlyStatsSnap.exists()
+          ? (monthlyStatsSnap.data().count || 0)
+          : 0;
+
+      const newCount =
+        Math.max(
+          0,
+          currentCount - oldQuantity
+        );
+
+      // -----------------------------------------------
+      // Se il mese è ancora dentro l'intervallo,
+      // deve rimanere anche se count = 0.
+      // -----------------------------------------------
+
+      if (
+        monthKey >= newFirstMonth &&
+        monthKey <= newLastMonth
+      ) {
+        transaction.set(
+          monthlyStatsRef,
+          {
+            count: newCount
+          },
+          { merge: true }
+        );
+      } else {
+        // Il mese è diventato esterno all'intervallo.
+        transaction.delete(monthlyStatsRef);
+      }
+
+      // -----------------------------------------------
+      // Se abbiamo accorciato il range, eliminiamo
+      // eventuali monthlyStats diventati esterni.
+      // -----------------------------------------------
+
+      if (isFirst) {
+
+        const oldFirstMonth =
+          getMonthKey(firstOccurrence);
+
+        if (oldFirstMonth < newFirstMonth) {
+
+          const monthsToDelete =
+            getMonthsBetween(
+              oldFirstMonth,
+              getPreviousMonth(newFirstMonth)
+            );
+
+          for (const month of monthsToDelete) {
+            transaction.delete(
+              doc(
+                db,
+                "users",
+                uid,
+                "tasks",
+                taskId,
+                "monthlyStats",
+                month
+              )
+            );
+          }
+        }
+      }
+
+      if (isLast) {
+
+        const oldLastMonth =
+          getMonthKey(lastOccurrence);
+
+        if (newLastMonth < oldLastMonth) {
+
+          const monthsToDelete =
+            getMonthsBetween(
+              getNextMonth(newLastMonth),
+              oldLastMonth
+            );
+
+          for (const month of monthsToDelete) {
+            transaction.delete(
+              doc(
+                db,
+                "users",
+                uid,
+                "tasks",
+                taskId,
+                "monthlyStats",
+                month
+              )
+            );
+          }
+        }
+      }
+
+      // Aggiorna l'intervallo della task.
+      transaction.update(
+        taskRef,
+        {
+          firstOccurrence: newFirst,
+          lastOccurrence: newLast
+        }
+      );
+    });
+
+  } catch (err) {
     console.error("Error saving occurrence:", err);
+    throw err;
   }
 }
 
+
+
+
 export async function markOccurrences(taskId, calendarDays, date) {
   if (!auth.currentUser || !taskId) return;
+
   try {
     const uid = auth.currentUser.uid;
-    const occRef = collection(db, "users", uid, "tasks", taskId, "occurrences");
-    const snapshot = await getDocs(occRef);
-    const completedDates = snapshot.docs.map(doc => doc.id);
 
-    const month = (date.getMonth() + 1).toString().padStart(2, "0");
     const year = date.getFullYear();
+    const month = date.getMonth();
+
+    const startDate =
+      `${year}-${String(month + 1).padStart(2, "0")}-01`;
+
+    const lastDay =
+      new Date(year, month + 1, 0).getDate();
+
+    const endDate =
+      `${year}-${String(month + 1).padStart(2, "0")}-${String(lastDay).padStart(2, "0")}`;
+
+    const occRef = collection(
+      db,
+      "users",
+      uid,
+      "tasks",
+      taskId,
+      "occurrences"
+    );
+
+    const q = query(
+      occRef,
+      where("__name__", ">=", startDate),
+      where("__name__", "<=", endDate)
+    );
+
+    const snapshot = await getDocs(q);
+
+    const completedDates =
+      new Set(snapshot.docs.map(docSnap => docSnap.id));
 
     calendarDays.querySelectorAll(".day").forEach(dayDiv => {
+
       dayDiv.style.background = "";
-      const day = dayDiv.textContent.padStart(2, "0");
-      const dateKey = `${year}-${month}-${day}`;
-      dayDiv.classList.toggle("completed", completedDates.includes(dateKey));
+
+      const day =
+        dayDiv.textContent.padStart(2, "0");
+
+      const dateKey =
+        `${year}-${String(month + 1).padStart(2, "0")}-${day}`;
+
+      dayDiv.classList.toggle(
+        "completed",
+        completedDates.has(dateKey)
+      );
     });
-  } catch(err) {
+
+  } catch (err) {
     console.error("Error marking occurrences:", err);
   }
 }
@@ -101,31 +610,74 @@ export async function markAllTasks(calendarDays, date, tasks) {
   if (!auth.currentUser) return;
 
   const uid = auth.currentUser.uid;
-  const month = (date.getMonth() + 1).toString().padStart(2, "0");
+
   const year = date.getFullYear();
+  const month = date.getMonth();
 
-  const dayColors = {}; // { "2026-03-01": ["hsl(...)","hsl(...)"] }
+  const startDate =
+    `${year}-${String(month + 1).padStart(2, "0")}-01`;
 
-  for (const task of tasks) {
-    const occRef = collection(db, "users", uid, "tasks", task.id, "occurrences");
-    const snapshot = await getDocs(occRef);
+  const lastDay =
+    new Date(year, month + 1, 0).getDate();
+
+  const endDate =
+    `${year}-${String(month + 1).padStart(2, "0")}-${String(lastDay).padStart(2, "0")}`;
+
+  const dayColors = {};
+
+  const results = await Promise.all(
+    tasks.map(async task => {
+
+      const occRef = collection(
+        db,
+        "users",
+        uid,
+        "tasks",
+        task.id,
+        "occurrences"
+      );
+
+      const q = query(
+        occRef,
+        where("__name__", ">=", startDate),
+        where("__name__", "<=", endDate)
+      );
+
+      const snapshot = await getDocs(q);
+
+      return {
+        task,
+        snapshot
+      };
+    })
+  );
+
+  results.forEach(({ task, snapshot }) => {
 
     snapshot.docs.forEach(docSnap => {
+
       const key = docSnap.id;
 
-      if (!key.startsWith(`${year}-${month}`)) return;
+      if (!dayColors[key]) {
+        dayColors[key] = [];
+      }
 
-      if (!dayColors[key]) dayColors[key] = [];
-
-      dayColors[key].push(`hsl(${task.color},70%,55%)`);
+      dayColors[key].push(
+        `hsl(${task.color},70%,55%)`
+      );
     });
-  }
+  });
 
   calendarDays.querySelectorAll(".day").forEach(dayDiv => {
-    const d = dayDiv.textContent.padStart(2, "0");
-    const key = `${year}-${month}-${d}`;
 
-    const colors = dayColors[key] || [];
+    const d =
+      dayDiv.textContent.padStart(2, "0");
+
+    const key =
+      `${year}-${String(month + 1).padStart(2, "0")}-${d}`;
+
+    const colors =
+      dayColors[key] || [];
 
     if (colors.length === 0) {
       dayDiv.style.background = "";
@@ -141,12 +693,12 @@ export async function markAllTasks(calendarDays, date, tasks) {
       return;
     }
 
-    const gradient = `linear-gradient(180deg, ${colors.join(",")})`;
-    dayDiv.style.background = gradient;
+    dayDiv.style.background =
+      `linear-gradient(180deg, ${colors.join(",")})`;
+
     dayDiv.classList.add("completed");
   });
 }
-
 
 
 
