@@ -1027,12 +1027,26 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
       if (!confirm("Press OK to delete this task.")) return;
       try {
         const uid = auth.currentUser.uid;
-        const occRef = collection(db, "users", uid, "tasks", taskId, "occurrences");
-        const snapshot = await getDocs(occRef);
-        for (const occDoc of snapshot.docs) {
-          await deleteDoc(doc(db, "users", uid, "tasks", taskId, "occurrences", occDoc.id));
-        }
-        await deleteDoc(doc(db, "users", uid, "tasks", taskId));
+        const taskRef = doc( db, "users", uid, "tasks", taskId);
+        const occRef = collection( db, "users", uid, "tasks", taskId, "occurrences");
+        const statsRef = collection( db, "users", uid, "tasks", taskId, "monthlyStats");
+        
+        const [occSnapshot, statsSnapshot] = await Promise.all([
+          getDocs(occRef),
+          getDocs(statsRef)
+        ]);
+        
+        await Promise.all([
+          ...occSnapshot.docs.map(occDoc =>
+            deleteDoc(occDoc.ref)
+          ),
+        
+          ...statsSnapshot.docs.map(statsDoc =>
+            deleteDoc(statsDoc.ref)
+          ),
+        
+          deleteDoc(taskRef)
+        ]);
       } catch(err) { console.error(err); }
       newTask.remove();
 
