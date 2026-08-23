@@ -191,6 +191,14 @@ export async function markOccurrences(taskId, calendarDays, date) {
       snapshot.docs.map(docSnap => docSnap.id)
     );
 
+
+    calendarDays.querySelectorAll(".day").forEach(day => {
+      day.classList.remove("completed");
+      day.style.background = "";
+      day.style.color = "";
+    });
+    
+
     calendarDays.querySelectorAll(".day").forEach(dayDiv => {
       const day = dayDiv.textContent.padStart(2, "0");
       const dateKey =
