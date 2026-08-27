@@ -51,7 +51,7 @@
 
 
   .color-mode {
-    --title-color: hsl(var(--main-hue), 70%, 55%);
+    --title-color: hsl(var(--main-hue), 70%, 55%) !important;
     --main-color: hsl(var(--main-hue), 70%, 55%);
     --main-color-dark: hsl(var(--main-hue), 70%, 40%);
     --main-color-light: hsl(var(--main-hue), 70%, 75%);
