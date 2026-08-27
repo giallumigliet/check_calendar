@@ -133,6 +133,10 @@
       color: var(--text-color);
   }
 
+  #resetData-btn {
+      color: #ff7f7f;
+  }
+
   #login-btn.warning {
       background-color: var(--main-color-dark);
       transform: scale(0.95);
