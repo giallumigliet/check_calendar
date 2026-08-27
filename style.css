@@ -7,6 +7,9 @@
     
     --preview-hue: 150;
     --preview-color: hsl(var(--preview-hue), 70%, 55%);
+
+
+    
   }
 
   body.light {
@@ -14,7 +17,9 @@
     --bg-main: #f4f7fa;
     --bg-hover-color: #e9eef2;
     --text-color: #15171a;
-    --border-color: #dce3e8;
+    --border-color: rgba(20, 30, 40, 0.09);
+    --button-color: rgba(30, 45, 60, 0.055);
+    --button-color-hover: rgba(30, 45, 60, 0.96);
   }
   
   body.dark {
@@ -22,7 +27,9 @@
     --bg-main: #090a0c;
     --bg-hover-color: #22252a;
     --text-color: #f5f5f7;
-    --border-color: #2b2e33;
+    --border-color: rgba(255, 255, 255, 0.055);
+    --button-color: rgba(255, 255, 255, 0.045);
+    --button-color-hover: rgba(255, 255, 255, 0.96);
   }
 
 
@@ -53,15 +60,15 @@
     font-size: clamp(32px, 4vw, 52px);
     font-weight: 500;
     letter-spacing: -0.7px;
-    color: var(--main-color);
+    color: var(--text-color);
     
   
   }
 
   /* Buttons */
   button {
-      background-color:  var(--main-color);
-      border: 3px solid #e8e8e8;
+      background-color:  var(--button-color);
+      border: 1px solid var(--border-color);
       color: white;
       padding: 12px 20px;
       font-size: 16px;
@@ -73,7 +80,7 @@
   }
 
   button:hover {
-      background-color: var(--main-color-dark);
+      background-color: var(--button-color-hover);
   }
 
 
@@ -137,7 +144,7 @@
       display: flex;
       justify-content: center;
       border-radius: 57px;
-      border: 0px solid var(--border-color);
+      border: 1px solid var(--border-color);
       box-shadow: 0 -5px 5px rgba(0,0,0,0.1);
       z-index: 998;
   }
