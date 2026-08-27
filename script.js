@@ -158,6 +158,8 @@ logoutBtn.addEventListener("click", async () => {
 });
 
 
+
+
 resetDataBtn.addEventListener("click", async () => {
   if (!auth.currentUser) return;
 
@@ -268,6 +270,28 @@ onAuthStateChanged(auth, async user => {
     currentTask.value = "";
     calendarDays.querySelectorAll(".day").forEach(day => day.classList.remove("completed"));
     updateProgress(calendarDays, progressBar, progressText);
+
+    
+    document.addEventListener("click", (event) => {
+      if (!loginBtn.contains(event.target)) {
+        message.textContent = "";
+        loginBtn.classList.add("warning");
+        setTimeout(() => {
+          loginBtn.classList.remove("warning");
+          setTimeout(() => {
+            loginBtn.classList.add("warning");
+            setTimeout(() => {
+              loginBtn.classList.remove("warning");
+            }, 150);
+          }, 150);
+        }, 150);
+      }
+    });
+
+
+
+
+    
   }
 });
 
