@@ -120,7 +120,7 @@
     padding: 8px 20px;;
     font-size: 14px;
     font-weight: normal;
-    border-radius: 0px;
+    border-radius: 13px;
     cursor: pointer;
     margin: 0;
     transition: background 0.3s;
@@ -129,10 +129,6 @@
   account-button:hover {
       background-color: var(--button-color-hover);
       color: var(--text-color);
-  }
-
-  account-button:not(:last-child) {
-    border-bottom: 1px solid #eee;
   }
 
 
@@ -559,7 +555,7 @@
     max-width: 90vw;    
     overflow: hidden;
   
-    padding: 0;
+    padding: 7px;
     gap: 0;
   
     transition: all 0.35s ease;
