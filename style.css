@@ -145,7 +145,7 @@
       justify-content: center;
       border-radius: 57px;
       border: 1px solid var(--border-color);
-      box-shadow: 0 -5px 5px rgba(0,0,0,0.1);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
       z-index: 998;
   }
 
@@ -327,7 +327,7 @@
     background: var(--bg-main);
     border-radius: 57px;
     border: 0px solid var(--border-color);
-    box-shadow: 0 -5px 5px rgba(0,0,0,0.1);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
 
     display: flex;
     flex-direction: column;
