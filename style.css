@@ -19,7 +19,7 @@
     --text-color: #15171a;
     --border-color: rgba(20, 30, 40, 0.09);
     --button-color: rgba(30, 45, 60, 0.055);
-    --button-color-hover: rgba(30, 45, 60, 0.96);
+    --button-color-hover: rgba(30, 45, 60, 0.07);
   }
   
   body.dark {
@@ -29,7 +29,7 @@
     --text-color: #f5f5f7;
     --border-color: rgba(255, 255, 255, 0.055);
     --button-color: rgba(255, 255, 255, 0.045);
-    --button-color-hover: rgba(255, 255, 255, 0.96);
+    --button-color-hover: rgba(255, 255, 255, 0.6);
   }
 
 
