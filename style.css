@@ -133,6 +133,11 @@
       color: var(--text-color);
   }
 
+  #login-btn.warning {
+      background-color: var(--main-color-dark);
+      transform: scale(0.95);
+  }
+
 
   /* Footer with buttons */
   #button-footer {
