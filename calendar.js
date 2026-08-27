@@ -569,7 +569,6 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
   if (tasks.length > 0) {
     const allTasksBtn = document.createElement("button");
     allTasksBtn.style.textAlign = "center";
-    allTasksBtn.style.fontweight = "bold";
     allTasksBtn.style.margin = "0";
     allTasksBtn.textContent = "SEE ALL TASKS";
     taskList.appendChild(allTasksBtn);
