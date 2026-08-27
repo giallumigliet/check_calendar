@@ -232,6 +232,20 @@ resetDataBtn.addEventListener("click", async () => {
 
 profileBtn.addEventListener("click", e => { e.stopPropagation(); accountPanel.classList.toggle("hidden-task-buttons"); });
 document.addEventListener("click", e => { if (!accountPanel.contains(e.target) && !profileBtn.contains(e.target)) accountPanel.classList.add("hidden-task-buttons"); });
+document.addEventListener("click", (event) => { if (!loginBtn.contains(event.target)) {
+        message.textContent = "login needed";
+        loginBtn.classList.add("warning");
+        setTimeout(() => {
+          loginBtn.classList.remove("warning");
+          setTimeout(() => {
+            loginBtn.classList.add("warning");
+            setTimeout(() => {
+              loginBtn.classList.remove("warning");
+            }, 150);
+          }, 150);
+        }, 150);
+      }
+    });
 
 // ---- AUTH STATE ----
 onAuthStateChanged(auth, async user => {
@@ -270,27 +284,6 @@ onAuthStateChanged(auth, async user => {
     currentTask.value = "";
     calendarDays.querySelectorAll(".day").forEach(day => day.classList.remove("completed"));
     updateProgress(calendarDays, progressBar, progressText);
-
-    
-    document.addEventListener("click", (event) => {
-      if (!loginBtn.contains(event.target)) {
-        message.textContent = "";
-        loginBtn.classList.add("warning");
-        setTimeout(() => {
-          loginBtn.classList.remove("warning");
-          setTimeout(() => {
-            loginBtn.classList.add("warning");
-            setTimeout(() => {
-              loginBtn.classList.remove("warning");
-            }, 150);
-          }, 150);
-        }, 150);
-      }
-    });
-
-
-
-
     
   }
 });
