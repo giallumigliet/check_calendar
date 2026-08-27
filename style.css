@@ -17,6 +17,7 @@
     --bg-main: #f4f7fa;
     --bg-hover-color: #e9eef2;
     --text-color: #15171a;
+    --button-text-color: #111111;
     --border-color: rgba(20, 30, 40, 0.09);
     --button-color: rgba(30, 45, 60, 0.055);
     --button-color-hover: rgba(30, 45, 60, 0.07);
@@ -27,6 +28,7 @@
     --bg-main: #090a0c;
     --bg-hover-color: #22252a;
     --text-color: #f5f5f7;
+    --button-text-color: #e5e5e7;
     --border-color: rgba(255, 255, 255, 0.055);
     --button-color: rgba(255, 255, 255, 0.045);
     --button-color-hover: rgba(255, 255, 255, 0.6);
@@ -69,7 +71,7 @@
   button {
       background-color:  var(--button-color);
       border: 1px solid var(--border-color);
-      color: var(--text-color);
+      color: var(--button-text-color);
       padding: 12px 20px;
       font-size: 16px;
       font-weight: normal;
@@ -81,6 +83,7 @@
 
   button:hover {
       background-color: var(--button-color-hover);
+      color: var(--text-color);
   }
 
 
@@ -111,9 +114,9 @@
     text-align: center;
     box-sizing: border-box; 
     
-    background-color: #fff;
+    background-color: var(--button-color);
     border: none;
-    color: #aaa;
+    color: var(--button-text-color);
     padding: 8px 20px;;
     font-size: 14px;
     font-weight: normal;
@@ -124,8 +127,8 @@
   }
 
   account-button:hover {
-      background-color:  #ddd;
-      color: #000;
+      background-color: var(--button-color-hover);
+      color: var(--text-color);
   }
 
   account-button:not(:last-child) {
@@ -542,10 +545,10 @@
     left: 50%;
     transform: translateX(-50%);
   
-    background: white;
-    border-radius: 40px;
-    border: 3px solid #e8e8e8;
-    box-shadow: 0 -5px 5px rgba(0,0,0,0.05);
+    background: --button-color;
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
   
     display: flex;
     flex-direction: column;
