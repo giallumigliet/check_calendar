@@ -1,9 +1,9 @@
   :root {
-    --main-color: hsl(210, 45%, 75%);
-    --main-color-dark: hsl(210, 35%, 60%);
-    --main-color-light: hsl(210, 35%, 80%);
+    --main-color: hsl(194, 100%, 70%);
+    --main-color-dark: hsl(194, 72%, 55%);
+    --main-color-light: hsl(194, 90%, 78%);
 
-    --notification-color: hsl(210, 70%, 55%);
+    --notification-color: hsl(194, 90%, 62%);
     
     --preview-hue: 150;
     --preview-color: hsl(var(--preview-hue), 70%, 55%);
@@ -11,18 +11,18 @@
 
   body.light {
     --bg-color: #ffffff;
-    --bg-main: #f0f0f0;
-    --bg-hover-color: #e8e8e8;
-    --text-color: #1f1f1f;
-    --border-color: #e8e8e8;
+    --bg-main: #f4f7fa;
+    --bg-hover-color: #e9eef2;
+    --text-color: #15171a;
+    --border-color: #dce3e8;
   }
   
   body.dark {
-    --bg-color: #1f1f1f;
-    --bg-main: #141414;
-    --bg-hover-color: #1a1a1a;
-    --text-color: #f5f5f5;
-    --border-color: #363636;
+    --bg-color: #191b1f;
+    --bg-main: #090a0c;
+    --bg-hover-color: #22252a;
+    --text-color: #f5f5f7;
+    --border-color: #2b2e33;
   }
 
 
@@ -723,6 +723,7 @@
     width: 40px;
     background-color: hsl(var(--main-hue), 70%, 55%, 0.8);
     border: 2px solid rgba(var(--main-color), 1);
+    border-radius: 8px 8px 0px 0px;
     text-align: center;
     color: white;
     display: flex;
