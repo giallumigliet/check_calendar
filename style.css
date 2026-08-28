@@ -21,7 +21,7 @@
     --button-text-color: #111111;
     --border-color: rgba(20, 30, 40, 0.09);
     --button-color: rgba(30, 45, 60, 0.055);
-    --button-color-hover: rgba(30, 45, 60, 0.07);
+    --button-color-hover: rgba(30, 45, 60, 0.08);
     --color-accent-soft: rgba(21, 159, 212, 0.13);
   }
   
@@ -34,7 +34,7 @@
     --button-text-color: #e5e5e7;
     --border-color: rgba(255, 255, 255, 0.055);
     --button-color: rgba(255, 255, 255, 0.045);
-    --button-color-hover: rgba(255, 255, 255, 0.6);
+    --button-color-hover: rgba(255, 255, 255, 0.5);
     --color-accent-soft: rgba(100, 216, 255, 0.12);
   }
 
