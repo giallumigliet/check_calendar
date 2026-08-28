@@ -47,7 +47,7 @@
       font-family: Inter, -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
       display: grid;
       place-items: center;
-      background: radial-gradient(circle at 50% 42%, var(--color-accent-soft), transparent 34%), var(--color-bg);
+      background: radial-gradient(circle at 50% 42%, var(--color-accent-soft), transparent 34%), var(--bg-color);
       color: var(--text-color);
   }
 
