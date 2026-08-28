@@ -41,13 +41,17 @@
 
   html {
       background: var(--bg-main);
+      width: 100%;
+      height: 100%;
   }
 
   body {
+      width: 100%;
+      height: 100%;
       font-family: Inter, -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
       display: grid;
       place-items: center;
-      background: radial-gradient(circle at 50% 42%, var(--color-accent-soft), transparent 34%), var(--bg-main);
+      background: radial-gradient(circle, var(--color-accent-soft), transparent 65%);
       color: var(--text-color);
   }
 
