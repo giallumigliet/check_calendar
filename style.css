@@ -180,7 +180,7 @@
   .month-btn {
       background: none;
       border: none;
-      color: var(--main-color);
+      color: color-mix(in srgb, var(--main-color) 50%, transparent);
       font-size: 22px;
       cursor: pointer;
       padding: 5px 10px;
@@ -188,7 +188,7 @@
 
   .month-btn:hover {
       background: none;
-      color: var(--main-color-dark);
+      color: color-mix(in srgb, var(--main-color-dark) 50%, transparent);
   }
 
 
