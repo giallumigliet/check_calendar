@@ -342,7 +342,7 @@
     border: 0px solid var(--border-color);
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
 
-    display: flex;
+    display: none;
     flex-direction: column;
 
     transform: translateY(150%);
@@ -353,6 +353,7 @@
   }
 
   #floating-panel.active {
+    display: flex;
     background: var(--bg-color);
     transform: translateY(0);
   }
