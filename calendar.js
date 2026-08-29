@@ -747,9 +747,11 @@ export function createTaskList(taskList, tasks, currentTask, calendarDays, calen
         document.body.classList.remove("color-mode");
         calendarDays.querySelectorAll(".day").forEach(day => day.classList.remove("completed"));
         progressWrapper.classList.add("hidden-day-buttons");
-        await markAllTasks(calendarDays, date, tasks);
       }
 
+      if (!currentTask.value) {
+        await markAllTasks(calendarDays, date, tasks);
+      }
     });
 
     // to edit the task
